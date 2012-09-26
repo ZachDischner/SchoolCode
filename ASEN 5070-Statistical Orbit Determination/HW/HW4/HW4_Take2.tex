@@ -1,0 +1,83 @@
+\documentclass[]{article}
+
+\begin{document}
+
+\title{ASEN 5005-Statistical Orbit Determination
+Homework 4}
+\author{Zach Dischner}
+\date{9/24/2012}
+\maketitle
+
+\section{Problem 1}
+Given the joint density function:
+
+\[\begin{array}[b]{ccc}
+f(x,y)=k*(x^2+y^2)   &  0<x<2,&1\le y\le 3 \cr 
+ f(x,y) = 0 & elsewhere & 
+\end{array}\]
+
+Several insights were to be found.
+
+
+%%%%%%%%%%%%%%%%%%%%%%  << 1a >>  %%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{1a-Find k} 
+To find {\bf k}, I employed the rule that any joint density function must be equal to one when integrated across the number range. 
+
+
+\begin{equation} 
+ \int_{-\infty}^\infty{\int_{-\infty}^\infty{ k*(x^2 + y^2) } dx dy} = 1 
+\end{equation}
+
+\noindent Since the validity of the function was limited to a specific number range for each variable, the joint density function  becomes:
+
+\begin{equation}
+\int_1^3{\int_0^2{ k*(x^2 + y^2) } dx dy} = 1 
+\end{equation}
+
+\noindent First, I integrated with respect to {\bf x}
+
+\begin{equation}
+{k*\int_1^3{(\frac{x^3 }{ 3} + x*y^2) } \Big{|}_0^2 dy} = 1 
+\end{equation}
+
+\noindent Then after evaluating for the {\bf x} range, I integrated with respect to  {\bf y}
+
+\begin{equation}
+{k*\Big{ [ } y*\frac{8}{3} + 2*\frac{y^3}{3} \Big{ ] }  \Big{|}_1^3 dy} = 1 
+\end{equation}
+
+\noindent Which evaluates down to
+
+\begin{equation}
+k*\Big{ [ }  22.67 \Big{ ] } = 1 
+\end{equation}
+
+\noindent Yielding a final value of 
+
+\begin{equation}
+	\boxed {\LARGE k = 0.0441} 
+\end{equation}
+
+\
+
+
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

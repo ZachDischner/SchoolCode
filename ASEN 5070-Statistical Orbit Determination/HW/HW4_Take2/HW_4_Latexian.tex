@@ -1,0 +1,217 @@
+\documentclass[]{article}
+
+%%%%%%%%%%%%%%%%%  << MATLAB INCLUSION>>  %%%%%%%%%%%%%%%%%
+\usepackage[numbered framed]{mcode}
+%%%%%%%%%%%%%%%%%  << MATLAB INCLUSION>>  %%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\title{ASEN 5005-Statistical Orbit Determination
+Homework 4}
+\author{Zach Dischner}
+\date{9/24/2012}
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%  << 1a >>  %%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem 1}
+Given the joint density function:
+
+\[\begin{array}[b]{ccc}
+f(x,y)=k*(x^2+y^2)   &  0<x<2,&1\le y\le 3 \cr 
+ f(x,y) = 0 & elsewhere & 
+\end{array}\]
+
+Several insights were to be found.
+
+
+%%%%%%%%%  << 1a >>  %%%%%%%%%%%
+
+\subsection*{1a-Find k} 
+To find {\bf k}, I employed the rule that any joint density function must be equal to one when integrated across the number range. 
+
+
+\begin{equation} 
+	 \int_{-\infty}^\infty{\int_{-\infty}^\infty{ k*(x^2 + y^2) } dx dy} = 1 
+\end{equation}
+
+\noindent Since the validity of the function was limited to a specific number range for each variable, the joint density function  becomes:
+
+\begin{displaymath}
+	\int_1^3{\int_0^2{ k*(x^2 + y^2) } dx dy} = 1 
+\end{displaymath}
+
+\noindent First, I integrated with respect to {\bf x}
+
+\begin{displaymath}
+	{k*\int_1^3{(\frac{x^3 }{ 3} + x*y^2) } \Big{|}_0^2 dy} = 1 
+\end{displaymath}
+
+\noindent Then after evaluating for the {\bf x} range, I integrated with respect to  {\bf y}
+
+\begin{displaymath}
+	{k*\Big{ [ } y*\frac{8}{3} + 2*\frac{y^3}{3} \Big{ ] }  \Big{|}_1^3 dy} = 1 
+\end{displaymath}
+
+\noindent Which evaluates down to
+
+\begin{displaymath}
+	k*\Big{ [ }  22.67 \Big{ ] } = 1 
+\end{displaymath}
+
+\noindent Yielding a final value of 
+
+\begin{displaymath}
+	\fbox {\LARGE k = 0.0441}
+\end{displaymath}
+
+\noindent As a double check, I also performed the problem symbolically in MATLAB, and the same result was obtained. 
+
+
+\begin{lstlisting}
+	syms x y k
+
+	k = 1/int(int((x^2+y^2),0,2),1,3);
+	k = eval(k);
+	disp(['k is:  ',num2str(k)]);
+	
+	>> k is:  0.044118
+\end{lstlisting}
+
+
+%%%%%%%%%  << 1b >>  %%%%%%%%%%%
+
+\subsection*{1b-Find Probability $ p(1<x\le{2}, 2<y\le{3})   $}
+
+In this problem, I simply had to integrate the joint density function over the range specified by the problem statement. If thought of graphically, the {\bf x} and {\bf y} ranges provide respective bounds for a 3-dimensional volume, which defines the relative probability of a result, given {\bf x} and {\bf y}. The probability over a subset of that range can be thought of as the volume subset defined by the new {\bf x} and {\bf y}  bounds. 
+
+\begin{displaymath}
+	p(1<x\le{2}, 2<y\le{3}) = \int_1^2{\int_2^3 {k*(x^2+y^2)   dy} dx }
+\end{displaymath}  
+
+\noindent As before, the integration was performed by hand as well as in MATLAB. Both methods yielded the same results. The hand derivation will not be shown here for the sake of brevity. 
+
+\begin{displaymath}
+	\fbox{ \LARGE $p(1<x\le{2}, 2<y\le{3})$=38.2353\%}  
+\end{displaymath}  
+
+\noindent To perform this integration in MATLAB, I used the built-in \emph{quad2d()} function. It simply performed the two-dimensional integral of the joint density function (\emph{fun()}), over a given interval
+
+\begin{lstlisting}
+	fun     = @(x,y) k*( x.^2 + y.^2);
+	ymin    = 2;
+	ymax    = 3;
+	xmin    = 1; % maybe 0
+	xmax    = 2;
+	P_1B    = quad2d(fun,xmin,xmax,ymin,ymax);
+\end{lstlisting}
+
+
+
+
+%%%%%%%%%  << 1c >>  %%%%%%%%%%%
+
+\subsection*{1c-Find Probability $ p(1<x\le{2})   $}
+
+This problem is similar to the previous, except that there is no specified bounds for the {\bf y} variable. The same integration as above would be performed, but with the {\bf y} bounds extending to its limit. Typically, this would be from $ -\infty $ to $ \infty $, but in this case, {\bf y} has only been defined for the range $ 1 \le {\bf y} \le 3 $.
+
+\begin{displaymath}
+	p(  1<x\le{2}  ) = \int_1^2{\int_1^3 {k*(x^2+y^2)   dy} dx }
+\end{displaymath}  
+
+\noindent Since these bounds are larger than those integrated over in the previous problem, I would expect that the probability of pulling a number within that range be larger. When integrated over, this is exactly what was found. 
+
+
+\begin{displaymath}
+	\fbox{    \Large $p(  1<x\le{2}  ) = 58.8235\%$   }
+\end{displaymath}  
+
+\noindent Indeed, this range was almost twice as likely to be drawn from given our probability distribution. MATLAB code for this integration is provided below, and is almost identical to that shown above. 
+
+\begin{lstlisting}
+	ymin    = 1;
+	ymax    = 3;
+	xmin    = 1; 
+	xmax    = 2;
+	P_1C    = quad2d(fun,xmin,xmax,ymin,ymax);
+\end{lstlisting}
+
+
+
+%%%%%%%%%  << 1D >>  %%%%%%%%%%%
+
+\subsection*{1d-Find Probability $ p(x+y \ge 4 )   $}
+
+While initially confounding, this is essentially the same problem as was just discussed. Re-arranging, the inequality can be represented by bounding {\bf y} by the relation ${\bf y \ge 4 - x }$. The integral representation is as follows:
+
+\begin{displaymath}
+	p(x+y \ge 4 )  = \int_1^2{\int_{4-x}^3 {k*(x^2+y^2)   dy} dx }
+\end{displaymath}  
+
+\noindent Note the bounds of integration for {\bf x}. While its full range is not limited, the expression is only true for values of $x \ge 1$. Thus, the bounds are limited to ${\bf 1 \le x \le 2}$. Like the above problems, this was evaluated by hand and MATLAB. First integrating with respect to {\bf y} yields:
+
+
+\begin{displaymath}
+	p(x+y \ge 4 )  = \int_1^2{4*\frac{(x - 4)^3}{3} + 3*x^2 + 9} dx 
+\end{displaymath}  
+
+\noindent which is easily evaluated by hand. MATLAB's \emph{quad2d()} function can handle the variable range bounds with ease, and was employed as a check. 
+
+\begin{lstlisting}
+	ymin    = @(x) 4-x;
+	ymax    = 3;
+	xmin    = 0; 
+	xmax    = 2;
+	P_1D    = quad2d(fun,xmin,xmax,ymin,ymax);
+\end{lstlisting}
+
+\noindent Both methods yielded the same result. 
+
+\begin{displaymath}
+	\fbox {   \Large $p(x+y \ge 4 )  = 22.0588\%$  }
+\end{displaymath}  
+
+
+%%%%%%%%%  << 1E >>  %%%%%%%%%%%
+
+\subsection*{1e-Find Probability $ p(x+y = 4 )   $}
+
+This time, the probability range is simply defined by an equality, not a range. So this probability can be visualized by finding the volume under the curve {\bf y = x + 4} as bound by the surface defined by the given joint density function (1). Since the range used here is continuous, and not a discretized one, this is essentially zero. The integral setup is as follows.
+
+\begin{displaymath}
+	p(x+y \ge 4 )  = \int_0^2{\int_{4-x}^{4-x}{k*(x^2+y^2)   dy} dx}
+\end{displaymath}   
+
+\noindent Since the integral bounds for {\bf y} are identical, the integral evaluates to zero, without even needing to go through the integration. But since this is graduate school, I performed the integration in MATLAB to verify that this is correct. 
+
+\begin{lstlisting}
+	ymin    = @(x) 4-x;
+	ymax    = 3;
+	xmin    = 0; 
+	xmax    = 2;
+	P_1D    = quad2d(fun,xmin,xmax,ymin,ymax);
+\end{lstlisting}
+
+
+
+
+
+
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
