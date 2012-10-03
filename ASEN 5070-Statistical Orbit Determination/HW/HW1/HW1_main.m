@@ -39,7 +39,7 @@ options = odeset('RelTol',tol,'AbsTol',[tol,tol,tol,tol,tol,tol]);
 
 RV_init = [R';V'];
 
-[t,RV]  = ode45('RV_Deriv',time,RV_init,options);
+[t,RV]  = ode45('RV_Deriv1',time,RV_init,options);
 
 
 
