@@ -74,7 +74,7 @@
         <attribute name="name" type="string">ZachDischner_HW4</attribute>
         <attribute name="folder" type="string">/Users/zachdischner/Desktop/Dropbox/School/SchoolCode/ASEN 5070-Statistical Orbit Determination/HW/HW4</attribute>
         <relationship name="mainfile" type="1/1" destination="FILE" idrefs="z106"></relationship>
-        <relationship name="selected" type="1/1" destination="FILE" idrefs="z106"></relationship>
+        <relationship name="selected" type="1/1" destination="FILE" idrefs="z105"></relationship>
         <relationship name="settings" type="1/1" destination="SETTINGS" idrefs="z103"></relationship>
         <relationship name="uisettings" type="1/1" destination="UISETTINGS" idrefs="z104"></relationship>
         <relationship name="items" type="0/0" destination="PROJECTITEM"></relationship>
@@ -91,7 +91,7 @@
     </object>
     <object type="UISETTINGS" id="z104">
         <attribute name="pdfviewscrollrect" type="string">{{0, 0}, {494, 689}}</attribute>
-        <attribute name="selectedcontrolstab" type="int16">0</attribute>
+        <attribute name="selectedcontrolstab" type="int16">3</attribute>
         <attribute name="maxoutlinedepth" type="int16">7</attribute>
         <attribute name="editorwidth" type="float">620</attribute>
         <attribute name="controlswidth" type="float">220</attribute>
@@ -99,10 +99,10 @@
     </object>
     <object type="TEXFILE" id="z105">
         <attribute name="wasopen" type="bool">0</attribute>
-        <attribute name="visiblerect" type="string">{{0, 0}, {594, 261}}</attribute>
+        <attribute name="visiblerect" type="string">{{0, 0}, {594, 619}}</attribute>
         <attribute name="lasteditdate" type="date">370232942.52476698160171508789</attribute>
         <attribute name="istext" type="bool">1</attribute>
-        <attribute name="fileloaddate" type="date">370241910.37087100744247436523</attribute>
+        <attribute name="fileloaddate" type="date">370997710.31234401464462280273</attribute>
         <attribute name="extension" type="string">tex</attribute>
         <attribute name="cursor" type="string">{217, 0}</attribute>
         <attribute name="sortindex" type="int32">0</attribute>
@@ -117,12 +117,12 @@
     </object>
     <object type="TEXFILE" id="z106">
         <attribute name="wasopen" type="bool">1</attribute>
-        <attribute name="visiblerect" type="string">{{0, 618}, {588, 619}}</attribute>
-        <attribute name="lasteditdate" type="date">370241909.22948098182678222656</attribute>
+        <attribute name="visiblerect" type="string">{{0, 0}, {588, 619}}</attribute>
+        <attribute name="lasteditdate" type="date">370997693.56911498308181762695</attribute>
         <attribute name="istext" type="bool">1</attribute>
-        <attribute name="fileloaddate" type="date">370241910.37512499094009399414</attribute>
+        <attribute name="fileloaddate" type="date">370997710.40697002410888671875</attribute>
         <attribute name="extension" type="string">tex</attribute>
-        <attribute name="cursor" type="string">{1467, 0}</attribute>
+        <attribute name="cursor" type="string">{157, 0}</attribute>
         <attribute name="sortindex" type="int32">1</attribute>
         <attribute name="name" type="string">HW4_Take2.tex</attribute>
         <attribute name="isexpanded" type="bool">0</attribute>

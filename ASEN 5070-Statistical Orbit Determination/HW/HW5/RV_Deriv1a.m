@@ -12,16 +12,6 @@ function [yprime] = RV_Deriv1a(time,y)
 u = 1;
 
 r = sqrt(y(1).^2 + y(2).^2);
-
-% yprime = [y(3) y(4) -y(1)./r.^3 -y(2)./r.^3]';
-
-% A = [               0                       0                       1        0;
-%                     0                       0                       0        1;
-%     -u./(r.^3)+3*u.*y(1).^2./(r.^5)   3*u*y(1)*y(2)/(r^5)           0        0;
-%             3*u*y(1)*y(2)/(r^5)    -u./(r.^3)+3*u.*y(2).^2./(r.^5)  0        0;
-%     ];
-
-% lumping together RV' = A*y     and PHI' = A*PHI
       
 yprime = [y(3) y(4) -y(1)/r^3 -y(2)/r^3 ]';
 

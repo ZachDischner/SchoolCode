@@ -11,14 +11,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % addpath 'Utils'
 
-clc;clear all;close all; format compact;format short g;
+clc;clear all;close all; format compact;format long g;
 % set(0,'defaultLineLineWidth', 2);set(0,'DefaultAxesXGrid','on','DefaultAxesYGrid','on')
 tic
 
 %% Problem 1a-Simple Orbit Solver
 %1a - Get true solution
 RV_Init = [1.0 0 0 1.0]';
-tol     = 1e-15;
+tol     = 1e-9;
 tol_mat = ones(size(RV_Init)) .* tol;
 time    = [0:0.01:100];
 
@@ -90,7 +90,7 @@ plot(time,Perturb1); xlabel('Time [s]');ylabel('\delta(X)_1');title('X* - X')
 subplot(3,1,2)
 plot(time,Perturb2); xlabel('Time [s]');ylabel('\delta(X)_2');title('\Phi * \delta_x')
 subplot(3,1,3)
-plot(time,Perturb2 - Perturb1); xlabel('Time [s]');ylabel('\delta(X)_2 - \delta(x)_1');title('Difference in Perturbation Methods')
+plot(time,Perturb1 + Perturb2); xlabel('Time [s]');ylabel('\delta(X)_1 - \delta(x)_2');title('Difference in Perturbation Methods')
 
 
 
@@ -151,83 +151,119 @@ rho_dot = [ -0.00317546143535849
             -1.47604467619908
              1.42173765213734
             -0.12082311844776];
-sigma_rho       = 0.25;
-sigma_rhodot    = 0.1;
-
-R       = [ 0.0625   0;    % R = E(e*e') = R = W^-1
-               0   0.01;
-          ];
-      
-      XV_Init = [3.0;0.0];       % [ m ; m/s ]   [x v]
-      
-      Phi_Init= eye(2,2);
-      
-          
-          DelXbar0 = [0 ; 0];
-      for jj = 1:4
-         
-          
-          
-          State_Init  = [XV_Init ; reshape(Phi_Init,4,1)];
-          
-          % Priori Reference Trajectory
-          Xstar0  = [4.0 ; 0.2];
-          
-          % Priori <something>
-          Pbar0   = [1000 0 ; 0 100];
-          
-          % System dynamics
-          k1          = 2.5;  % N/m
-          k2          = 3.7;  % N/m
-          m           = 1.5;  % Kg
-          w_squared   = (k1 + k2)/m;
-          h           = 5.4;  % m
-          
-          
-          %% Perform dynamical integration
-          time    = [0:1:10];
-          tol_mat = ones(size(State_Init)) .* tol;
-          options = odeset('RelTol',tol,'AbsTol',tol_mat);
-          [t,X]      = ode45('SpringDeriv',time,State_Init);
-          
-          Xstar = X(:,1:length(XV_Init));
-          for ii = 1:length(X)
-              Phi3{ii} = reshape(X(ii,3:6),size(Phi_Init));
-          end
-          
-          x = X(:,1); v = X(:,2);
-          sumHH = [0 0;0 0];
-          sumHy = [0;0];
-          
-          
-          for ii = 1:length(rho)
-              Htilde   = [                 x(ii)/rho(ii)                   0;...
-                  (v(ii)/rho(ii) - x(ii)^2*v(ii)/(rho(ii)^3))    x(ii)/rho(ii) ...
-                  ];
-              H3{ii}    = Htilde*Phi3{ii};
-              
-              sumHH    = sumHH + H3{ii}'*inv(R)*H3{ii};
-              
-              y3{ii}    = [rho(ii) rho_dot(ii)]' - [sqrt(x(ii)^2 + h^2);x(ii)*v(ii)/rho(ii)];
-              sumHy    = sumHy + H3{ii}'*inv(R)*y3{ii};
-              
-          end
-          
-          DelXcarret0 = inv(sumHH + inv(Pbar0))*(sumHy + inv(Pbar0)*DelXbar0);
-          
-          DelXbar0 = DelXbar0 - DelXcarret0;
-          
-          XV_Init = XV_Init + DelXcarret0;
-          
-      end
-      format long G
-      
-fprintf('\n\n\n\n#^#^#^#^#^#^#^#^#^#^#^# Problem 3 #^#^#^#^#^#^#^#^#^#^#^#^#^#\n\n')
+        sigma_rho       = 0.25;
+        sigma_rhodot    = 0.1;
+        
+        R       = [ 0.0625   0;    % R = E(e*e') = R = W^-1
+                    0   0.01;
+            ];
+        
+        
+        
+        Phi_Init= eye(2,2);
+        
+        DelXhat0 = [0 0];
+        
+        DelXbar0 = [0 ; 0];
+        
+        
+        % Priori Reference Trajectory
+        Xstar0  = [4.0 ; 0.2];
+        
+        XV_Init = Xstar0;       % [ m ; m/s ]   [x v]
+        
+        for jj = 1:4
+            
+            
+            
+           
+    
+            
+            State_Init  = [XV_Init ; reshape(Phi_Init,4,1)];
+            
+            % Priori <something>
+            Pbar0   = [1000 0 ; 0 100];
+            
+            % System dynamics
+            k1          = 2.5;  % N/m
+            k2          = 3.7;  % N/m
+            m           = 1.5;  % Kg
+            w_squared   = (k1 + k2)/m;
+            h           = 5.4;  % m
+            
+            
+            %% Perform dynamical integration
+            tol     = 1e-14;
+            time    = [0:1:10];
+            tol_mat = ones(size(State_Init)) .* tol;
+            options = odeset('RelTol',tol,'AbsTol',tol_mat);
+            
+            [t,X]      = ode45('SpringDeriv',time,State_Init,options);
+            
+            Xstar = X(:,1:length(XV_Init));
+            
+            for ii = 1:length(X)
+                Phi3{ii} = reshape(X(ii,3:6),size(Phi_Init));
+            end
+            
+            x = X(:,1); v = X(:,2);
+            sumHH = [0 0;0 0];
+            sumHy = [0;0];
+            
+            
+            
+            for ii = 1:length(rho)
+                
+                
+                RhoStar(ii)  = sqrt(x(ii)^2 + h^2);
+                
+                Htilde   = [                 x(ii)/RhoStar(ii)                   0;...
+                    (v(ii)/RhoStar(ii) - x(ii)^2*v(ii)/(RhoStar(ii)^3))    x(ii)/RhoStar(ii) ...
+                    ];
+                
+                H3{ii}    = Htilde*Phi3{ii};
+                
+                sumHH    = sumHH + H3{ii}'*inv(R)*H3{ii};
+                
+                G_Star   = [RhoStar(ii) ; x(ii)*v(ii)/RhoStar(ii)];
+                
+                y3{ii}    = [rho(ii) rho_dot(ii)]' - G_Star;
+                sumHy    = sumHy + H3{ii}'*inv(R)*y3{ii};
+                
+            end
+            
+            DelXhat0 = inv(sumHH + inv(Pbar0))*(sumHy + inv(Pbar0)*DelXbar0);
+            
+            DelXbar0 = DelXbar0 - DelXhat0;
+            
+            XV_Init = XV_Init + DelXhat0;
+            
+        end
+        format long G
+        
+        fprintf('\n\n\n\n#^#^#^#^#^#^#^#^#^#^#^# Problem 3 #^#^#^#^#^#^#^#^#^#^#^#^#^#\n\n')
 disp(['X*0    :   [',num2str(XV_Init'),']'''])
 
 
+rho_rms = rms(RhoStar' - rho);
+rho_dot_rms = rms(rho_dot - x.*v./RhoStar');
 
 
+disp(['rho_rms    :',num2str(rho_rms)])
+
+disp(['rho_dot_rms    :',num2str(rho_dot_rms)])
+
+
+% Final Covariance Matrix
+P = inv(sumHH + inv(Pbar0));
+
+sigmaX = P(1,1)^0.5;
+sigmaY = P(2,2)^0.5;
+
+disp(['Sigma_X0   :',num2str(sigmaX)])
+disp(['Sigma_Y0   :',num2str(sigmaY)])
+
+disp(['rho_xy   :',num2str(P(1,2)/(sigmaX*sigmaY))])
 
 
 
@@ -246,3 +282,5 @@ disp(['X*0    :   [',num2str(XV_Init'),']'''])
 
 
 fprintf('\n\n\n\nAssignement took %3.3f seconds to run\n\n\n\n',toc)
+
+
