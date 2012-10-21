@@ -1,0 +1,100 @@
+
+% This LaTeX was auto-generated from an M-file by MATLAB.
+% To make changes, update the M-file and republish this document.
+
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{color}
+
+\sloppy
+\definecolor{lightgray}{gray}{0.5}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+    
+    
+\subsection*{Contents}
+
+\begin{itemize}
+\setlength{\itemsep}{-1ex}
+   \item Problem 4.20
+   \item Problem 4.21
+\end{itemize}
+\begin{verbatim}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+% Zach Dischner-10/14/2012
+%
+% ASEN 5070-Statistical Orbit Determination
+%
+% Homework 6
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+clc;clear all;close all; format compact;format long g;
+\end{verbatim}
+
+
+\subsection*{Problem 4.20}
+
+\begin{verbatim}
+[a b c] = Problem420();
+fprintf('4.20-a           xhat  =  %3.5f \n\n',a)
+fprintf('4.20-b    std(error)   =  %3.5f \n\n',b)
+disp(['4.20-c        error    = [',num2str(c'),']'''])
+fprintf('\n\n')
+\end{verbatim}
+
+        \color{lightgray} \begin{verbatim}4.20-a           xhat  =  1.50000 
+
+4.20-b    std(error)   =  0.57735 
+
+4.20-c        error    = [-0.5         0.5        -0.5]'
+
+
+\end{verbatim} \color{black}
+    
+
+\subsection*{Problem 4.21}
+
+\begin{verbatim}
+format rat
+[a b c] = Problem421();
+format rat
+disp(['4.21-a        Batch Xhat0    = [',num2str(a'),']'''])
+disp(['4.21-b        Sequential Xhat0    = [',num2str(b'),']'''])
+disp(['4.21-c        Phi(1,0)*Xhat1 -->Xhat0    = [',num2str(c'),']'''])
+
+fprintf('\n\n Or in a more RATIONAL way...\n')
+a
+b
+c
+\end{verbatim}
+
+        \color{lightgray} \begin{verbatim}4.21-a        Batch Xhat0    = [0.72414     0.86207     0.96552]'
+4.21-b        Sequential Xhat0    = [0.72414     0.86207     0.96552]'
+4.21-c        Phi(1,0)*Xhat1 -->Xhat0    = [0.72414     0.86207     0.96552]'
+
+
+ Or in a more RATIONAL way...
+a =
+      21/29    
+      25/29    
+      28/29    
+b =
+      21/29    
+      25/29    
+      28/29    
+c =
+      21/29    
+      25/29    
+      28/29    
+\end{verbatim} \color{black}
+    
+
+
+\end{document}
+    

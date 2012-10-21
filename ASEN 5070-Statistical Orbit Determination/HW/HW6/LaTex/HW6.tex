@@ -1,0 +1,577 @@
+\documentclass[]{article}
+
+%%%%%%%%%%%%%%%%%  << MATLAB INCLUSION>>  %%%%%%%%%%%%%%%%%
+\usepackage[numbered framed]{mcode}
+%%%%%%%%%%%%%%%%%  << MATLAB INCLUSION>>  %%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%  << IMAGE INCLUSION>>  %%%%%%%%%%%%%%%%%
+\usepackage{graphicx}
+%%%%%%%%%%%%%%%%%  << IMAGE INCLUSION>>  %%%%%%%%%%%%%%%%%
+
+\usepackage{cleveref}
+\usepackage{amsmath}
+
+\begin{document}
+
+\title{ASEN 5070-Stastistical Orbit Determination-HW 6}
+\author{Zach Dischner}
+\date{10-18-2012}
+\maketitle
+
+
+%%%%%%%%%%%%%%%%%%%%%%  << 1a >>  %%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem 1} 
+
+%%
+Given:
+
+%1
+\begin{equation}\label{given1}
+y=
+\left[ \begin{array}{c} 
+	1 \\
+	2 \\
+	1 \\
+\end{array}\right] 
+\end{equation}
+
+%2
+\begin{equation}\label{given2}
+	E[\epsilon] = 0
+\end{equation}
+
+%3
+\begin{equation}\label{given3}
+R=W^{-1}=
+\left[ \begin{array}{ccc} 
+	1/2 	& 	0	&	0 \\
+	0	&	1	&	0 \\
+	0	&	0	&	1 \\
+\end{array}\right] 
+\end{equation}
+
+%4
+\begin{equation}\label{given4}
+H=
+\left[ \begin{array}{c} 
+	1 \\
+	1 \\
+	1 \\
+\end{array}\right] 
+\end{equation}
+
+%5
+\begin{equation}\label{given5}
+	\bar{x}= 2
+\end{equation}
+
+%6
+\begin{equation}\label{given6}
+	\sigma^2(\bar{x})= \frac{1}{2}
+\end{equation}
+
+
+
+%>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Problem 1A <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+\vspace{1in}
+\subsection{1a - Solve for $\hat{x}$ using the batch processor with $R^{-1}$ as the weighting matrix} 
+
+I solved for $\hat{x}$ using Equation 4.3.25 in the text, which results in the least squares solution for $\hat{x}$  including \emph{a priori} and weighting information.
+
+\begin{equation}
+	\hat{x} = (H^T W H + \bar{W}_k)^{-1} (H^T W y + \bar{W}\bf{\bar{x}}_k)
+\end{equation}
+
+Equation 7 was solved in MATLAB, since all components are readily available. The code accomplishing this is in Appendix A. 
+
+\begin{displaymath}
+	\fbox{\LARGE $\hat{x}=1.5$}
+\end{displaymath}
+
+
+
+
+%>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Problem 1B <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+\vspace{0.5in}
+\subsection{1b - Find standard deviation of the estimation error of $\hat{x}$}\label{1b}
+Finding the standard deviation of the estimation error first involved solving equation  4.3.7 in the book, which solves for the estimation error $\epsilon$.
+
+\begin{equation}
+	\hat{\epsilon} = \bf{y}-H \bf{\hat{x}}
+\end{equation}
+
+Once that was solved, the standard deviation could easily be found. 
+
+\begin{displaymath}
+	\fbox{\LARGE $\sigma(\hat{\epsilon})=0.57735$}
+\end{displaymath}
+
+
+%>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Problem 1C <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+\vspace{0.5in}
+\subsection{1c - Find best estimate of estimation error $\hat{\epsilon}$}
+
+The estimate of the estimation error $\hat{\epsilon}$ was already included in part 1b, equation (8). 
+
+
+\begin{displaymath}
+	\fbox{\LARGE $\hat{\epsilon}=
+		\left[ \begin{array}{c} 
+			-\frac{1}{2} \\
+			 \frac{1}{2} \\
+			-\frac{1}{2} \\
+		\end{array}\right] $}
+\end{displaymath}
+
+\vspace{0.5in}
+Again, all code is provided in Appendix A. 
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%  << 1a >>  %%%%%%%%%%%%%%%%%%%%%%%%
+\vspace{8in}
+\section{Problem 2} 
+
+
+%%
+Given:
+%9
+\begin{equation}
+	X=
+	\left[ \begin{array}{c} 
+		x \\
+		\dot{x} \\
+		\ddot{x} \\
+	\end{array}\right] 
+	=
+	\left[ \begin{array}{ccc} 
+		1 	& 	t	&	\frac{1}{2}t^2 \\
+		0	&	1	&	t \\
+		0	&	0	&	1 \\
+	\end{array}\right] 
+	*
+	\left[ \begin{array}{c} 
+		x \\
+		\dot{x} \\
+		\ddot{x}\\
+	\end{array}\right] 
+\end{equation}
+
+
+%10
+\begin{equation}
+	\bar{P_0}=
+	\left[ \begin{array}{ccc} 
+		4 	& 	0	&	0 \\
+		0	&	2	&	0 \\
+		0	&	0	&	2 \\
+	\end{array}\right] 
+\end{equation}
+
+%% 10
+\begin{equation}
+	X=
+	\left[ \begin{array}{c} 
+		1 \\
+		1 \\
+		1\\
+	\end{array}\right] 
+\end{equation}
+
+%% 12
+\begin{equation}
+	t_0 = 0
+\end{equation}
+
+At time $t_1$:
+
+%% 13
+\begin{equation}
+	Y(t_1) = G*X = x(t1) = 2
+\end{equation}
+
+Therefore:
+
+%% 14
+\begin{equation}
+	G = 
+	\left[ \begin{array}{ccc} 
+		x  	&	0	&	0 
+	\end{array}\right] 
+\end{equation}
+
+%% 15
+\begin{equation}
+	\sigma(\epsilon_Y) = 1 = R
+\end{equation}
+
+
+
+%>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Problem 2a <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+\subsection{2a - Find $\hat{X}_{t0}$ Using the Batch Processor Algorithm}
+
+Following the Batch Processing Algorithm outlined in Chapter 4 of the book I first initialized my variables, and found the state transition matrix. I did this using a definition of the state transition matrix:
+
+%% 16
+\begin{equation}
+	X(t_1) = \Phi(t_0,t_1)*X_{t0}
+\end{equation}
+
+Equation (9) gives us the relationship for X between times at this instant, so $\Phi$ is simple enough to find.
+
+%17
+\begin{equation}
+	\Phi(t_0,t_1)=
+	\left[ \begin{array}{ccc} 
+		1 	& 	t	&	\frac{t^2}{2} \\
+		0	&	1	&	t \\
+		0	&	0	&	1 \\
+	\end{array}\right] 
+\end{equation}
+
+Next, I used this to determine the H matrix at $t_1$. We were given G (more or less), and knowing that $\tilde{H}=\frac{d{G}}{dX}$, finding H was trivial.
+
+%% 18
+\begin{equation}
+	H_1 = \tilde{H}_1*\Phi{t_0,t_1} 
+	=
+	\left[ \begin{array}{ccc} 
+		1  	&	0	&	0 
+	\end{array}\right] 
+	\left[ \begin{array}{ccc} 
+		1 	& 	1	&	\frac{1^2}{2} \\
+		0	&	1	&	1 \\
+		0	&	0	&	1 \\
+	\end{array}\right] 	
+\end{equation}
+
+\noindent
+Which yields:
+
+%% 19
+\begin{equation}
+	G = 
+	\left[ \begin{array}{ccc} 
+		1 	&	1	&	\frac{1}{2} 
+	\end{array}\right] 
+\end{equation}\
+
+Due to the fact that our dynamics and observation relationships are both linear, there is no need to linearize and find state and observation deviation vectors (x,y). Instead we can solve directly for X and Y.
+
+Continuing through the batch algorithm in the book, I formed my batch calculation terms:
+
+%% 20
+\begin{equation}
+	\Lambda = \bar{P_0}^{-1} + H^T R^{-1} H
+\end{equation}
+
+%% 21
+\begin{equation}
+	N =  \bar{P_0}^{-1} \bar{X_0} + H^T R^{-1} Y
+\end{equation}
+
+And finally, I solved for $\hat{X}_{t0}$
+
+%% 21
+\begin{equation}
+	\hat{X}_{t0} = \Lambda^{-1}N
+\end{equation}
+
+Resulting in a final value of 
+
+\begin{displaymath}
+	\fbox{\LARGE $\hat{X}_{t0,a}=
+		\left[ \begin{array}{c} 
+			21/29 \\
+			25/29 \\
+			28/29 \\
+		\end{array}\right] $}
+\end{displaymath}
+
+This result was found in MATLAB, and the accompanying code is found in Appendix A.
+
+
+
+
+%>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Problem 2b <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+\vspace{3in}
+\subsection{2b - Find $\hat{X}_{t0}$ Using the Sequential Processor Algorithm}
+
+Similar to 4.21a, I followed the procedure outlined in the book to perform the sequential processing algorithm. The catch is that the process int the book involves finding $\hat{X}_{t1}$, using $\tilde{H}$ matrices to map just between observations. To find $\hat{X}_{t0}$, we have to map the sequential algorithm back to the $t_0$ epoch using the H matrix. Using the H matrix to map the observation back to the epoch, I first found the Kalman Gain.
+
+%% 22
+\begin{equation}
+	K_0 = \bar{P}_0H(H\bar{P}_0 H^T + R)^{-1}
+\end{equation}
+
+All terms in equation (23) were found previously, and were simply re-used for this calculation, in MATLAB. Next, I found $\hat{X}_{t0}$ using the equations in the book. 
+
+%% 23
+\begin{equation}
+	\hat{X}_{t0} = \bar{X}_0 + K_0[Y_1 - H\bar{X}_0]
+\end{equation}
+
+Which results in a final answer of:
+
+\begin{displaymath}
+	\fbox{\LARGE $\hat{X}_{t0,b}=
+		\left[ \begin{array}{c} 
+			21/29 \\
+			25/29 \\
+			28/29 \\
+		\end{array}\right] $}
+\end{displaymath}
+
+This answer matches perfectly that found in part a, with the batch processor algorithm. Essentially, we were just adjusting our initial value, using the original initial value and an adjustment with the Kalman gain and a future observation error. 
+
+
+
+
+
+%>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Problem 1C <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+\vspace{3in}
+\subsection{2c - Find $\hat{X}_{t0}$ by mapping $\hat{X}_{t1}$ back to $t_0$ with $\Phi(t_1,t_0)$}
+
+For this problem, I went through the sequential processing algorithm as the book outlines it, by using $\tilde{H}$ matrices and covariance matrices found at the time of the observation, $t_1$.
+
+First, I mapped the original priori covariance matrix (eq (10)) to the current time with the pre-determined state transition matrix (eq (17)). 
+
+
+%% 25
+\begin{equation}
+	\bar{P}_1 = \Phi(t_0,t_1)\bar{P}_0 \Phi^{-1}(t_0,t_1)
+\end{equation}
+
+Next, I obtained a new $\bar{X}$
+
+%% 26
+\begin{equation}
+	\bar{X}_1 = \Phi(t_0,t_1)\bar{X}_0 
+\end{equation}
+
+Next, the Kalman gain was found for this observation time.
+
+%% 27
+\begin{equation}
+	K_1 = \bar{P}_1\tilde{H}(\tilde{H}\bar{P}_1 \tilde{H}^T + R)^{-1}
+\end{equation}
+
+Which then allows me to calculate the new best estimate of $\hat{X}_1$
+
+
+%% 28
+\begin{equation}
+	\hat{X}_{t1} = \bar{X}_1 + K_1[Y_1 - \tilde{H}\bar{X}_1]
+\end{equation}
+
+Finally, I then mapped the result of eq (28) back to the initial state using the inverse of the state transition matrix, knowing $\Phi(t_0,t_1) = \Phi^{-1}(t_1,t_0)$. 
+
+%% 29
+\begin{equation}
+	\hat{X}_{t0} =\Phi^{-1}(t_0,t_1)\hat{X}_{t1}
+\end{equation}
+
+When performed, the exact same result is found as in problem 4.21a and 4.21b. 
+
+
+\begin{displaymath}
+	\fbox{\LARGE $\hat{X}_{t0,c}=
+		\left[ \begin{array}{c} 
+			21/29 \\
+			25/29 \\
+			28/29 \\
+		\end{array}\right] $}
+\end{displaymath}
+
+
+
+
+
+
+
+
+
+\vspace{3in}
+\appendix{\centerline{\LARGE \bf{Appendix A - MATLAB Code}}}
+
+
+\section{Main Script}
+
+% This LaTeX was auto-generated from an M-file by MATLAB.
+% To make changes, update the M-file and republish this document.
+
+%\documentclass{article}
+%\usepackage{graphicx}
+%\usepackage{color}
+
+\sloppy
+\definecolor{lightgray}{gray}{0.5}
+\setlength{\parindent}{0pt}
+
+    
+    
+\subsection*{Contents}
+
+\begin{itemize}
+\setlength{\itemsep}{-1ex}
+   \item Problem 4.20
+   \item Problem 4.21
+\end{itemize}
+\begin{verbatim}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+% Zach Dischner-10/14/2012
+%
+% ASEN 5070-Statistical Orbit Determination
+%
+% Homework 6
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+clc;clear all;close all; format compact;format long g;
+\end{verbatim}
+
+
+\subsection*{Problem 4.20}
+
+\begin{verbatim}
+[a b c] = Problem420();
+fprintf('4.20-a           xhat  =  %3.5f \n\n',a)
+fprintf('4.20-b    std(error)   =  %3.5f \n\n',b)
+disp(['4.20-c        error    = [',num2str(c'),']'''])
+fprintf('\n\n')
+\end{verbatim}
+
+        \color{lightgray} \begin{verbatim}4.20-a           xhat  =  1.50000 
+
+4.20-b    std(error)   =  0.57735 
+
+4.20-c        error    = [-0.5         0.5        -0.5]'
+
+
+\end{verbatim} \color{black}
+    
+
+\subsection*{Problem 4.21}
+
+\begin{verbatim}
+format rat
+[a b c] = Problem421();
+format rat
+disp(['4.21-a        Batch Xhat0    = [',num2str(a'),']'''])
+disp(['4.21-b        Sequential Xhat0    = [',num2str(b'),']'''])
+disp(['4.21-c        Phi(1,0)*Xhat1 -->Xhat0    = [',num2str(c'),']'''])
+
+fprintf('\n\n Or in a more RATIONAL way...\n')
+a
+b
+c
+\end{verbatim}
+
+        \color{lightgray} \begin{verbatim}4.21-a        Batch Xhat0    = [0.72414     0.86207     0.96552]'
+4.21-b        Sequential Xhat0    = [0.72414     0.86207     0.96552]'
+4.21-c        Phi(1,0)*Xhat1 -->Xhat0    = [0.72414     0.86207     0.96552]'
+
+
+ Or in a more RATIONAL way...
+a =
+      21/29    
+      25/29    
+      28/29    
+b =
+      21/29    
+      25/29    
+      28/29    
+c =
+      21/29    
+      25/29    
+      28/29    
+\end{verbatim} \color{black}
+    
+
+\vspace{2.75in}
+\section{Problem 4.20}
+\begin{lstlisting}
+	function [a b c] = Problem420()
+
+		%% Givens
+		y           = [1 2 1]';
+		Ee          = 0;
+		R           = [1/2 0 0;0 1 0;0 0 1];   % E(ee')
+		H           = [1 1 1]';
+		xbar        = 2;
+		var_xbar    = 2;                       % sigma^2(xbar)
+		
+		%% Part A: Find xhat with batch processing algorithm
+		W   = inv(R);
+		Wbar=var_xbar;
+		xhat = (H'*W*H + Wbar)\(H'*W*y+Wbar*xbar);
+		a    = xhat;
+		
+		%% Part B: Find Standard Deviation of the Estimation Error with xhat 
+		epsilon = y-H*xhat;
+		b       = std(epsilon);		
+		
+		%% Part C: Find Estimation Error
+		c       = epsilon;			
+	end
+\end{lstlisting}
+
+\vspace{2in}
+\section{Problem 4.21}
+
+\begin{lstlisting}
+	function [a b c] = Problem420()
+		
+		%% Givens
+		y           = [1 2 1]';
+		Ee          = 0;
+		R           = [1/2 0 0;0 1 0;0 0 1];   % E(ee')
+		H           = [1 1 1]';
+		xbar        = 2;
+		var_xbar    = 2;                       % sigma^2(xbar)
+		
+		%% Part A: Find xhat with batch processing algorithm
+		W   = inv(R);
+		Wbar=var_xbar;
+		xhat = (H'*W*H + Wbar)\(H'*W*y+Wbar*xbar);
+		a    = xhat;
+				
+		%% Part B: Find Standard Deviation of the Estimation Error with xhat
+		epsilon = y-H*xhat;
+		b       = std(epsilon);
+
+		%% Part C: Find Estimation Error
+		c       = epsilon;
+	end
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
