@@ -49,7 +49,7 @@ rho_a   = rho0.*exp((r - r0)./H);
 F_Drag = -0.5 .* Cd .* (Area./m) .* rho_a .* va .* Va;
 
 % Assemble
-F_a = F_U - F_Drag;
+F_a = F_U + F_Drag; % 
 
 % X' = F*X
 F =[xdot ; ydot ; zdot ; F_a ; 0 ; 0 ; 0 ; 0 ; 0 ; 0 ; 0 ; 0 ; 0 ; 0 ; 0 ; 0];
@@ -63,6 +63,9 @@ A=simplify(A);
 A=subs(A,sqrt(x^2+y^2+z^2),r);
 A=subs(A,(x^2+y^2+z^2),r^2);
 A = simplify(A);
+
+matlabFunction(A,'file','A_18x18.m')
+
 
 
 %% Find Htilde Matrix (for a generic station position)
@@ -90,10 +93,11 @@ Single_Station_X       = [x ; y ; z ; xdot ; ydot ; zdot ; uE ; J2 ; Cd ; Xsite 
 
 Htilde = jacobian(obs,Single_Station_X);
 
+
                              
 
 
-
+matlabFunction(Htilde,'file','Htilde_2x12.m')
 
 
 

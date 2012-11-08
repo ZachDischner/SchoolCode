@@ -1,0 +1,363 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>HW7_main</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-10-23"><meta name="DC.source" content="HW7_main.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">1 - Derive A_18x18 and Htilde_2x18</a></li><li><a href="#3">2 - Perform integration</a></li><li><a href="#4">3 - Compare Residules of Observed and Computed Range and Range Rate</a></li></ul></div><pre class="codeinput"><span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Zach Dischner-10/21/2012</span>
+<span class="comment">%</span>
+<span class="comment">% ASEN 5070-Statistical Orbit Determination</span>
+<span class="comment">%</span>
+<span class="comment">% Homework 7</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+
+clc;clear <span class="string">all</span>;close <span class="string">all</span>; format <span class="string">compact</span>;format <span class="string">long</span> <span class="string">g</span>;tic
+</pre><h2>1 - Derive A_18x18 and Htilde_2x18<a name="2"></a></h2><pre class="codeinput"><span class="comment">% [A,Htilde]= FindA_Htilde();</span>
+<span class="comment">% fprintf('A and Htilde were found. Not shown since they are too big to glean any insight from')</span>
+</pre><h2>2 - Perform integration<a name="3"></a></h2><pre class="codeinput"><span class="comment">%---------------------------------------------</span>
+<span class="comment">%Constants</span>
+tol = 1e-12;
+uE  = 398600.4 * 1000;              <span class="comment">% m^3/s^2</span>
+J2  = 0.00108248;                   <span class="comment">% []</span>
+Cd  = 2;
+theta_dot  = 7.29211585530066e-5;   <span class="comment">% rad/s</span>
+<span class="comment">%---------------------------------------------</span>
+
+
+<span class="comment">%---------------------------------------------</span>
+<span class="comment">%Initial Conditions</span>
+time    = [0:20:18340];
+
+RV_Init         = [757700,5222607.0,4851500.0,2213.21,4678.34,-5371.30];
+Station_Init    = [-5127510.0 , -3794160.0 , 0.0 ,<span class="keyword">...</span><span class="comment">               %101</span>
+                    3860910.0  , 3238490.0  , 3898094.0 , <span class="keyword">...</span><span class="comment">       %337</span>
+                    549505.0 , -1380872.0 , 6182197.0 ];            <span class="comment">%394</span>
+Const_Init = [uE , J2 , Cd ];
+
+Phi_Init = eye(18);
+
+StateInit = [RV_Init , Const_Init , Station_Init , reshape(Phi_Init,1,length(Phi_Init)^2)]';
+<span class="comment">%---------------------------------------------</span>
+
+
+<span class="comment">%---------------------------------------------</span>
+<span class="comment">% Integrate</span>
+tol_mat = ones(size(StateInit)) .* tol;
+options = odeset(<span class="string">'RelTol'</span>,tol,<span class="string">'AbsTol'</span>,tol_mat);
+
+[time,StatePhi] = ode45(<span class="string">'StateDeriv_WithPhi'</span>,time,StateInit,options);
+
+<span class="keyword">for</span> ii = 1:length(time)
+       Phi{ii} = reshape(StatePhi(ii,19:end),size(Phi_Init));
+       State(ii,:) = StatePhi(ii,1:18);
+<span class="keyword">end</span>
+<span class="comment">%---------------------------------------------</span>
+
+fprintf(<span class="string">'State(18340,0)  ==&gt;   %f3.5 \n\n'</span>,State(time(end)/20,1))
+</pre><pre class="codeoutput">State(18340,0)  ==&gt;   1088731.1516763.5 
+
+</pre><h2>3 - Compare Residules of Observed and Computed Range and Range Rate<a name="4"></a></h2><pre class="codeinput"><span class="comment">%---------------------------------------------</span>
+<span class="comment">%Rho and Rho dot equations (Turn into Wences' awesome function)</span>
+rho = @(x,y,z,Xsite,Ysite,Zsite,theta) sqrt(x^2+y^2+z^2+Xsite^2+Ysite^2+Zsite^2-2*(x*Xsite+y*Ysite)*cos(theta)+2*(x*Ysite-y*Xsite)*sin(theta)-2*z*Zsite);
+rhodot = @(x,y,z,xdot,ydot,zdot,Xsite,Ysite,Zsite,theta,theta_dot,rho) (x*xdot + y*ydot + z*zdot - (xdot*Xsite + ydot*Ysite)*cos(theta) + theta_dot*(x*Xsite + y*Ysite)*sin(theta)<span class="keyword">...</span>
+            +(xdot*Ysite - ydot*Xsite)*sin(theta) + theta_dot*(x*Ysite - y*Xsite)*cos(theta) - zdot*Zsite)<span class="keyword">...</span>
+                                                                    /rho;
+<span class="comment">%---------------------------------------------</span>
+
+
+<span class="comment">%---------------------------------------------</span>
+<span class="comment">% Load in Observation Data</span>
+obs         = load(<span class="string">'Observations.mat'</span>);
+time_obs    = obs.obs(:,1);
+station     = obs.obs(:,2);
+rho_obs     = obs.obs(:,3);
+rhodot_obs  = obs.obs(:,4);
+<span class="comment">%---------------------------------------------</span>
+
+
+SatState = cell(18,1);
+rho_comp = zeros(length(time_obs),1); rhodot_comp = rho_comp;
+
+<span class="comment">%---------------------------------------------</span>
+<span class="comment">% Generate rho, rhodot</span>
+<span class="keyword">for</span> ii = 1:length(time_obs);
+
+    index = time == time_obs(ii);
+    SatState=num2cell(State(index,:));
+
+
+    [x,y,z,xdot,ydot,zdot,uE,J2,Cd,Xsite1,Ysite1,Zsite1,Xsite2,Ysite2,Zsite2,Xsite3,Ysite3,Zsite3] = SatState{:};
+
+    <span class="comment">%Station 1</span>
+    <span class="keyword">if</span> station(ii) == 101
+        Xsite=Xsite1;   Ysite=Ysite1;   Zsite=Zsite1;
+    <span class="keyword">end</span>
+
+    <span class="comment">%Station 2</span>
+    <span class="keyword">if</span> station(ii) == 337
+        Xsite=Xsite2;   Ysite=Ysite2;   Zsite=Zsite2;
+    <span class="keyword">end</span>
+
+    <span class="comment">%Station 3</span>
+    <span class="keyword">if</span> station(ii) == 394
+        Xsite=Xsite3;   Ysite=Ysite3;   Zsite=Zsite3;
+    <span class="keyword">end</span>
+
+
+    theta = (time_obs(ii)*theta_dot);
+    rho_comp(ii)    = rho(x,y,z,Xsite,Ysite,Zsite,theta);
+    rhodot_comp(ii) = rhodot(x,y,z,xdot,ydot,zdot,Xsite,Ysite,Zsite,theta,theta_dot,rho_comp(ii));
+<span class="keyword">end</span>
+<span class="comment">%---------------------------------------------</span>
+
+
+rho_diff = (rho_obs - rho_comp);
+rhodot_diff = (rhodot_obs - rhodot_comp);
+
+plot(rho_diff)
+ylabel(<span class="string">'Rho Difference'</span>)
+figure
+plot(rhodot_diff)
+ylabel(<span class="string">'Rho\dot Difference'</span>)
+
+range_rms = sqrt(sum(rho_diff).^2/length(rho_diff));
+range_rate_rms = sqrt(sum(rhodot_diff).^2/length(rhodot_diff));
+
+fprintf(<span class="string">'Range RMS is  ==&gt;  %3.5f\n'</span>,range_rms)
+fprintf(<span class="string">'Range Rate RMS is  ==&gt;  %3.5f\n\n'</span>,range_rate_rms)
+
+
+
+
+
+
+
+
+
+
+
+fprintf(<span class="string">'Time it took to run is : %f3.5'</span>,toc)
+
+<span class="comment">% figure_awesome</span>
+</pre><pre class="codeoutput">Range RMS is  ==&gt;  586.74122
+Range Rate RMS is  ==&gt;  41.48904
+
+Time it took to run is : 11.2258043.5</pre><img vspace="5" hspace="5" src="HW7_main_01.png" alt=""> <img vspace="5" hspace="5" src="HW7_main_02.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% 
+% Zach Dischner-10/21/2012
+% 
+% ASEN 5070-Statistical Orbit Determination
+% 
+% Homework 7
+% 
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+clc;clear all;close all; format compact;format long g;tic
+
+
+
+%% 1 - Derive A_18x18 and Htilde_2x18
+
+% [A,Htilde]= FindA_Htilde();
+% fprintf('A and Htilde were found. Not shown since they are too big to glean any insight from')
+
+%% 2 - Perform integration
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- 
+%Constants
+tol = 1e-12;
+uE  = 398600.4 * 1000;              % m^3/s^2
+J2  = 0.00108248;                   % []
+Cd  = 2;
+theta_dot  = 7.29211585530066e-5;   % rad/s
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- 
+
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- 
+%Initial Conditions
+time    = [0:20:18340];
+
+RV_Init         = [757700,5222607.0,4851500.0,2213.21,4678.34,-5371.30];
+Station_Init    = [-5127510.0 , -3794160.0 , 0.0 ,...               %101
+                    3860910.0  , 3238490.0  , 3898094.0 , ...       %337
+                    549505.0 , -1380872.0 , 6182197.0 ];            %394
+Const_Init = [uE , J2 , Cd ];
+
+Phi_Init = eye(18);
+
+StateInit = [RV_Init , Const_Init , Station_Init , reshape(Phi_Init,1,length(Phi_Init)^2)]';
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- 
+
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- 
+% Integrate
+tol_mat = ones(size(StateInit)) .* tol;
+options = odeset('RelTol',tol,'AbsTol',tol_mat);
+
+[time,StatePhi] = ode45('StateDeriv_WithPhi',time,StateInit,options);
+
+for ii = 1:length(time)
+       Phi{ii} = reshape(StatePhi(ii,19:end),size(Phi_Init));
+       State(ii,:) = StatePhi(ii,1:18);
+end
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+fprintf('State(18340,0)  ==>   %f3.5 \n\n',State(time(end)/20,1))
+
+
+%% 3 - Compare Residules of Observed and Computed Range and Range Rate 
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- 
+%Rho and Rho dot equations (Turn into Wences' awesome function)
+rho = @(x,y,z,Xsite,Ysite,Zsite,theta) sqrt(x^2+y^2+z^2+Xsite^2+Ysite^2+Zsite^2-2*(x*Xsite+y*Ysite)*cos(theta)+2*(x*Ysite-y*Xsite)*sin(theta)-2*z*Zsite);
+rhodot = @(x,y,z,xdot,ydot,zdot,Xsite,Ysite,Zsite,theta,theta_dot,rho) (x*xdot + y*ydot + z*zdot - (xdot*Xsite + ydot*Ysite)*cos(theta) + theta_dot*(x*Xsite + y*Ysite)*sin(theta)...
+            +(xdot*Ysite - ydot*Xsite)*sin(theta) + theta_dot*(x*Ysite - y*Xsite)*cos(theta) - zdot*Zsite)...
+                                                                    /rho;
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-                                                                 
+            
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-                                                            
+% Load in Observation Data
+obs         = load('Observations.mat');
+time_obs    = obs.obs(:,1);
+station     = obs.obs(:,2);
+rho_obs     = obs.obs(:,3);
+rhodot_obs  = obs.obs(:,4);
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+
+SatState = cell(18,1);
+rho_comp = zeros(length(time_obs),1); rhodot_comp = rho_comp;
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- 
+% Generate rho, rhodot
+for ii = 1:length(time_obs);
+    
+    index = time == time_obs(ii);
+    SatState=num2cell(State(index,:));
+    
+    
+    [x,y,z,xdot,ydot,zdot,uE,J2,Cd,Xsite1,Ysite1,Zsite1,Xsite2,Ysite2,Zsite2,Xsite3,Ysite3,Zsite3] = SatState{:};
+    
+    %Station 1
+    if station(ii) == 101
+        Xsite=Xsite1;   Ysite=Ysite1;   Zsite=Zsite1;
+    end
+    
+    %Station 2
+    if station(ii) == 337
+        Xsite=Xsite2;   Ysite=Ysite2;   Zsite=Zsite2;
+    end
+    
+    %Station 3
+    if station(ii) == 394
+        Xsite=Xsite3;   Ysite=Ysite3;   Zsite=Zsite3;
+    end
+    
+    
+    theta = (time_obs(ii)*theta_dot);
+    rho_comp(ii)    = rho(x,y,z,Xsite,Ysite,Zsite,theta);
+    rhodot_comp(ii) = rhodot(x,y,z,xdot,ydot,zdot,Xsite,Ysite,Zsite,theta,theta_dot,rho_comp(ii));
+end
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- 
+
+
+rho_diff = (rho_obs - rho_comp);
+rhodot_diff = (rhodot_obs - rhodot_comp);
+
+plot(rho_diff)
+ylabel('Rho Difference')
+figure
+plot(rhodot_diff)
+ylabel('Rho\dot Difference')
+
+range_rms = sqrt(sum(rho_diff).^2/length(rho_diff));
+range_rate_rms = sqrt(sum(rhodot_diff).^2/length(rhodot_diff));
+
+fprintf('Range RMS is  ==>  %3.5f\n',range_rms)
+fprintf('Range Rate RMS is  ==>  %3.5f\n\n',range_rate_rms)
+
+
+
+
+
+
+
+
+
+
+
+fprintf('Time it took to run is : %f3.5',toc)
+
+% figure_awesome
+                
+##### SOURCE END #####
+--></body></html>

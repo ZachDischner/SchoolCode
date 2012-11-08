@@ -27,7 +27,7 @@ P2_Potter   = P2_True;
 P2_Batch    = P2_True;
 
 for ii = 1:length(e)
-    [P2_True(ii),P2_Kalman(ii),P2_Joseph(ii),P2_Potter(ii),P2_Batch(ii)]=FindP2(e(ii));
+    [P2_True(ii),P2_Kalman(ii),P2_Joseph(ii),P2_Potter(ii),P2_Batch(ii)]=FindP2(e(ii),1);
 end
 
 figure
@@ -49,12 +49,20 @@ xlabel('\epsilon');ylabel('P2_{true} - P2_{Batch}'); title('Batch')
 
 
 %% 4
+x_batch = zeros(size(e));
+x_kalman = x_batch;
+x_joseph = x_batch;
+x_potter = x_batch;
+
+for ii = 1:length(e)
+    [x_batch(ii),x_kalman(ii),x_joseph(ii),x_potter(ii)] = FindStateP4(e,ii);
+end
 syms e
-R = eye(2,2)
-H = [1 2*e;1 3*e]
-P0bar = [1/e^2 0;0 1/e^2]
-A = inv(P0bar) + transpose(H)*R*H;
-Ptrue = inv(A)
+R       = eye(2,2);
+H       = [1 2*e;1 3*e];
+P0bar   = [1/e^2 0;0 1/e^2];
+A       = inv(P0bar) + transpose(H)*R*H;
+Ptrue   = inv(A);
 
 
 
