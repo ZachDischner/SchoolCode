@@ -1,0 +1,6 @@
+addpath('Tracking')
+addpath('Filters')
+addpath('Filters/BatchTools')
+addpath('Dynamics')
+addpath('setup')
+addpath('Scripts')
