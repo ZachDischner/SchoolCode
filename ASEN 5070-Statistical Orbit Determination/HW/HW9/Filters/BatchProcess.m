@@ -91,7 +91,7 @@ xbar0       = zeros(18,1);
 
 
 %% Perform Batch Loop
-num_iterations = 3;
+num_iterations = 1;
 for ii = 1:num_iterations
     
     % Dynamical Integration
@@ -107,6 +107,8 @@ for ii = 1:num_iterations
     %---------------------------------------------
     Lam = inv(Pbar0);
     N   = Pbar0\xbar0;  % same as inv(pobar)*xbar0
+    N_orig = N;
+    Lam_orig=Lam;
     
 
     % Reform Phi Matrix
@@ -234,6 +236,17 @@ end
 
 fprintf('\n\nRunning Time for Batch Processor : %3.5f\n\n',toc)
 
+%% Display Outputs
+SumHtWH = Lam - Lam_orig;
+SumHtWy = N - N_orig;
+
+fprintf('Sum of H''WH is :\n')
+printMatrix(SumHtWH,27,10);
+fprintf('\n\n\n Sum of H''Wy is :\n')
+printMatrix(SumHtWy,15,5);
+
+fprintf('\n\n\n Output of xhat0 is :\n')
+printMatrix(xhat0,27,10)
 
 
 

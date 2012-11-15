@@ -1,0 +1,644 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>BatchProcess</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-15"><meta name="DC.source" content="BatchProcess.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">First, Load and Parse Observation Data</a></li><li><a href="#3">Pre-Allocations</a></li><li><a href="#4">Initialize Variables</a></li><li><a href="#5">Perform Batch Loop</a></li><li><a href="#6">Display Outputs</a></li></ul></div><pre class="codeinput"><span class="comment">% function Xstar0 = BatchProcess()</span>
+<span class="comment">% Compute new xhat</span>
+<span class="comment">% Looks for functions to return:</span>
+<span class="comment">%   G</span>
+<span class="comment">%   Htilde</span>
+<span class="comment">% Inside of /Filters/BatchTools.m</span>
+
+clc; clear <span class="string">all</span>;close <span class="string">all</span>; format <span class="string">compact</span>;tic
+warning <span class="string">off</span> <span class="string">MATLAB:nearlySingularMatrix</span>
+</pre><h2>First, Load and Parse Observation Data<a name="2"></a></h2><pre class="codeinput">load(<span class="string">'Observations.mat'</span>);
+t_obs       = obs(:,1);
+station     = obs(:,2);
+rho_obs     = obs(:,3);
+rhodot_obs  = obs(:,4);
+</pre><h2>Pre-Allocations<a name="3"></a></h2><pre class="codeinput">x       = zeros(length(obs));
+y       = x;
+z       = x;
+xdot    = x;
+ydot    = x;
+zdot    = x;
+Xsite1  = x;
+Ysite1  = x;
+Zsite1  = x;
+Xsite2  = x;
+Ysite2  = x;
+Zsite2  = x;
+Xsite3  = x;
+Ysite3  = x;
+Zsite3  = x;
+Phi     = cell(1,length(obs));
+y_res   = zeros(2,length(obs));
+Xsite   = x;
+Ysite   = x;
+Zsite   = x;
+theta   = x;
+</pre><h2>Initialize Variables<a name="4"></a></h2><pre class="codeinput"><span class="comment">% Calculations for rho, rhodot. Put into bigger functiom sometime</span>
+<span class="comment">%---------------------------------------------</span>
+findrhostar      = @(x,y,z,Xsite,Ysite,Zsite,theta) sqrt(x^2+y^2+z^2+Xsite^2+Ysite^2+Zsite^2-2*(x*Xsite+y*Ysite)*cos(theta)+2*(x*Ysite-y*Xsite)*sin(theta)-2*z*Zsite);
+findrhodotstar   = @(x,y,z,xdot,ydot,zdot,Xsite,Ysite,Zsite,theta,theta_dot,rho) (x*xdot + y*ydot + z*zdot - (xdot*Xsite + ydot*Ysite)*cos(theta) + theta_dot*(x*Xsite + y*Ysite)*sin(theta)<span class="keyword">...</span>
+                    +(xdot*Ysite - ydot*Xsite)*sin(theta) + theta_dot*(x*Ysite - y*Xsite)*cos(theta) - zdot*Zsite)<span class="keyword">...</span>
+                                                    /rho;
+<span class="comment">%---------------------------------------------</span>
+
+<span class="comment">% System Constants</span>
+<span class="comment">%---------------------------------------------</span>
+Phi_Init    = eye(18,18);
+tol         = 1e-13;
+uE          = 3.986004415e14;        <span class="comment">% m^3/s^2</span>
+J2          = 1.082626925638815e-3;  <span class="comment">% []</span>
+Cd          = 2;                     <span class="comment">% []</span>
+theta_dot   = 7.29211585530066e-5;   <span class="comment">% rad/s</span>
+time        = t_obs;
+<span class="comment">%---------------------------------------------</span>
+
+<span class="comment">% Information</span>
+<span class="comment">%---------------------------------------------</span>
+sigma_rho   = 0.01;                  <span class="comment">% rms std</span>
+sigma_rhodot= 0.001;                 <span class="comment">% rms std</span>
+R           = [sigma_rho^2  ,         0        ; <span class="keyword">...</span>
+                    0       ,    sigma_rhodot^2];
+W = inv(R);
+Pbar0       = diag([1e6,1e6,1e6,1e6,1e6,1e6,1e20,1e6,1e6,1e-10,1e-10,1e-10,1e6,1e6,1e6,1e6,1e6,1e6]);
+<span class="comment">%---------------------------------------------</span>
+
+<span class="comment">% Initial Conditions</span>
+<span class="comment">%---------------------------------------------</span>
+RV_Init     = [757700,5222607.0,4851500.0,2213.21,4678.34,-5371.30];
+Station_Init= [-5127510.0 , -3794160.0 , 0.0 ,<span class="keyword">...</span><span class="comment">               %101</span>
+                3860910.0 , 3238490.0  , 3898094.0 , <span class="keyword">...</span><span class="comment">        %337</span>
+                549505.0  , -1380872.0 , 6182197.0 ];           <span class="comment">%394</span>
+Const_Init = [uE , J2 , Cd ];
+<span class="comment">%---------------------------------------------</span>
+
+<span class="comment">% Form Initialization State</span>
+<span class="comment">%---------------------------------------------</span>
+Xstar0 = [RV_Init , Const_Init , Station_Init , reshape(Phi_Init,1,length(Phi_Init)^2)]';
+<span class="comment">%---------------------------------------------</span>
+
+<span class="comment">% Initial xbar0, or a-priori state deviation from reference trajectory</span>
+<span class="comment">%---------------------------------------------</span>
+xbar0       = zeros(18,1);
+<span class="comment">%---------------------------------------------</span>
+</pre><h2>Perform Batch Loop<a name="5"></a></h2><pre class="codeinput">num_iterations = 1;
+<span class="keyword">for</span> ii = 1:num_iterations
+
+    <span class="comment">% Dynamical Integration</span>
+    <span class="comment">%---------------------------------------------</span>
+    tol_mat     = ones(size(Xstar0)) .* tol;
+    options     = odeset(<span class="string">'RelTol'</span>,tol,<span class="string">'AbsTol'</span>,tol,<span class="string">'OutputFcn'</span>,@odetpbar);
+
+    [time,StatePhi] = ode45(@StateDeriv_WithPhi,time,Xstar0,options);
+    <span class="comment">%---------------------------------------------</span>
+
+
+        <span class="comment">% Batch Processing Part</span>
+    <span class="comment">%---------------------------------------------</span>
+    Lam = inv(Pbar0);
+    N   = Pbar0\xbar0;  <span class="comment">% same as inv(pobar)*xbar0</span>
+    N_orig = N;
+    Lam_orig=Lam;
+
+
+    <span class="comment">% Reform Phi Matrix</span>
+    <span class="comment">%---------------------------------------------</span>
+    <span class="keyword">for</span> jj = 1:length(time)
+           Phi      = reshape(StatePhi(jj,19:end),size(Phi_Init));
+           Xstar    = StatePhi(:,1:18);
+           x        = Xstar(:,1);
+           y        = Xstar(:,2);
+           z        = Xstar(:,3);
+           xdot     = Xstar(:,4);
+           ydot     = Xstar(:,5);
+           zdot     = Xstar(:,6);
+           Xsite1   = Xstar(:,10);
+           Ysite1   = Xstar(:,11);
+           Zsite1   = Xstar(:,12);
+           Xsite2   = Xstar(:,13);
+           Ysite2   = Xstar(:,14);
+           Zsite2   = Xstar(:,15);
+           Xsite3   = Xstar(:,16);
+           Ysite3   = Xstar(:,17);
+           Zsite3   = Xstar(:,18);
+
+    <span class="comment">%---------------------------------------------</span>
+
+
+
+
+
+<span class="comment">%     parfor jj = 1:length(rho_obs)</span>
+        theta(jj)          = theta_dot*time(jj);
+        Htilde             = zeros(2,18);
+        <span class="comment">% Check Stations</span>
+        <span class="comment">%---------------------------------------------</span>
+        <span class="comment">%Station 1</span>
+        <span class="keyword">if</span> station(jj) == 101
+            Xsite(jj)   = Xsite1(jj);   Ysite(jj)=Ysite1(jj);   Zsite(jj)=Zsite1(jj);
+            <span class="comment">% Find H Tilde</span>
+            <span class="comment">%---------------------------------------------</span>
+            Htilde = FindHtilde(Xsite(jj),Ysite(jj),Zsite(jj),theta(jj),theta_dot,x(jj),xdot(jj),y(jj),ydot(jj),z(jj),zdot(jj));
+            <span class="comment">%---------------------------------------------</span>
+            Htilde  = [Htilde , zeros(2,6)];
+
+        <span class="keyword">end</span>
+
+        <span class="comment">%Station 2</span>
+        <span class="keyword">if</span> station(jj) == 337
+            Xsite(jj)   = Xsite2(jj);   Ysite(jj)=Ysite2(jj);   Zsite(jj)=Zsite2(jj);
+            <span class="comment">% Find H Tilde</span>
+            <span class="comment">%---------------------------------------------</span>
+            Htilde = FindHtilde(Xsite(jj),Ysite(jj),Zsite(jj),theta(jj),theta_dot,x(jj),xdot(jj),y(jj),ydot(jj),z(jj),zdot(jj));
+            <span class="comment">%---------------------------------------------</span>
+            Htilde  = [Htilde(:,1:9) , zeros(2,3), Htilde(:,10:12),zeros(2,3)];
+        <span class="keyword">end</span>
+
+        <span class="comment">%Station 3</span>
+        <span class="keyword">if</span> station(jj) == 394
+            Xsite(jj)   = Xsite3(jj);   Ysite(jj)=Ysite3(jj);   Zsite(jj)=Zsite3(jj);
+            <span class="comment">% Find H Tilde</span>
+            <span class="comment">%---------------------------------------------</span>
+            Htilde = FindHtilde(Xsite(jj),Ysite(jj),Zsite(jj),theta(jj),theta_dot,x(jj),xdot(jj),y(jj),ydot(jj),z(jj),zdot(jj));
+            <span class="comment">%---------------------------------------------</span>
+            Htilde  = [Htilde(:,1:9),zeros(2,6),Htilde(:,10:12)];
+        <span class="keyword">end</span>
+        <span class="comment">%---------------------------------------------</span>
+
+        <span class="comment">% Map To Epoch</span>
+        <span class="comment">%---------------------------------------------</span>
+        H{jj}    = Htilde*Phi;
+        <span class="comment">%---------------------------------------------</span>
+
+        <span class="comment">% Cumulate INFORMATION?? Matrix</span>
+        <span class="comment">%---------------------------------------------</span>
+        Lam       = Lam + H{jj}'*W*H{jj};
+        <span class="comment">%---------------------------------------------</span>
+
+        <span class="comment">% Put into FindG</span>
+        <span class="comment">%---------------------------------------------</span>
+        rhostar   = findrhostar(x(jj),y(jj),z(jj),Xsite(jj),Ysite(jj),Zsite(jj),theta(jj));
+        rhodotstar= findrhodotstar(x(jj),y(jj),z(jj),xdot(jj),ydot(jj),zdot(jj),Xsite(jj),Ysite(jj),Zsite(jj),theta(jj),theta_dot,rhostar);
+        <span class="comment">%---------------------------------------------</span>
+
+        <span class="comment">% Find Observation Deviations</span>
+        <span class="comment">%---------------------------------------------</span>
+        ystar       = [rhostar;rhodotstar];
+        y_res(:,jj) = [rho_obs(jj);rhodot_obs(jj)] - ystar;
+        <span class="comment">%---------------------------------------------</span>
+
+
+        <span class="comment">% Cumulate SOMETING?? Matrix</span>
+        <span class="comment">%---------------------------------------------</span>
+        N     = N + H{jj}'*W*y_res(:,jj);
+        <span class="comment">%---------------------------------------------</span>
+    <span class="keyword">end</span>
+    fprintf(<span class="string">'RMS of rho is :  %3.5f \n'</span>,rms(y_res(1,:)))
+    fprintf(<span class="string">'RMS of rhodot is :  %3.5f \n'</span>,rms(y_res(2,:)))
+    <span class="comment">% Find New State Deviation</span>
+    <span class="comment">%---------------------------------------------</span>
+    xhat0   = Lam\(N);
+    <span class="comment">%---------------------------------------------</span>
+
+    <span class="comment">% Update Best Guess of Initial Conditions</span>
+    <span class="comment">%---------------------------------------------</span>
+    Xstar0  = [Xstar0(1:18) + xhat0; (reshape(Phi_Init,length(Phi_Init)^2,1))];
+    <span class="comment">%---------------------------------------------</span>
+
+    <span class="comment">% Update a-priori State Deviation</span>
+    <span class="comment">%---------------------------------------------</span>
+    xbar0 = xbar0 - xhat0;
+    <span class="comment">%---------------------------------------------</span>
+
+
+    figure(1)
+    subplot(num_iterations,2,2*ii-1)
+    plot(y_res(1,:))
+    ylabel(<span class="string">'rho residules'</span>)
+    xlabel(<span class="string">'observation number'</span>)
+
+    subplot(num_iterations,2,2*ii)
+    plot(y_res(2,:))
+    ylabel(<span class="string">'rho residules'</span>)
+    xlabel(<span class="string">'observation number'</span>)
+
+<span class="keyword">end</span>
+
+fprintf(<span class="string">'\n\nRunning Time for Batch Processor : %3.5f\n\n'</span>,toc)
+</pre><pre class="codeoutput">ODE integration: 100%    [..........]
+   Integration time: 3.9356
+RMS of rho is :  732.74831 
+RMS of rhodot is :  2.90017 
+
+
+Running Time for Batch Processor : 9.33199
+
+</pre><img vspace="5" hspace="5" src="BatchProcess_01.png" alt=""> <h2>Display Outputs<a name="6"></a></h2><pre class="codeinput">SumHtWH = Lam - Lam_orig;
+SumHtWy = N - N_orig;
+
+fprintf(<span class="string">'Sum of H''WH is :\n'</span>)
+printMatrix(SumHtWH,27,10);
+fprintf(<span class="string">'\n\n\n Sum of H''Wy is :\n'</span>)
+printMatrix(SumHtWy,15,5);
+
+fprintf(<span class="string">'\n\n\n Output of xhat0 is :\n'</span>)
+printMatrix(xhat0,27,10)
+</pre><pre class="codeoutput">Sum of H'WH is :
+        15642892.2139638532	        96445342.0481109023	        87553862.2093564719	     39035426229.8915863037	     85380621054.4556427002	    -89456061116.4034271240	              -1.5954227562	 286051153800621.4375000000	        -7713897.2730123671	           94424.1960645709	          -55744.7939965413	         1837092.6939293954	          678092.1290839665	          638409.6495227553	        -1277860.1201436382	          733971.6775837080	          635723.5618613327	          123510.5898856849	
+        96445342.0481109023	       647567086.6741099358	       591096262.6015053988	    261992453682.0038146973	    568653301031.6795654297	   -602809745181.2003173828	             -10.7016510482	1995728895595858.5000000000	       -52282664.0776869431	         -773424.0039953113	         1432595.0899111021	        10595645.8622289877	         7392018.3361077625	         1308575.5194160349	        -8711564.5189841464	         6309531.7304992266	         1145230.3956329017	         -266474.1940985713	
+        87553862.2093564868	       591096262.6015053988	       545069191.1156791449	    239589749865.7162170410	    517506233589.1514892578	   -554569933689.5238037109	              -9.8035792463	1834580284670072.5000000000	       -48506619.6265168786	         -402655.1210385546	         1045048.6870896441	         8376683.0559452018	         7194081.2672169982	         1587982.6929616374	        -8729815.9775514472	         6065287.8468057951	         1084368.6505893399	         -273346.3020820002	
+     39035426229.8915939331	    261992453682.0038452148	    239589749865.7162170410	 106661554804651.4062500000	 230019289585374.4687500000	-244305773049970.0625000000	           -4332.9515060860	803726582978524416.0000000000	    -21168772678.9310188293	       -50859313.7735307217	       302043238.1972026825	      4288498976.4752812386	      2916254082.3784904480	       611717806.8690390587	     -3472182365.3918185234	      2884955908.2518606186	       206458670.4745006561	      -225374609.3335765600	
+     85380621054.4556274414	    568653301031.6795654297	    517506233589.1514892578	 230019289585374.4687500000	 500449734561211.2500000000	-528426575793172.3750000000	           -9393.3837935608	1745988440697024256.0000000000	    -45491258336.3640747070	      -690061915.6090250015	      1311456344.9984645844	      9736126092.6784706116	      6209844895.7019824982	      1224063166.9970550537	     -7345835814.4685678482	      5408488696.8719940186	      1469890745.0940928459	       -83278163.7571291327	
+    -89456061116.4034271240	   -602809745181.2001953125	   -554569933689.5236816406	-244305773049970.0625000000	-528426575793172.3125000000	 564925217977991.5000000000	            9992.9746072029	-1868777680042144768.0000000000	     49351823593.8733901978	       453804529.4006270766	     -1186627512.8099844456	     -8815559900.1859703064	     -7155118427.5747156143	     -1442785596.3882243633	      8473696896.6845960617	     -6211919135.8050832748	     -1275868107.9849932194	       227040169.4953751564	
+              -1.5954227562	             -10.7016510482	              -9.8035792463	           -4332.9515060860	           -9393.3837935608	            9992.9746072029	               0.0000001772	       -33071416.4047614485	               0.8680775739	               0.0105353831	              -0.0212645324	              -0.1670443062	              -0.1240245340	              -0.0250132771	               0.1466430480	              -0.1057804599	              -0.0238949898	               0.0031677740	
+ 286051153800621.4375000000	1995728895595858.5000000000	1834580284670072.5000000000	803726582978524544.0000000000	1745988440697024000.0000000000	-1868777680042144512.0000000000	       -33071416.4047614485	6357520838113366114304.0000000000	-162933815454797.0937500000	  -5176617560516.4169921875	   8224474829224.8125000000	  27349691260043.2031250000	  27574275176521.5312500000	     81037364953.2355957031	 -27206535197374.7304687500	  19159599168762.6289062500	   3598318516081.8442382812	   -805207179437.5408935547	
+        -7713897.2730123661	       -52282664.0776869431	       -48506619.6265168637	    -21168772678.9310188293	    -45491258336.3640747070	     49351823593.8733901978	               0.8680775739	-162933815454797.1250000000	         4712675.9088873239	            4607.5040727804	          -47211.4081440844	         -617765.3808566579	         -571670.9101045745	          -87065.8866727704	          691156.4551380392	         -593635.2690462477	           36198.6465750722	           59945.3954439472	
+           94424.1960645709	         -773424.0039953114	         -402655.1210385547	       -50859313.7735307217	      -690061915.6090250015	       453804529.4006271362	               0.0105353831	  -5176617560516.4169921875	            4607.5040727804	          301411.2586326599	         -238883.2131691568	           13355.2193051041	               0.0000000000	               0.0000000000	               0.0000000000	               0.0000000000	               0.0000000000	               0.0000000000	
+          -55744.7939965413	         1432595.0899111023	         1045048.6870896443	       302043238.1972027421	      1311456344.9984645844	     -1186627512.8099844456	              -0.0212645324	   8224474829224.8115234375	          -47211.4081440844	         -238883.2131691568	          382196.5541191101	           -5925.9028849073	               0.0000000000	               0.0000000000	               0.0000000000	               0.0000000000	               0.0000000000	               0.0000000000	
+         1837092.6939293954	        10595645.8622289877	         8376683.0559452018	      4288498976.4752812386	      9736126092.6784706116	     -8815559900.1859703064	              -0.1670443062	  27349691260043.2031250000	         -617765.3808566579	           13355.2193051041	           -5925.9028849073	          547491.3019981384	               0.0000000000	               0.0000000000	               0.0000000000	               0.0000000000	               0.0000000000	               0.0000000000	
+          678092.1290839666	         7392018.3361077616	         7194081.2672169982	      2916254082.3784904480	      6209844895.7019824982	     -7155118427.5747156143	              -0.1240245340	  27574275176521.5351562500	         -571670.9101045745	               0.0000000000	               0.0000000000	               0.0000000000	          443985.4002217269	         -187039.8461420266	         -202932.9174915103	               0.0000000000	               0.0000000000	               0.0000000000	
+          638409.6495227553	         1308575.5194160349	         1587982.6929616374	       611717806.8690390587	      1224063166.9970550537	     -1442785596.3882243633	              -0.0250132771	     81037364953.2366943359	          -87065.8866727704	               0.0000000000	               0.0000000000	               0.0000000000	         -187039.8461420266	          489429.5398828702	         -185546.2470719735	               0.0000000000	               0.0000000000	               0.0000000000	
+        -1277860.1201436382	        -8711564.5189841483	        -8729815.9775514472	     -3472182365.3918190002	     -7345835814.4685678482	      8473696896.6845960617	               0.1466430480	 -27206535197374.7382812500	          691156.4551380392	               0.0000000000	               0.0000000000	               0.0000000000	         -202932.9174915103	         -185546.2470719735	          467743.5986754843	               0.0000000000	               0.0000000000	               0.0000000000	
+          733971.6775837080	         6309531.7304992266	         6065287.8468057951	      2884955908.2518606186	      5408488696.8719940186	     -6211919135.8050832748	              -0.1057804599	  19159599168762.6289062500	         -593635.2690462477	               0.0000000000	               0.0000000000	               0.0000000000	               0.0000000000	               0.0000000000	               0.0000000000	          477457.6594665953	         -145787.8075451687	          -99770.1215443975	
+          635723.5618613327	         1145230.3956329024	         1084368.6505893404	       206458670.4745006561	      1469890745.0940928459	     -1275868107.9849936962	              -0.0238949898	   3598318516081.8452148438	           36198.6465750722	               0.0000000000	               0.0000000000	               0.0000000000	               0.0000000000	               0.0000000000	               0.0000000000	         -145787.8075451687	          666808.3371934118	          208656.0639778854	
+          123510.5898856849	         -266474.1940985713	         -273346.3020820001	      -225374609.3335765600	       -83278163.7571291327	       227040169.4953751564	               0.0031677740	   -805207179437.5407714844	           59945.3954439472	               0.0000000000	               0.0000000000	               0.0000000000	               0.0000000000	               0.0000000000	               0.0000000000	          -99770.1215443974	          208656.0639778854	           76408.2371207681	
+
+
+
+ Sum of H'Wy is :
+5486061547.19810	
+36584442778.58514	
+33408872159.34251	
+14834824166248.30859	
+32158626582387.25391	
+-34086624652357.96484	
+     -604.98783	
+112317807659114768.00000	
+-2948644630.17576	
+-27771434.44241	
+ 67040528.11551	
+603470756.22806	
+400176817.76198	
+ 91700586.30273	
+-484097205.11321	
+369071814.20939	
+ 75465589.38682	
+-13494689.60293	
+
+
+
+ Output of xhat0 is :
+              -0.0363025898	
+              -0.2741066153	
+              -0.1808766575	
+               0.0409349622	
+               0.0327483949	
+              -0.0147530394	
+        -9463442.1830325481	
+              -0.0000006574	
+               0.1475547229	
+               0.0000018632	
+               0.0000013787	
+              -0.0000002538	
+             -10.5636296834	
+               9.9833774037	
+               5.7943247874	
+              -5.7819128352	
+               2.3443688041	
+               1.5124575876	
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+% function Xstar0 = BatchProcess()
+% Compute new xhat
+% Looks for functions to return:
+%   G
+%   Htilde
+% Inside of /Filters/BatchTools.m
+
+clc; clear all;close all; format compact;tic
+warning off MATLAB:nearlySingularMatrix
+
+%% First, Load and Parse Observation Data
+load('Observations.mat');
+t_obs       = obs(:,1);
+station     = obs(:,2);
+rho_obs     = obs(:,3);
+rhodot_obs  = obs(:,4);
+
+%% Pre-Allocations
+x       = zeros(length(obs));
+y       = x;
+z       = x;
+xdot    = x;
+ydot    = x;
+zdot    = x;
+Xsite1  = x;
+Ysite1  = x;
+Zsite1  = x;
+Xsite2  = x;
+Ysite2  = x;
+Zsite2  = x;
+Xsite3  = x;
+Ysite3  = x;
+Zsite3  = x;
+Phi     = cell(1,length(obs));
+y_res   = zeros(2,length(obs));
+Xsite   = x;
+Ysite   = x;
+Zsite   = x;
+theta   = x;
+
+
+%% Initialize Variables
+
+% Calculations for rho, rhodot. Put into bigger functiom sometime
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+findrhostar      = @(x,y,z,Xsite,Ysite,Zsite,theta) sqrt(x^2+y^2+z^2+Xsite^2+Ysite^2+Zsite^2-2*(x*Xsite+y*Ysite)*cos(theta)+2*(x*Ysite-y*Xsite)*sin(theta)-2*z*Zsite);
+findrhodotstar   = @(x,y,z,xdot,ydot,zdot,Xsite,Ysite,Zsite,theta,theta_dot,rho) (x*xdot + y*ydot + z*zdot - (xdot*Xsite + ydot*Ysite)*cos(theta) + theta_dot*(x*Xsite + y*Ysite)*sin(theta)...
+                    +(xdot*Ysite - ydot*Xsite)*sin(theta) + theta_dot*(x*Ysite - y*Xsite)*cos(theta) - zdot*Zsite)...
+                                                    /rho;
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+% System Constants
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+Phi_Init    = eye(18,18);
+tol         = 1e-13;
+uE          = 3.986004415e14;        % m^3/s^2
+J2          = 1.082626925638815e-3;  % []
+Cd          = 2;                     % []
+theta_dot   = 7.29211585530066e-5;   % rad/s
+time        = t_obs;
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+% Information
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+sigma_rho   = 0.01;                  % rms std
+sigma_rhodot= 0.001;                 % rms std
+R           = [sigma_rho^2  ,         0        ; ...
+                    0       ,    sigma_rhodot^2];
+W = inv(R);                
+Pbar0       = diag([1e6,1e6,1e6,1e6,1e6,1e6,1e20,1e6,1e6,1e-10,1e-10,1e-10,1e6,1e6,1e6,1e6,1e6,1e6]);
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+% Initial Conditions
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+RV_Init     = [757700,5222607.0,4851500.0,2213.21,4678.34,-5371.30];
+Station_Init= [-5127510.0 , -3794160.0 , 0.0 ,...               %101
+                3860910.0 , 3238490.0  , 3898094.0 , ...        %337
+                549505.0  , -1380872.0 , 6182197.0 ];           %394
+Const_Init = [uE , J2 , Cd ];
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+% Form Initialization State
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+Xstar0 = [RV_Init , Const_Init , Station_Init , reshape(Phi_Init,1,length(Phi_Init)^2)]';
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+% Initial xbar0, or a-priori state deviation from reference trajectory
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+xbar0       = zeros(18,1);
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+
+%% Perform Batch Loop
+num_iterations = 1;
+for ii = 1:num_iterations
+    
+    % Dynamical Integration
+    %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+    tol_mat     = ones(size(Xstar0)) .* tol;
+    options     = odeset('RelTol',tol,'AbsTol',tol,'OutputFcn',@odetpbar);
+
+    [time,StatePhi] = ode45(@StateDeriv_WithPhi,time,Xstar0,options);
+    %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+    
+    
+        % Batch Processing Part
+    %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+    Lam = inv(Pbar0);
+    N   = Pbar0\xbar0;  % same as inv(pobar)*xbar0
+    N_orig = N;
+    Lam_orig=Lam;
+    
+
+    % Reform Phi Matrix
+    %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+    for jj = 1:length(time)
+           Phi      = reshape(StatePhi(jj,19:end),size(Phi_Init));
+           Xstar    = StatePhi(:,1:18);
+           x        = Xstar(:,1);
+           y        = Xstar(:,2);
+           z        = Xstar(:,3);
+           xdot     = Xstar(:,4);
+           ydot     = Xstar(:,5);
+           zdot     = Xstar(:,6);
+           Xsite1   = Xstar(:,10);
+           Ysite1   = Xstar(:,11);
+           Zsite1   = Xstar(:,12);
+           Xsite2   = Xstar(:,13);
+           Ysite2   = Xstar(:,14);
+           Zsite2   = Xstar(:,15);
+           Xsite3   = Xstar(:,16);
+           Ysite3   = Xstar(:,17);
+           Zsite3   = Xstar(:,18);
+
+    %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+
+    
+    
+    
+%     parfor jj = 1:length(rho_obs)
+        theta(jj)          = theta_dot*time(jj);
+        Htilde             = zeros(2,18);
+        % Check Stations
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+        %Station 1
+        if station(jj) == 101
+            Xsite(jj)   = Xsite1(jj);   Ysite(jj)=Ysite1(jj);   Zsite(jj)=Zsite1(jj);
+            % Find H Tilde
+            %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+            Htilde = FindHtilde(Xsite(jj),Ysite(jj),Zsite(jj),theta(jj),theta_dot,x(jj),xdot(jj),y(jj),ydot(jj),z(jj),zdot(jj));
+            %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+            Htilde  = [Htilde , zeros(2,6)];
+            
+        end
+
+        %Station 2
+        if station(jj) == 337
+            Xsite(jj)   = Xsite2(jj);   Ysite(jj)=Ysite2(jj);   Zsite(jj)=Zsite2(jj);
+            % Find H Tilde
+            %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+            Htilde = FindHtilde(Xsite(jj),Ysite(jj),Zsite(jj),theta(jj),theta_dot,x(jj),xdot(jj),y(jj),ydot(jj),z(jj),zdot(jj));
+            %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+            Htilde  = [Htilde(:,1:9) , zeros(2,3), Htilde(:,10:12),zeros(2,3)];
+        end
+
+        %Station 3
+        if station(jj) == 394
+            Xsite(jj)   = Xsite3(jj);   Ysite(jj)=Ysite3(jj);   Zsite(jj)=Zsite3(jj);
+            % Find H Tilde
+            %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+            Htilde = FindHtilde(Xsite(jj),Ysite(jj),Zsite(jj),theta(jj),theta_dot,x(jj),xdot(jj),y(jj),ydot(jj),z(jj),zdot(jj));
+            %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+            Htilde  = [Htilde(:,1:9),zeros(2,6),Htilde(:,10:12)];
+        end
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+       
+        % Map To Epoch
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+        H{jj}    = Htilde*Phi;
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+        
+        % Cumulate INFORMATION?? Matrix
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+        Lam       = Lam + H{jj}'*W*H{jj};
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+        
+        % Put into FindG
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+        rhostar   = findrhostar(x(jj),y(jj),z(jj),Xsite(jj),Ysite(jj),Zsite(jj),theta(jj));
+        rhodotstar= findrhodotstar(x(jj),y(jj),z(jj),xdot(jj),ydot(jj),zdot(jj),Xsite(jj),Ysite(jj),Zsite(jj),theta(jj),theta_dot,rhostar);
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+        
+        % Find Observation Deviations
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+        ystar       = [rhostar;rhodotstar];
+        y_res(:,jj) = [rho_obs(jj);rhodot_obs(jj)] - ystar;
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+        
+        % Cumulate SOMETING?? Matrix
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+        N     = N + H{jj}'*W*y_res(:,jj);
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-                                                         
+    end
+    fprintf('RMS of rho is :  %3.5f \n',rms(y_res(1,:)))
+    fprintf('RMS of rhodot is :  %3.5f \n',rms(y_res(2,:)))
+    % Find New State Deviation
+    %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+    xhat0   = Lam\(N);
+    %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+    
+    % Update Best Guess of Initial Conditions
+    %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+    Xstar0  = [Xstar0(1:18) + xhat0; (reshape(Phi_Init,length(Phi_Init)^2,1))];
+    %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- 
+    
+    % Update a-priori State Deviation
+    %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+    xbar0 = xbar0 - xhat0;
+    %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+    
+    
+    figure(1)
+    subplot(num_iterations,2,2*ii-1)
+    plot(y_res(1,:))
+    ylabel('rho residules')
+    xlabel('observation number')
+    
+    subplot(num_iterations,2,2*ii)
+    plot(y_res(2,:))
+    ylabel('rho residules')
+    xlabel('observation number')
+    
+end
+
+fprintf('\n\nRunning Time for Batch Processor : %3.5f\n\n',toc)
+
+%% Display Outputs
+SumHtWH = Lam - Lam_orig;
+SumHtWy = N - N_orig;
+
+fprintf('Sum of H''WH is :\n')
+printMatrix(SumHtWH,27,10);
+fprintf('\n\n\n Sum of H''Wy is :\n')
+printMatrix(SumHtWy,15,5);
+
+fprintf('\n\n\n Output of xhat0 is :\n')
+printMatrix(xhat0,27,10)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>

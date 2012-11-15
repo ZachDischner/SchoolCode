@@ -1,0 +1,85 @@
+\documentclass[]{article}
+
+%%%%%%%%%%%%%%%%%  << MATLAB INCLUSION>>  %%%%%%%%%%%%%%%%%
+%\usepackage[numbered framed]{mcode}
+% Need mcode.sty in current directory
+%%%%%%%%%%%%%%%%%  << MATLAB INCLUSION>>  %%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%  << IMAGE INCLUSION>>  %%%%%%%%%%%%%%%%%
+\usepackage{graphicx}
+%%%%%%%%%%%%%%%%%  << IMAGE INCLUSION>>  %%%%%%%%%%%%%%%%%
+
+\usepackage{cleveref}
+\usepackage{amsmath}
+% Other packages
+\usepackage{times, rawfonts, geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{float}
+
+% New commands
+\newcommand{\ignore}[1]{}  % {} empty inside = %% comment
+
+% Scientific notation:
+\providecommand{\e}[1]{\ensuremath{\times 10^{#1}}}
+
+% General
+\newcommand{\parens} [1] {\left(  #1  \right)}
+\newcommand{\brackets} [1] {\left[ #1 \right]}
+\newcommand{\rootdir}{./Figures/}
+
+% Array
+\newcommand{\arrayp}[2]{\parens{ \begin{array}{#1}  #2 \end{array} } }
+\newcommand{\arrayb}[2]{\brackets{ \begin{array}{#1}  #2 \end{array} } }
+
+\begin{document}
+
+\title{ASEN 5070-Stastistical Orbit Determination-HW 8}
+\author{Zach Dischner}
+\date{11-10-2012}
+\maketitle
+
+
+%%%%%%%%%%%%%%%%%%%%%%  << 1a >>  %%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem 1} 
+
+See attached code in Appendix A. 
+
+\section{Problem 2}
+The following is a plot of the trace of each formulation of P2 subtracted from the truth, or exact, calculation of that same value. 
+
+\begin{figure}[Trace]
+    \centering
+    \includegraphics[width=8.3in]{../\rootdir 1.png}
+    \caption{Attitude accuracy is a function of the centroid accuracy (colored lines) and the number of stars using in the q-method transformation}
+    \label{fig:accuracy}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

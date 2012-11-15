@@ -1,4 +1,9 @@
 function [P2_True,P2_Kalman,P2_Joseph,P2_Potter,P2_Batch]=FindP2(e,tr)
+% Compute P2 (or the trace therof) for various different algorithms. 
+
+% Input is error value, and 'tr', indicator to return the trace of each 
+%       calculation
+
 
 if exist('tr','var')
     tr=1;
@@ -18,15 +23,13 @@ H2      = [1 1];
 R       = 1;
 %------------------------------------------------------------
 %% a - True Solution from 4.7.24
-% syms B e v1 v2
+
 B   = 1 - 2*e + 2*e^2*(2+e^2);
 P2_True  = 1/B*[ 1+2*e^2     -(1+e); ...
                   -(1+e)       2+e^2 ];
 if tr              
     P2_True     = trace(P2_True);
 end
-% matlabFunction(P2_true,'file','P2_true.m');
-
 %------------------------------------------------------------
 
 %% b - P2 Using Conventional Kalman Filter
@@ -53,21 +56,13 @@ P1          = (eye(2) - K1*H1)*P1bar*(eye(2)-K1*H1)' + K1*R*K1';
 K2          = P1*H2'*inv(H2*P1*H2' + R);
 
 P2_Joseph   = (eye(2) - K2*H2)*P1*(eye(2)-K2*H2)' + K2*R*K2';
-% P2_Joseph = [ 1+2*e    -(1+3*e);-(1+3*e) 2+e];
 if tr
     P2_Joseph     = trace(P2_Joseph);         
 end
-% matlabFunction(P2_Joseph,'file','P2_Joseph.m');
 
 %------------------------------------------------------------
 
 %% d - P2 Using Plotter Algorithm (5.7.17) 
-% Do this at one time, for z2
-% H       = [1 1];
-% P2bar   = (1/e)^2*eye(2,2);
-% W_trans = chol(P2bar);
-% W2bar   = transpose(W_trans);
-% R       = 1;
 
 W1bar   = (chol(P1bar))';
 
@@ -106,11 +101,5 @@ P2_Batch= Delta\eye(2,2);
 if tr
     P2_Batch= trace(P2_Batch);
 end
-% P2_Batch= trace([1+2*e -(1+3*e); -(1+3*e) 2*(1+2*e)]);  % given
 
-% eval(['P2_Batch = @(e,v1,v2) ',inv(Delta),';']); 
-% P2_Batch = [ (v1 + e^2*v2 + e^2*v1*v2)/(2*e^2*v1 - 2*e + e^2*v2 + e^4*v2 + e^2 + e^4*v1*v2 + 1),          -(v1 + e*v2)/(2*e^2*v1 - 2*e + e^2*v2 + e^4*v2 + e^2 + e^4*v1*v2 + 1);
-%               -(v1 + e*v2)/(2*e^2*v1 - 2*e + e^2*v2 + e^4*v2 + e^2 + e^4*v1*v2 + 1), (v1*v2*e^2 + v1 + v2)/(2*e^2*v1 - 2*e + e^2*v2 + e^4*v2 + e^2 + e^4*v1*v2 + 1)];
-% matlabFunction(P2_Batch,'file','P2_Batch.m');          
-          
           
