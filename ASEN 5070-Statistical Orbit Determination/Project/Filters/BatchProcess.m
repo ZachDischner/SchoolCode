@@ -213,7 +213,7 @@ for ii = 1:num_iterations
     Xstar0  = [Xstar0(1:18) + xhat0; (reshape(Phi_Init,length(Phi_Init)^2,1))];
     %--------------------------------------------- 
     
-    % Update a-priori State Deviation
+    % Update a-priori State Deviation% function Xstar0 = BatchProcess()
     %---------------------------------------------
     xbar0 = xbar0 - xhat0;
     %---------------------------------------------

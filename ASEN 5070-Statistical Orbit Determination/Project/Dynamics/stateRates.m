@@ -72,7 +72,7 @@ zddot = -mu*z/r^3*(1-3/2*J2*(RE/r)^2*(5*(z/r)^2-3))-1/2*CD*(A/m)*rhoA*VA*zdot;
 F = transpose([xdot ydot zdot xddot yddot zddot 0 0 0 0 0 0 0 0 0 0 0 0]);
 
 % Calculate A matirx
-Amat = A_18x18(A,CD,H,J2,RE,m,r0,rho0,theta_dot,mu,x,xdot,y,ydot,z,zdot); 
+Amat = FindA(A,CD,H,J2,RE,m,r0,rho0,theta_dot,mu,x,xdot,y,ydot,z,zdot); 
 
 % Calculate phi_dot
 phi_dot = Amat*phi;
