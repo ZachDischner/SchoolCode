@@ -34,7 +34,6 @@ Zsite2  = x;
 Xsite3  = x;
 Ysite3  = x;
 Zsite3  = x;
-% Phi     = cell(1,length(obs));
 y1   = zeros(2,length(obs));
 Xsite   = x;
 Ysite   = x;
@@ -55,7 +54,7 @@ findrhodotstar   = @(x,y,z,xdot,ydot,zdot,Xsite,Ysite,Zsite,theta,theta_dot,rho)
 % System Constants
 %---------------------------------------------
 Phi_Init    = eye(18,18);
-tol         = 1e-13;
+tol         = 1e-8;
 uE          = 3.986004415e14;        % m^3/s^2
 J2          = 1.082626925638815e-3;  % []
 Cd          = 2;                     % []
@@ -89,17 +88,18 @@ Xstar0 = [RV_Init , Const_Init , Station_Init , reshape(Phi_Init,1,length(Phi_In
 
 % Initialize Kalman Filter
 %---------------------------------------------
-xbar0       = zeros(18,1);
-xhat0       = xbar0;
+xbar       = zeros(18,1);
+xhat       = xbar;
 
 Phi_tk_t0   = Phi_Init;%ones(size(Phi_Init));
 %---------------------------------------------
 
 
 %% Perform Batch Loop
-num_iterations = 5;
+num_iterations = 3;
  for ii = 1:num_iterations
-    P0          = Pbar0;
+     tr=[];
+    P(:,:,1)          = Pbar0;
     
     % Dynamical Integration
     %---------------------------------------------
@@ -109,18 +109,11 @@ num_iterations = 5;
     [time,StatePhi] = ode45(@StateDeriv_WithPhi,time,Xstar0,options);
     %---------------------------------------------
     
-    
-    % Batch Processing Part
-    %---------------------------------------------
-    %     Lam = inv(Pbar0);
-    %     N   = Pbar0\xbar0;  % same as inv(pobar)*xbar0
-    %---------------------------------------------
-
+   
     % Reform Phi Matrix
     %---------------------------------------------
     for jj = 1:length(time)
            Phi(:,:,jj)     = reshape(StatePhi(jj,19:end),size(Phi_Init));
-%            Phi_tk_t0= Phi(:,:,jj)*Phi_tk_t0;
            Xstar    = StatePhi(:,1:18);
            x        = Xstar(:,1);
            y        = Xstar(:,2);
@@ -183,14 +176,11 @@ num_iterations = 5;
         
         % Time Update
         %---------------------------------------------
-        if time(jj) > 0
+        if jj > 1
             Phi_step= Phi(:,:,jj)/Phi(:,:,jj-1);
-            xbar1   = Phi_step*xhat0;
-            Pbar1   = Phi_step*P0*Phi_step';
+            xbar(:,:,jj)   = Phi_step*xhat(:,:,jj-1);
+            P(:,:,jj)   = Phi_step*P(:,:,jj-1)*Phi_step';
             
-        else
-            xbar1   = xbar0;
-            Pbar1   = P0;
         end
         %---------------------------------------------
         
@@ -209,24 +199,17 @@ num_iterations = 5;
         
         % Kalman Gain
         %---------------------------------------------
-        K1          = Pbar1*Htilde'*inv(Htilde*Pbar1*Htilde' + R);
+        K1          = P(:,:,jj)*Htilde'*inv(Htilde*P(:,:,jj)*Htilde' + R);
         %---------------------------------------------
         
         % Measurement Update
         %---------------------------------------------
-        xhat1 = xbar1 + K1*(y1(:,jj) - Htilde*xbar1);
-%         P1 = (eye(size(K1*Htilde)) - K1*Htilde)*Pbar1*(eye(size(K1*Htilde))-K1*Htilde)' + K1*R*K1';
-        P1 = (eye(size(K1*Htilde)) - K1*Htilde)*Pbar1;
+        xhat(:,:,jj) = xbar(:,:,jj) + K1*(y1(:,jj) - Htilde*xbar(:,:,jj));
+%         P(:,:,jj) = (eye(size(K1*Htilde)) - K1*Htilde)*P(:,:,jj)*(eye(size(K1*Htilde))-K1*Htilde)' + K1*R*K1';
+        P(:,:,jj) = (eye(size(K1*Htilde)) - K1*Htilde)*P(:,:,jj);
         %---------------------------------------------
-        
-        
-        % Replace for Next Observation
-        %---------------------------------------------
-        xhat0   = xhat1;
-        P0      = P1;
-        %---------------------------------------------
-        
-
+              
+        tr = [tr,trace(P(1:3,1:3,jj))];
                                                                
     end   % End observation loop
     
@@ -234,15 +217,11 @@ num_iterations = 5;
         
     % Update Best Guess of Initial Conditions
     %---------------------------------------------%     
-     Xstar0  = [Xstar0(1:18) + inv(Phi(:,:,end))*xhat1; (reshape(Phi_Init,length(Phi_Init)^2,1))];
-     P0      = inv(Phi(:,:,end))*P1*inv(Phi(:,:,end))';
-     xbar0   = xbar0 - xhat0;% inv(Phi(:,:,end))*xhat1;%zeros(18,1);
+     Xstar0 = [Xstar0(1:18) + inv(Phi(:,:,end))*xhat(:,:,end); (reshape(Phi_Init,length(Phi_Init)^2,1))];
+     P      = inv(Phi(:,:,end))*P(:,:,end)*inv(Phi(:,:,end))';
+     xbar   = xbar(:,:,end-1) - xhat(:,:,end-1);
 
-    % Hmm trying to use the cumulated phi
-%     Phi_tk_t0 = prod(Phi,3);
-%     Xstar0  = [Xstar0(1:18) + (Phi_tk_t0)*xhat1; (reshape(Phi_Init,length(Phi_Init)^2,1))];
-%     P0      = (Phi_tk_t0)*P1*(Phi_tk_t0)';
-%     xbar0   = (Phi_tk_t0)*xhat1;%zeros(18,1);
+
 
     %--------------------------------------------- 
     fprintf('RMS of rho is :  %3.5f \n',rms(y1(1,:)))
@@ -255,16 +234,24 @@ num_iterations = 5;
     subplot(num_iterations,2,2*ii-1)
     plot(y1(1,:))
     ylabel('rho residules')
-    xlabel('observation number')
+    xlabel('Observation Number')
     
     subplot(num_iterations,2,2*ii)
     plot(y1(2,:))
-    ylabel('rho residules')
-    xlabel('observation number')
+    ylabel('rho dot residules')
+    xlabel('Observation Number')
+    
+    
+    figure(2)
+    subplot(num_iterations,1,ii)
+    loglog(tr)
+    xlabel('Observation Number')
+    ylabel('Trace( P_x_y_z )')
     
 end
 
 fprintf('\n\nRunning Time for Kalman Filter : %3.5f\n\n',toc)
+
 
 
 
