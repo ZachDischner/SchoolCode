@@ -54,7 +54,7 @@ findrhodotstar   = @(x,y,z,xdot,ydot,zdot,Xsite,Ysite,Zsite,theta,theta_dot,rho)
 % System Constants
 %---------------------------------------------
 Phi_Init    = eye(18,18);
-tol         = 1e-8;
+tol         = 1e-9;
 uE          = 3.986004415e14;        % m^3/s^2
 J2          = 1.082626925638815e-3;  % []
 Cd          = 2;                     % []
