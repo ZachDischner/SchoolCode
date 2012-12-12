@@ -1,0 +1,19 @@
+% Filename:    Exam3_Problem4_data.txt
+% Author:      Jeff Parker
+% Date:        12/9/2012
+% Purpose:     This file contains data for use in Problem 4 of Exam 3
+% Contents:    This file contains N independent and uncorrelated solutions
+%              to an identical problem.
+%              The file stores these solutions one per row.
+%              Each row is formatted as follows:
+% Row i = the ith estimated solution to the same problem.
+% i,      x,        y,    P(1,1),   P(1,2),   P(2,1),    P(2,2)
+1,    9.367,   10.142,    61.329,    8.801,    8.801,    5.184
+2,    8.849,   10.836,    70.405,   -3.514,   -3.514,    11.773
+3,   11.903,    9.711,    48.215,   37.450,   37.450,    31.759
+4,    3.511,   16.111,   140.684,        0,        0,   109.153
+5,    9.228,   10.317,     3.188,   -2.004,   -2.004,     4.022
+6,   20.952,    0.575,   110.988,  -90.003,  -90.003,   112.222
+7,    9.624,   11.066,     3.371,   -2.119,   -2.119,     4.151
+8,    9.501,   12.488,    28.215,   -4.450,   -4.450,    31.759
+

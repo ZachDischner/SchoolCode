@@ -95,7 +95,7 @@ Phi_tk_t0   = Phi_Init;%ones(size(Phi_Init));
 %---------------------------------------------
 
 
-%% Perform Batch Loop
+%% Perform Kalman Loop
 num_iterations = 3;
  for ii = 1:num_iterations
      tr=[];
@@ -205,8 +205,9 @@ num_iterations = 3;
         % Measurement Update
         %---------------------------------------------
         xhat(:,:,jj) = xbar(:,:,jj) + K1*(y1(:,jj) - Htilde*xbar(:,:,jj));
-%         P(:,:,jj) = (eye(size(K1*Htilde)) - K1*Htilde)*P(:,:,jj)*(eye(size(K1*Htilde))-K1*Htilde)' + K1*R*K1';
-        P(:,:,jj) = (eye(size(K1*Htilde)) - K1*Htilde)*P(:,:,jj);
+%          P(:,:,jj) = (eye(size(K1*Htilde)) - K1*Htilde)*P(:,:,jj)*(eye(size(K1*Htilde))-K1*Htilde)' + K1*R*K1';
+%        P(:,:,jj) = (eye(size(K1*Htilde)) - K1*Htilde)*P(:,:,jj);
+        P(:,:,jj) = ComputeP(Htilde,P(:,:,jj),R,Xstar(jj,1:18),ystar,'potter');
         %---------------------------------------------
               
         tr = [tr,trace(P(1:3,1:3,jj))];
@@ -233,12 +234,12 @@ num_iterations = 3;
     figure(1)
     subplot(num_iterations,2,2*ii-1)
     plot(y1(1,:))
-    ylabel('rho residules')
+    ylabel('$\rho$ residules')
     xlabel('Observation Number')
     
     subplot(num_iterations,2,2*ii)
     plot(y1(2,:))
-    ylabel('rho dot residules')
+    ylabel('$\dot{\rho}$ residules')
     xlabel('Observation Number')
     
     
@@ -246,9 +247,13 @@ num_iterations = 3;
     subplot(num_iterations,1,ii)
     loglog(tr)
     xlabel('Observation Number')
-    ylabel('Trace( P_x_y_z )')
+    ylabel('Trace( $P_{xyz}$ )')
     
-end
+ end
+
+ % epic function by Pierce Martin
+ RE     = 6378136.3;     % m    Radius of earth
+ plot_X_star(Xstar',RE,station)
 
 fprintf('\n\nRunning Time for Kalman Filter : %3.5f\n\n',toc)
 

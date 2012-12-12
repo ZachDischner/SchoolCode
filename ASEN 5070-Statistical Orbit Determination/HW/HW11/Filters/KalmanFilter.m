@@ -54,7 +54,7 @@ findrhodotstar   = @(x,y,z,xdot,ydot,zdot,Xsite,Ysite,Zsite,theta,theta_dot,rho)
 % System Constants
 %---------------------------------------------
 Phi_Init    = eye(18,18);
-tol         = 1e-8;
+tol         = 1e-13;
 uE          = 3.986004415e14;        % m^3/s^2
 J2          = 1.082626925638815e-3;  % []
 Cd          = 2;                     % []
@@ -95,8 +95,8 @@ Phi_tk_t0   = Phi_Init;%ones(size(Phi_Init));
 %---------------------------------------------
 
 
-%% Perform Batch Loop
-num_iterations = 3;
+%% Perform Kalman Loop
+num_iterations = 1;
  for ii = 1:num_iterations
      tr=[];
     P(:,:,1)          = Pbar0;
@@ -205,8 +205,8 @@ num_iterations = 3;
         % Measurement Update
         %---------------------------------------------
         xhat(:,:,jj) = xbar(:,:,jj) + K1*(y1(:,jj) - Htilde*xbar(:,:,jj));
-%         P(:,:,jj) = (eye(size(K1*Htilde)) - K1*Htilde)*P(:,:,jj)*(eye(size(K1*Htilde))-K1*Htilde)' + K1*R*K1';
-        P(:,:,jj) = (eye(size(K1*Htilde)) - K1*Htilde)*P(:,:,jj);
+        P(:,:,jj) = (eye(size(K1*Htilde)) - K1*Htilde)*P(:,:,jj)*(eye(size(K1*Htilde))-K1*Htilde)' + K1*R*K1';
+%         P(:,:,jj) = (eye(size(K1*Htilde)) - K1*Htilde)*P(:,:,jj);
         %---------------------------------------------
               
         tr = [tr,trace(P(1:3,1:3,jj))];
@@ -244,11 +244,13 @@ num_iterations = 3;
     
     figure(2)
     subplot(num_iterations,1,ii)
-    loglog(tr)
+    semilogy(tr)
     xlabel('Observation Number')
     ylabel('Trace( P_x_y_z )')
+    title('Kalman Filter With Joseph Formulation')
     
-end
+ end
+figure_awesome('save')
 
 fprintf('\n\nRunning Time for Kalman Filter : %3.5f\n\n',toc)
 
