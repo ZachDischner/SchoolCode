@@ -1,0 +1,165 @@
+\documentclass[11pt,a4paper,oneside]{article}
+
+%################################# Preamble ##################################%
+
+	%%%%%%%%%%%%%%%%%  << MATLAB INCLUSION>>  %%%%%%%%%%%%%%%%%
+	\usepackage[]{mcode}
+	% *mcode is in 
+	%		/Users/zachdischner/Library/texmf/tex/latex/local
+	% added to database with:
+	%    		>>> sudo texhash
+	%%%%%%%%%%%%%%%%%  << MATLAB INCLUSION>>  %%%%%%%%%%%%%%%%%
+	
+	%%%%%%%%%%%%%%%%%  << Margins and Spacing>>  %%%%%%%%%%%%%%%%%
+	\usepackage[margin=0.75in]{geometry}
+	%%%%%%%%%%%%%%%%%  << Margins and Spacing>>  %%%%%%%%%%%%%%%%%
+	
+	%%%%%%%%%%%%%%%%%  << IMAGE INCLUSION>>  %%%%%%%%%%%%%%%%%
+	\usepackage{graphicx}
+	%%%%%%%%%%%%%%%%%  << IMAGE INCLUSION>>  %%%%%%%%%%%%%%%%%
+	\usepackage{natbib}
+	\usepackage{color}
+	\usepackage{cleveref}
+	\usepackage{amsmath}
+	\usepackage{graphicx}
+	\usepackage{color}
+	\usepackage{appendix}
+	\usepackage{url}
+	
+	\usepackage{float}
+	%\floatstyle{boxed} 		% Box around figures and things
+	\restylefloat{figure}
+	\setlength{\textfloatsep}{15pt plus 1.0pt minus 2.0pt}
+	\setlength{\floatsep}{5pt plus 1.0pt minus 2.0pt}
+	
+	% Other packages
+	%\usepackage{times, rawfonts, geometry}
+	%\usepackage{amsmath,amssymb}
+	%\usepackage{float}
+	
+	% New commands
+	\newcommand{\ignore}[1]{}  % {} empty inside = %% comment
+	
+	% Scientific notation:
+	\providecommand{\e}[1]{\ensuremath{\times 10^{#1}}}
+	
+	% General
+	\newcommand{\parens} [1] {\left(  #1  \right)}
+	\newcommand{\brackets} [1] {\left[ #1 \right]}
+	\newcommand{\rootdir}{./Figures/}
+	
+	% Array
+	\newcommand{\arrayp}[2]{\parens{ \begin{array}{#1}  #2 \end{array} } }
+	\newcommand{\arrayb}[2]{\brackets{ \begin{array}{#1}  #2 \end{array} } }
+	% Use like:  where {c|c} is a vertical bar, inserts into the matrix. 
+	% $\arrayb{c|c}{y & 4\\y & 4\\y & X\\y & nn}$
+	
+	%Figure {HERE}   - use like:  \fig{figurename.extension}{Caption}{Label}
+	\newcommand{\fig}[3]{
+			\begin{center}
+				\begin{figure}[H]
+					\includegraphics[width=.9\textwidth]{\rootdir #1}
+					\caption{#2}
+					\label{#3}
+				\end{figure}
+			\end{center}
+			}
+	
+%################################# Preamble ##################################%
+
+\begin{document}
+
+% Math Examples
+%----------------------------------------------------------------------------------------------------------------------------------------
+\section{Math Examples}
+
+\subsection{Predefined}
+\bf{arayb:}
+\begin{center}
+	$\arrayb{c|c}{y & 4\\y & 4\\y & X\\y & nn}$\cite{STATODbook}
+\end{center}
+
+
+\noindent \bf{arrapp:}
+\begin{center}
+	$\arrayp{cc}{y & 4\\y & 4\\y & X\\y & nn}$
+\end{center}
+
+
+
+
+\subsection{Matrices}
+\bf{Braces:}
+
+\begin{center}
+	$
+		A_{m,n} =
+		 \begin{Bmatrix}
+		  a_{1,1} & a_{1,2} & \cdots & a_{1,n} \\
+		  a_{2,1} & a_{2,2} & \cdots & a_{2,n} \\
+		  \vdots  & \vdots  & \ddots & \vdots  \\
+		  a_{m,1} & a_{m,2} & \cdots & a_{m,n}
+		 \end{Bmatrix}
+	$
+\end{center}
+
+\noindent \bf{Brackets}
+\begin{center}
+	$
+		A_{m,n} =
+		 \begin{bmatrix}
+		  a_{1,1} & a_{1,2} & \cdots & a_{1,n} \\
+		  a_{2,1} & a_{2,2} & \cdots & a_{2,n} \\
+		  \vdots  & \vdots  & \ddots & \vdots  \\
+		  a_{m,1} & a_{m,2} & \cdots & a_{m,n}
+		 \end{bmatrix}
+	$
+\end{center}
+
+\noindent \bf{Parenthesis}
+	\begin{center}
+	$
+		A_{m,n} =
+		 \begin{pmatrix}
+		  a_{1,1} & a_{1,2} & \cdots & a_{1,n} \\
+		  a_{2,1} & a_{2,2} & \cdots & a_{2,n} \\
+		  \vdots  & \vdots  & \ddots & \vdots  \\
+		  a_{m,1} & a_{m,2} & \cdots & a_{m,n}
+		 \end{pmatrix}
+	$
+\end{center}
+
+%----------------------------------------------------------------------------------------------------------------------------------------
+
+
+% Figure Examples
+%----------------------------------------------------------------------------------------------------------------------------------------
+\section{Figures}
+\subsection{Self Defined Functions}
+Put it here:
+\fig{GPS.jpg}{GPS Caption \cite{GPS}}{GPS Label}
+
+
+%----------------------------------------------------------------------------------------------------------------------------------------
+
+\section{Lists}
+Simple Bullet List:
+\begin{itemize}
+	\renewcommand{\labelitemi}{$\bullet$}
+	\item Batch Processor
+	\item Conventional Kalman (Sequential) Filter
+	\item Extended Kalman Filter
+	\item State Noise Compensation
+	\item Alternative Methods for Determining \emph{P}, the Covariance Matrix
+\end{itemize}
+
+
+
+
+\newpage
+\section{Bibliography}
+\bibliographystyle{abbrv}		% Must have a bib style!!
+\bibliography{Playground}	% Name of .bib file, in this same directory
+
+
+\end{document}
