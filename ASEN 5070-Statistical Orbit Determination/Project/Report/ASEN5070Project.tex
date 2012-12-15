@@ -108,7 +108,7 @@ This report summarizes an investigation of various methods of statistical orbit 
 
 
 \newpage
-% Orbit Determination Process
+% Background
 %----------------------------------------------------------------------------------------------------------------------------------------
 \section{Background}
 
@@ -117,7 +117,15 @@ The orbit determination process is, at the fundamental level, one which determin
 
 The state of a satellite is "a set of parameters required to predict future motion of the system"\cite{tapley2004statistical}. These parameters include the position and velocity vectors of the satellite, and often includes other information relating to the dynamical model. Other information can include atmospheric drag, solar wind, gravity terms, tracking station information, or other system dynamics. Fundamentally, anything can be included in the state that the operator would wish to track and model. 
 
-The process of determining a satellite state at a given Epoch involves convolving information about its present and past state, in a mathematically optimized manner. Present state information comes from both physical observations of the system, as well as from a dynamical system model. Observations often comes from range, range-rate, azimuth, elevation, angel, and other physically observable quantities, provided by tracking ground station or other celestial bodies. The dynamical model is a purely mathematical approximation of the satellite's state in time. Information about the satellite's past state (\emph{a-priori} information) comes from the navigator's historical data. 
+The process of determining a satellite state at a given Epoch involves convolving information about its present and past state, in a mathematically optimized manner. Present state information comes from both physical observations of the system, as well as from a dynamical system model. Observations often comes from range, range-rate, azimuth, elevation, angel, and other physically observable quantities, provided by tracking ground station or other celestial bodies. The dynamical model is a purely mathematical approximation of the satellite's state in time. Information about the satellite's past state (\emph{a-priori}) information) comes from the navigator's historical data. 
+
+Important to note is the fact that all information about the state is imperfect. Observations have biases and accuracy in measurements, any model will have errors and unknown factors at play, and \emph{a-priori} information is a result of similar imperfections obtained from past information. Basically, the true state of the satellite is never known. The OD process is one which uses all of the imperfect information to generate a statistical "best" estimate of the satellite state at a given epoch. 
+
+Another key note is that the relation between observation of the state and the state itself are highly nonlinear in most applications. 
+
+\subsection{The Batch Processor}
+The Batch Processor is one formulation of the OD process. 
+
 
 %----------------------------------------------------------------------------------------------------------------------------------------
 
