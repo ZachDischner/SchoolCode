@@ -47,7 +47,6 @@ for ii = 1:998
         PS(kk) = P(kk) + S(kk)*(PS(kk+1) - P(kk+1))*S(kk)';
         
         EtaHatS(kk) = EtaHat(kk) + S(kk)*(EtaHat(kk+1) - PhiStep(kk+1)*EtaHat(kk));
-        EtaHatS2(kk) = mean([EtaHat(kk+1),EtaHat(kk-1),EtaHat(kk)]);
    end   
 end
 
@@ -68,7 +67,6 @@ hold on
 plot(Truth,'k','linewidth',1)
 plot(Truth+res,'b','Linewidth',1)
 plot(Truth(1:999)+res2,'g','Linewidth',1)
-plot(EtaHatS2,'r')
 legend('Truth','Res','Smoothed Res')
 
 

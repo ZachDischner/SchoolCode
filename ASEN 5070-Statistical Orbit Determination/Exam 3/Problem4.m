@@ -122,12 +122,11 @@ plot(xhat6prime(1) ,xhat6prime(2),'b*','Markersize',12)
 a= Pfinal(1,1)^.5;
 b=Pfinal(2,2)^.5;
 
-delsigx = (xhat6prime(1))/a;
-delsigy = (xhat6prime(2))/b;
+% delsigx = (xhat6prime(1))/a;
+% delsigy = (xhat6prime(2))/b;
+% 
+% nsigma = sqrt(delsigx^2 + delsigy^2);
 
-nsigma = sqrt(delsigx^2 + delsigy^2);
-
-cov_ellipse(Pfinal*nsigma^2,xhat2(1),xhat2(2),'y')
 
 % error_ellipse(Pfinal*13.157268^2,xhat2)
 % lines = sort(findobj(gca,'Type','line'));
@@ -135,12 +134,12 @@ cov_ellipse(Pfinal*nsigma^2,xhat2(1),xhat2(2),'y')
 
 
 phi = atan2(U(2,1),U(1,1));
-dist = norm(xhat6-xhat2);
-delx = dist*U(1,1);
-dely = dist*(U(1,2));
-delsigx = delx/a;
-delsigy=dely/b;
-delsigma = norm([delsigx delsigy]);
+% dist = norm(xhat6-xhat2);
+% delx = dist*U(1,1);
+% dely = dist*(U(1,2));
+% delsigx = delx/a;
+% delsigy=dely/b;
+% delsigma = norm([delsigx delsigy]);
 
 th=atan2(xhat6prime(2),xhat6prime(1));
 rel=th-phi;
@@ -152,6 +151,7 @@ delystd=dely/b;
 
 delstd = sqrt(delxstd^2 + delystd^2);
 
+cov_ellipse(Pfinal*delstd^2,xhat2(1),xhat2(2),'y')
 
 % plot principle axis
 quiver([xhat2(1),xhat2(1)]',[xhat2(2) xhat2(2)]',vec(:,2),vec(:,1),6)
