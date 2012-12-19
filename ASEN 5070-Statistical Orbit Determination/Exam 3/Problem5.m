@@ -26,7 +26,7 @@ ob = d(:,2);
 
 Truth = sin(2*pi*t/10);
 
-load('EtaHW11.mat')
+load('EtaHatEX3.mat')
 
 %% Smooth out the Data
 l = length(t);
@@ -47,7 +47,6 @@ for ii = 1:998
         PS(kk) = P(kk) + S(kk)*(PS(kk+1) - P(kk+1))*S(kk)';
         
         EtaHatS(kk) = EtaHat(kk) + S(kk)*(EtaHat(kk+1) - PhiStep(kk+1)*EtaHat(kk));
-        EtaHatS2(kk) = mean([EtaHat(kk+1),EtaHat(kk-1),EtaHat(kk)]);
    end   
 end
 
@@ -59,23 +58,34 @@ plot(ob,'r.','MarkerSize',1)
 plot(EtaHat,'b','linewidth',1)
 plot(EtaHatS,'g','Linewidth',1)
 legend('Truth','Observations','$\hat{\eta}$','Smoothed $\hat{\eta}$')
+xlabel('t');ylabel('$\hat{\eta}$');title('Comparison - Smoothing in Action')
 
 
+%% Plot Residual Comparision
 res = Truth-EtaHat';
 res2 = Truth(1:999) - EtaHatS';
 figure
 hold on
-plot(Truth,'k','linewidth',1)
+plot(Truth,'k')
 plot(Truth+res,'b','Linewidth',1)
 plot(Truth(1:999)+res2,'g','Linewidth',1)
-plot(EtaHatS2,'r')
-legend('Truth','Res','Smoothed Res')
+
+legend('Truth','Filtered RMS','Smoothed RMS')
+xlabel('t');ylabel('$\eta$');title(' - Residual Comparision')
 
 
+
+%% Normality Fit
 figure
+subplot(1,2,1)
 hist(res);histfit(res)
-title('Original Residules')
+title('Original Residuals')
 
-figure
+subplot(1,2,2)
 hist(res2);histfit(res2)
-title('Smoothed Residules')
+title('Smoothed Residuals')
+
+%% RMS Calculation
+fprintf('\n Original res: rms = %3.5f\n\n',rms(res))
+fprintf('\n Smoothed res: rms = %3.5f\n\n',rms(res2))
+fprintf('Resulting in a drop in res of:  %3.5f Percent\n\n',(rms(res)-rms(res2))*100)

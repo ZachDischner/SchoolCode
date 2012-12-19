@@ -7,8 +7,10 @@ obs     =load('Exam3_Problem5_data.txt');
 time    =obs(:,1);
 Y       =obs(:,2);
 
-Beta    = 0.02;
-sigma   = 0.67;
+% Beta    = 0.02;
+% sigma   = 0.67;
+Beta = 1.45;
+sigma = 10.49;
 
 Eta(1) = Y(1);
 
