@@ -130,7 +130,7 @@ Henceforth, any mention of \emph{textbook, 5070 textbook} or simply, \emph{the b
 
 \subsubsection{Overview of Orbit Determination Process}
 \label{sec:OD sub Overview}
-The orbit determination process is, at the fundamental level, one which determines a celestial body's motion relative to another. Typically, this process is used to determine the motion of Earth-launched satellites relative to Earth. Though the problem can and is often applied to a variety of systems, but this paper will concern itself with Earth-centered satellites and their dynamical states. Even so, the same process described here can easily be applied to any dynamical system. From tracking trains and automobiles, to basic control systems for pointing mechanical linkages, the theory and procedures are generally the same. 
+The orbit determination process is, at the fundamental level, one which determines a celestial body's motion relative to another. Typically, this process is used to determine the motion of Earth-launched satellites relative to Earth. Though the problem can and is often applied to a variety of systems, but this paper will concern itself with Earth-centered satellites and their dynamical states. 
 
 The state of a satellite is "a set of parameters required to predict future motion of the system"\cite{tapley2004statistical}. These parameters include the position and velocity vectors of the satellite, and often includes other information relating to the dynamical model. Other information can include atmospheric drag, solar wind, gravity terms, tracking station information, or other system dynamics. Fundamentally, anything can be included in the state that the operator would wish to track and model. 
 
@@ -330,7 +330,7 @@ Where
 \begin{displaymath}
 	P = E[(\hat{x}_k - x_k)(\hat{x}_k - x_k)^T]
 	\hspace{1cm}
-	R=E[\epsilon \epsilon^T] = W^{-1}
+	R=E[\epsilon \epsilon^T] 
 \end{displaymath}
 
 
@@ -346,102 +346,13 @@ Again, adding \emph{a-priori} information to eq\eqref{eq:x MinVar} can help to y
 Theoretically, there are an infinite number of \emph{best} estimate solutions. From a 'least cubed' or 'least 4/3' estimates, to an often used \emph{Maximum Likelihood and Bayesian Estimation} solution, there are dozens of implemented and derived OD solutions. The general process is to first pick a performance index, $J(x)$. This should be a function which has some basis in statistical reasoning. Next, solve for a value of $x$ which minimizes the performance index. 
 
 
-%----------------------------------------------------
-%OD Filters-------------------------------------------------------------
-%----------------------------------------------------
 
 
 \subsection{Orbit Determination Filters} 
-\label{sec:Filters}
-With assumptions about the linearity of the deviation between satellite truth and reference states, and statistically derived criteria for solving for this state deviation, the process of orbit determination can begin. There are several standard approaches to solving the OD problem. This paper will only concern itself with the basic ones.  
 
-%----------------------------------------------------
-%----------------------------------------------------
-%Batch Processor----------------------
 
 \subsubsection{The Batch Processor}
-\label{sec:Batch Processor}
-The Batch Processor is one formulation of the OD process. As the name implies, its aim is to process a set of observations and a reference trajectory at one time, in a single batch computation. Typically, the entire batch of computation is done in order to get a new best estimate for the state deviation vector at an epoch $t_0$. In operation, the satellite's current trajectory is not the only state of interest. For science missions, a very accurate estimation of the state at a given historical instance is needed for high quality analysis of data. The batch processor takes information about a time before the epoch of interest, and information afterwards to generate the best estimate of the satellite state at epoch. 
-Using the weighted least squares with \emph{a-priori} information, the eq\eqref{eq:x WLSap} equation for the state deviation vector for a full batch of observations becomes
-
-\begin{equation}
-	\hat{x}_0 = (H^T R^{-1} H + \bar{P}_0^{-1})^{-1}   (H^T R^{-1} y + \bar{P}_0^{-1} \bar{x}_0)
-	\label{eq:x Batch}
-\end{equation}
-
-Here, $t_0$ is the epoch time of interest. Since eq\eqref{eq:x Batch} is supposed to solve for $\hat{x}_0$, all quantities must be mapped to that epoch using the state transition matrices, described in section \ref{sec:OD sub STM}.
-
-The course text book features an in-depth procedure for using the batch processor in an application, as well as insights into key terms and quantities in Chapter 4.7. It will not be discussed here for the sake of brevity. The general process is to \cite{5070LEC}:
-
-\begin{itemize}
-	\renewcommand{\labelitemi}{$\bullet$}
-	\item Collect Observations and Residuals Over an  Arc
-	\item Process All Using Weighted Least Squares with \emph{a-priori}
-	\item Generate Best Estimate
-	\item Iterate
-\end{itemize}
-
-
-The batch processor will yield an updated result for the state deviation vector at epoch, however it must be iterated in order to obtain the absolute best solution. The iteration process is straightforward, and is done by re-running the filter after updating the initial conditions with the new best estimates. Again, this process is outlined in the textbook. 
-
-One problem with the batch processor is the fact that a large matrix inversion is required. This is evident in eq\eqref{eq:x Batch}, and this portion is called the \emph{information matrix}, eq\eqref{eq:Information Matrix}. In practice, Cholesky decompositions or other methods would be utilized to increase the accuracy of this inversion, but matrix inversions are still computationally heavy. 
-
-\begin{equation}
-	\Lambda_0 = (H^T R^{-1} H + \bar{P}_0^{-1})
-	\label{eq:Information Matrix}
-\end{equation}
-
-
-The other potential detriment to the batch processor is the fact that since it uses future information to get the best estimate of some past epoch, it is not ideally suited for live tracking situations. This is where the sequential processor comes in. 
-
-
-
-%----------------------------------------------------
-%----------------------------------------------------
-%Kalman Filter----------------------
-
-\subsubsection{Sequential Filter}
-\label{sec:Sequential Filter}
-
-The conventional sequential filter, commonly referred to as a Kalman filter, KF, or CKF, is a reformulation of the batch processor described in \ref{sec:Batch Processor}. With perfect numerical precision, the two yield identical results. 
-
-The advantage of the CKF is that it processes observations live. As soon as a new observation is available, it will be processed. The other advantage is that not only can it process observation sets one at a time, but it can process just single observations sequentially. Even when a set is observed at the same time. This is advantageous because it cuts down on computational requirements by just involving scalar divisions~\cite{tapley2004statistical}. The reformulation of the batch solution is as follows
-
-\begin{equation}
-	\hat{x}_k = \bar{x}_k + K_k [ y_k - \tilde{H}_k \bar{x}k ]
-	\label{eq:x Kalman}
-\end{equation}
-
-Where the covariance matrix, $P$ at new time $t_k$ is
-
-\begin{equation}
-	P_k = [I - K_k \tilde{H}_k] \bar{P}_k
-	\label{eq:P Kalman}
-\end{equation}
-
-And $K$ is found at each observation time as
-
-\begin{equation}
-	K_k \equiv \bar{P}_k \tilde{H}_k^T [ \tilde{H}_k \bar{P}_k \tilde{H}_k^T + R_k]^{-1}
-	\label{eq:K Kalman}
-\end{equation}
-
-$K$ is referred to as the Kalman Gain. It is a matrix which weighs the certainty of the observations against the certainty of the reference trajectory. Equation \eqref{eq:x Kalman} shows the computation of the best estimate state deviation vector at time $t_k$. It is a balance between the \emph{a-priori} state deviation vector and the newly observed difference in observed and computed observation deviation vectors. The \emph{balancing} is performed by the Kalman gain. The computation uses weighting, as well as \emph{a-priori} information. 
-
-As with the batch processor, the CKF should be iterated to obtain the best solution. Instead of computing the state deviation at the epoch time, here it is computed at the latest update time. To iterate, this solution must be mapped back to the epoch time using the state transition matrix (section \ref{sec:OD sub STM}).
-
-The full procedural outline is found in Chapter 4.7 of the textbook, but is summarized here.
-
-
-\begin{itemize}
-	\renewcommand{\labelitemi}{$\bullet$}
-	\item Collect Observations and Residuals Over an  Arc
-	\item Process All Using Weighted Least Squares with \emph{a-priori}
-	\item Generate Best Estimate
-	\item Iterate
-\end{itemize}
-
-
+The Batch Processor is one formulation of the OD process. 
 
 
 %----------------------------------------------------------------------------------------------------------------------------------------
