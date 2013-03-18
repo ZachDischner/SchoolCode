@@ -11,7 +11,7 @@
 
 clc;clear all;close all
 
-%% Problem 3.23 - Verify Cayley Transformation
+%% Problem 2: 3.23 - Verify Cayley Transformation
 
 % Variables 
 %---------------------------------------------
@@ -45,7 +45,7 @@ fprintf('---------------------------------------------\n\n')
 
 
 
-%% Problem 3.28 - Integrate Attitude Vector
+%% Problem 4: 3.28 - Integrate Attitude Vector
 
 
 
@@ -83,6 +83,106 @@ legend('$\sigma_1$','$\sigma_2$','$\sigma_3$','location','best')
 
 set(gcf,'Color',[1 1 1], 'Position',[10 (900)  900 500])
 %---------------------------------------------
+
+
+
+
+%% Problem 6, Triad Method
+
+% Variables 
+%---------------------------------------------
+v1b = [0.8273 0.5541 -0.920]';
+v2b = [-0.8285 0.5522 -0.0955]';
+v3b = [0.2155 0.5522 0.8022]';
+v4b = [0.5570 -0.7442 -0.2884]';
+
+v1i = [-0.1517 -0.9669 0.2050]';
+v2i = [-0.8393 0.4494 -0.3044]';
+v3i = [-0.0886 -0.5856 -0.8000]';
+v4i = [0.8814 -0.0303 0.5202]';
+%---------------------------------------------
+
+
+% Do the triad dood! 
+%---------------------------------------------
+BI{1} = triad(v1b/norm(v1b),v2b/norm(v2b),v1i/norm(v1i),v2i/norm(v2i));
+BI{2} = triad(v1b/norm(v1b),v3b/norm(v3b),v1i/norm(v1i),v3i/norm(v3i));
+BI{3} = triad(v1b/norm(v1b),v4b/norm(v4b),v1i/norm(v1i),v4i/norm(v4i));
+%---------------------------------------------
+
+
+% Output
+%---------------------------------------------
+fprintf('\n\n\n Problem 6:\n')
+fprintf('---------------------------------------------\n\n')
+fprintf('Using  [v1]  and  [v2]  :\n')
+disp(BI{1})
+fprintf('Using  [v1]  and  [v3]  :\n')
+disp(BI{2})
+fprintf('Using  [v1]  and  [v4]  :\n')
+disp(BI{3})
+fprintf('---------------------------------------------\n\n')
+%---------------------------------------------
+
+
+
+%% Problem 7, Q Method
+
+% Setup Variables
+%---------------------------------------------
+% Arrays of observations
+vb = [v1b  v2b  v3b  v4b];
+vi = [v1i  v2i  v3i  v4i];
+% Weighting vector
+weights = [10,3,3,3];
+%---------------------------------------------
+
+
+% Do the Q method dood!
+%---------------------------------------------
+q  = doQmethod(vb,vi,weights);
+%---------------------------------------------
+
+
+% Convert to PRV and compare
+%---------------------------------------------
+PRV_triad   = C2PRV(BI{1});
+phiTriad    = mod(PRV_triad(1),2*pi);
+PRV_q       = EP2PRV(q);
+phi_q       = mod(PRV_q(1),2*pi);
+%---------------------------------------------
+
+% Output
+%---------------------------------------------
+fprintf('\n\n\n Problem 7:\n')
+fprintf('---------------------------------------------\n\n')
+fprintf('Phi from the triad method is  :  [%3.5f] rad\n\n',phiTriad)
+fprintf('Phi from the Q method is      :  [%3.5f] rad\n\n',phi_q)
+fprintf('Difference between the two is :  [%3.5f] rad\n\n',phi_q-phiTriad)
+fprintf('---------------------------------------------\n\n')
+%---------------------------------------------
+
+
+
+%% Problem 8, Quest Method
+
+% Quest-imate the stuff!
+%---------------------------------------------
+q_quest     = doQuest(vb,vi,weights);
+PRV_quest   = EP2PRV(q_quest);
+phi_quest   = mod(PRV_quest(1),2*pi);
+%---------------------------------------------
+
+% Output
+%---------------------------------------------
+fprintf('\n\n\n Problem 8:\n')
+fprintf('---------------------------------------------\n\n')
+fprintf('Phi from the Q method is      :  [%3.5f] rad\n\n',phi_q)
+fprintf('Phi from the Quest method is      :  [%3.5f] rad\n\n',phi_quest)
+fprintf('Difference between the two is :  [%3.5f] rad\n\n',phi_q-phi_quest)
+fprintf('---------------------------------------------\n\n\n')
+%---------------------------------------------
+
 
 
 

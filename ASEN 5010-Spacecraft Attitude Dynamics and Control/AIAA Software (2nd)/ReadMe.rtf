@@ -1,0 +1,125 @@
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf430
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fmodern\fcharset0 Courier;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww12240\viewh15840\viewkind1
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\qc
+
+\f0\b\fs24 \cf0 Rigid Body Kinematics Toolbox
+\fs20 \
+\
+
+\b0 Dr. H. Schaub and Dr. J. L. Junkins\
+April 7, 2009\
+
+\i Analytical Mechanics of Space Systems
+\i0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural
+
+\b \cf0 \
+1.0 General Information\
+
+\b0 This toolbox contains rigid body transformations presented in 
+\i Chapter 3
+\i0 , as well as some basic orbit functions from chapter 9.  Toolboxes are provided for the Matlab and Mathematica software packages, as well as C-code libraries in the form of *.c and *.h files.  
+\i Appendix E
+\i0  of the book lists and explains all the routines provided as they appear in the Matlab toolbox.  Equivalent commands are also provided to Mathematica and C-code users.  Each command has an online help text associated with it that explains its use.  The orbital motion sub-routines are only available to Mathematica and C-code users at this time.\
+\
+
+\b 2.0 Installation\
+
+\b0 Both the Matlab and Mathematica toolboxes are plain ASCII text files that must be placed in the proper Matlab or Mathematica sub-folder/sub-directory.  Since the Unix (Mac OS X) and Windows operating system use different ASCII file line endings, two different versions of these ASCII files have been provided which are encoded specifically for each operating system.  If required, these plain text files can be easily converted to other ASCII file formats as needed.  \
+
+\b \
+
+\i\b0 2.1 Matlab\
+
+\i0 - Open the 
+\i Matlab Toolbox
+\i0  folder/directory on the CD.\
+- Open the subfolder/subdirectory specific for the operating system you are going to use.\
+- The folder/directory 
+\i RigidBodyKinematics 
+\i0 contains the various commands as *.m files.  On your system, find the folder which contains the Matlab program.  Copy the 
+\i RigidBodyKinematics
+\i0  folder/directory into the appropriate Matlab 
+\i Toolbox
+\i0  folder/directory.  As you start up Matlab, the new rigid body kinematics toolbox should be available.  For example, if you type 
+\f1 help addEP
+\f0 , you should see:\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li720\ql\qnatural
+
+\f1 \cf0 EDU>help addEP\
+\
+  addEP(B1,B2)\
+ \
+ 	Q = addEP(B1,B2) provides the Euler parameter vector\
+ 	which corresponds to performing to successive\
+ 	rotations B1 and B2.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural
+
+\f0 \cf0 \
+
+\i 2.2 Mathematica
+\i0 \
+- Open the 
+\i Mathematica Toolbox
+\i0  folder/directory on the CD.\
+- Open the subfolder/subdirectory specific for the operating system you are going to use.  It contains the Mathematica 
+\i RigidBodyKinematics.m
+\i0  toolbox file.\
+- On your system, find the folder/directory which contains the Mathematica program.  Copy the 
+\i RigidBodyKinematics.m
+\i0  file of the CD into the appropriate 
+\i AddOns
+\i0  folder/directory. For example, you can add it to the 
+\i StandardPackages
+\i0  folder/directory.  To load up the rigid body kinematics package, open a Mathematica notebook and invoke the command:\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\fi720\ql\qnatural
+
+\b \cf0 <<RigidBodyKinematics`
+\b0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural
+\cf0 \
+To see if the package loaded properly, type in the help command:\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\fi720\ri720\ql\qnatural
+
+\b \cf0 ? addEP
+\f1\b0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li720\ri720\ql\qnatural
+\cf0 "addEP[B1,B2] provides the Euler parameter vector which corresponds to performing to successive rotations B1 and B2."\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural
+
+\f0 \cf0 \
+To load the orbital motion packages, type the command:\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\fi720\ql\qnatural
+
+\b \cf0 <<OrbitalMotion`
+\b0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural
+\cf0 \
+This will allow you to use the orbital motion subroutines such as a conversion from the true anomaly angle f to the eccentric anomaly using\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\fi720\ri720\ql\qnatural
+
+\b \cf0 EccentricAnomaly = f2E[f,e]
+\f1\b0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural
+
+\f0 \cf0 \
+
+\i 2.3 C-Code
+\i0 \
+The rigid body kinematics and orbital motion routines are also provided as C-code subroutines in the form of *.c and *.h files.  To use these function, add both the *.c and *.h files to your C-code project or directory, and then using the \
+\
+	#include "RigidBodyKineamtics.h"\
+\
+line at the top of your C-code file that will use these subroutines.  Similary, the orbital motion is included using\
+\
+	#include "orbitalMotion.h"\
+\
+The files vector3D.c/h are support files for these rigid body kinematics and orbital motion algorithms and allows 3D and 4D vector math to be performed in C.\
+}

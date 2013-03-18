@@ -1,0 +1,182 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Problem318</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-02-19"><meta name="DC.source" content="Problem318.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Create Symbolic Variables</a></li><li><a href="#3">Build DCMs and Multiple</a></li><li><a href="#4">Use Sheperd's equations</a></li><li><a href="#5">Output</a></li></ul></div><pre class="codeinput">clc;clear <span class="string">all</span>;close <span class="string">all</span>
+fprintf(<span class="string">'Problem 3.18:\n\n\n'</span>)
+</pre><pre class="codeoutput">Problem 3.18:
+
+
+</pre><h2>Create Symbolic Variables<a name="2"></a></h2><pre class="codeinput">syms <span class="string">a0</span> <span class="string">a1</span> <span class="string">a2</span> <span class="string">a3</span> <span class="string">b0</span> <span class="string">b1</span> <span class="string">b2</span> <span class="string">b3</span>
+
+<span class="comment">% a# is q'</span>
+<span class="comment">% b# is q''</span>
+</pre><h2>Build DCMs and Multiple<a name="3"></a></h2><pre class="codeinput">C1 = EP2C([a0 a1 a2 a3]);
+
+C2 = EP2C([b0 b1 b2 b3]);
+
+C = C2*C1;
+</pre><h2>Use Sheperd's equations<a name="4"></a></h2><pre class="codeinput"><span class="comment">% Tell it what 'one' is!!!</span>
+<span class="comment">% Can look at the trace term and see that this is a common element to</span>
+<span class="comment">% simplify</span>
+
+one = (a0^2 + a1^2 + a2^2 + a3^2) * (b0^2 + b1^2 + b2^2 + b3^2);
+<span class="comment">% Good trick, thank you kevin dinkel</span>
+
+
+B0 = simplify(sqrt(1/4*(one + trace(C))));
+
+B1 = simplify(sqrt(1/4*(one+2*C(1,1)-trace(C))));
+
+B2 = simplify(sqrt(1/4*(one+2*C(2,2)-trace(C))));
+
+B3 = simplify(sqrt(1/4*(one+2*C(3,3)-trace(C))));
+</pre><h2>Output<a name="5"></a></h2><pre class="codeinput">fprintf(<span class="string">'\nB0 = '</span>);pretty(B0)
+fprintf(<span class="string">'\nB1 = '</span>);pretty(B1)
+fprintf(<span class="string">'\nB2 = '</span>);pretty(B2)
+fprintf(<span class="string">'\nB3 = '</span>);pretty(B3)
+
+fprintf(<span class="string">'\n\n Note, there is sign ambiguity on a symbolic square root'</span>)
+fprintf(<span class="string">'\n So Matlab doesnt know how to treat it. That is why there'</span>)
+fprintf(<span class="string">'\n a [...^2)^(1/2)] term in the final answers. They are irrelevant'</span>)
+fprintf(<span class="string">'\n\n Also note that B0 is negative of what is in the book'</span>)
+fprintf(<span class="string">'\n Since quaternions are a dual set, this is just the opposite'</span>)
+fprintf(<span class="string">'\n set for a rotation\n\n'</span>)
+</pre><pre class="codeoutput">
+B0 = 
+                                  2 1/2
+  ((a1 b1 - a0 b0 + a2 b2 + a3 b3) )
+
+B1 = 
+                                  2 1/2
+  ((a0 b1 + a1 b0 + a2 b3 - a3 b2) )
+
+B2 = 
+                                  2 1/2
+  ((a0 b2 + a2 b0 - a1 b3 + a3 b1) )
+
+B3 = 
+                                  2 1/2
+  ((a0 b3 + a1 b2 - a2 b1 + a3 b0) )
+
+
+ Note, there is sign ambiguity on a symbolic square root
+ So Matlab doesnt know how to treat it. That is why there
+ a [...^2)^(1/2)] term in the final answers. They are irrelevant
+
+ Also note that B0 is negative of what is in the book
+ Since quaternions are a dual set, this is just the opposite
+ set for a rotation
+
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+clc;clear all;close all
+fprintf('Problem 3.18:\n\n\n')
+%% Create Symbolic Variables
+syms a0 a1 a2 a3 b0 b1 b2 b3
+
+% a# is q'
+% b# is q''
+
+%% Build DCMs and Multiple
+C1 = EP2C([a0 a1 a2 a3]);
+
+C2 = EP2C([b0 b1 b2 b3]);
+
+C = C2*C1;
+
+%% Use Sheperd's equations
+
+% Tell it what 'one' is!!!
+% Can look at the trace term and see that this is a common element to
+% simplify
+
+one = (a0^2 + a1^2 + a2^2 + a3^2) * (b0^2 + b1^2 + b2^2 + b3^2); 
+% Good trick, thank you kevin dinkel
+
+
+B0 = simplify(sqrt(1/4*(one + trace(C))));
+
+B1 = simplify(sqrt(1/4*(one+2*C(1,1)-trace(C))));
+
+B2 = simplify(sqrt(1/4*(one+2*C(2,2)-trace(C))));
+
+B3 = simplify(sqrt(1/4*(one+2*C(3,3)-trace(C))));
+
+%% Output
+fprintf('\nB0 = ');pretty(B0)
+fprintf('\nB1 = ');pretty(B1)
+fprintf('\nB2 = ');pretty(B2)
+fprintf('\nB3 = ');pretty(B3)
+
+fprintf('\n\n Note, there is sign ambiguity on a symbolic square root')
+fprintf('\n So Matlab doesnt know how to treat it. That is why there')
+fprintf('\n a [...^2)^(1/2)] term in the final answers. They are irrelevant')
+fprintf('\n\n Also note that B0 is negative of what is in the book')
+fprintf('\n Since quaternions are a dual set, this is just the opposite')
+fprintf('\n set for a rotation\n\n')
+##### SOURCE END #####
+--></body></html>
