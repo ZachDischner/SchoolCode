@@ -1,17 +1,26 @@
-function w=intRigidEOM(w_init,t,I)
+function X=intRigidEOM(X_init,t,I,returnPrime)
 
 %% Rotation about each PA
 
-w = zeros(length(t),length(w_init));
-w(1,:)= w_init;
+% X is a column vector with [w ; 321angles]
+
+X = zeros(length(t),length(X_init));
+Xprime = X;
+X(1,:)= X_init;
+
 for ii=2:length(t)
    % Find the Derivative
-   wprime = RigidEOMDot(t(ii),w(ii-1,:),I);
+   Xprime(ii,:) = RigidEOMDot(t(ii),X(ii-1,:),I);
    
    % General linear integration:
    %    x_(n+1) = x_(n) + x'*delta_t
-   w(ii,:) = w(ii-1,:) + wprime*(t(ii)-t(ii-1));
+   X(ii,:) = X(ii-1,:) + Xprime(ii,:)*(t(ii)-t(ii-1));
    
+   
+end
+
+if exist('returnPrime','var')
+    X=Xprime;
 end
 
 
