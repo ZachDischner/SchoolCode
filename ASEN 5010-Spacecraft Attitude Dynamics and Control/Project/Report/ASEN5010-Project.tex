@@ -1,0 +1,653 @@
+% Try to reduce the number of latex support calls from people who
+% don't read the included documentation.
+%
+%\typeout{}\typeout{If latex fails to find aiaa-tc, read the README file!}
+%
+
+
+\documentclass[]{aiaa-tc}% insert '[draft]' option to show overfull boxes
+
+%%%%%%%%%%%%%%%%%  << MATLAB INCLUSION>>  %%%%%%%%%%%%%%%%%
+\usepackage[]{mcode}
+% *mcode is in 
+%		/Users/zachdischner/Library/texmf/tex/latex/local
+% added to database with:
+%    		>>> sudo texhash
+%%%%%%%%%%%%%%%%%  << MATLAB INCLUSION>>  %%%%%%%%%%%%%%%%%
+	
+
+\usepackage{graphicx}
+%%%%%%%%%%%%%%%%%  << IMAGE INCLUSION>>  %%%%%%%%%%%%%%%%%
+	
+
+% Scientific notation:
+\providecommand{\e}[1]{\ensuremath{\times 10^{#1}}}
+
+% General
+\newcommand{\parens} [1] {\left(  #1  \right)}
+\newcommand{\brackets} [1] {\left[ #1 \right]}
+\newcommand{\rootdir}{./Figures/}
+	
+% Array
+\newcommand{\arrayp}[2]{\parens{ \begin{array}{#1}  #2 \end{array} } }
+\newcommand{\arrayb}[2]{\brackets{ \begin{array}{#1}  #2 \end{array} } }
+% Use like:  where {c|c} is a vertical bar, inserts into the matrix. 
+% $\arrayb{c|c}{y & 4\\y & 4\\y & X\\y & nn}$
+	
+%Figure {HERE}   - use like:  \fig{figurename.extension}{Caption}{Label}
+\newcommand{\figH}[3]{
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=.9\textwidth]{\rootdir #1}
+			\caption{#2}
+			\label{#3}
+		\end{figure}
+		}
+		
+%Figure {not HERE}
+	\newcommand{\fig}[3]{
+		\begin{figure}
+			\centering
+			\includegraphics[width=.9\textwidth]{\rootdir #1}
+			\caption{#2}
+			\label{#3}
+		\end{figure}
+		}
+
+ \title{ASEN 5010 Course Project}
+
+\author{Zach Dischner \\ University of Colorado at Boulder \\ Department of Aerospace Engineering}
+\date{04/06/2013}
+%\maketitle
+
+ % Data used by 'handcarry' option if invoked
+% \AIAApapernumber{2013}
+% \AIAAconference{Conference Name, Date, and Location}
+% \AIAAcopyright{\AIAAcopyrightD{YEAR}}
+
+ % Define commands to assure consistent treatment throughout document
+ \newcommand{\eqnref}[1]{(\ref{#1})}
+ \newcommand{\class}[1]{\texttt{#1}}
+ \newcommand{\package}[1]{\texttt{#1}}
+ \newcommand{\file}[1]{\texttt{#1}}
+ \newcommand{\BibTeX}{\textsc{Bib}\TeX}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+The essence of attitude determination is the estimation of a body's pointing relative to a known frame, given one or more observations taken in different frames. This paper will discuss the development and theoretical testing of attitude estimation algorithms for a satellite two such sensors. Numerical simulations will simulate measurements taken in various frames, and from them determine the spacecraft's attitude relative to the inertial frame. Various parameters such as measurement noise, and orbit characteristics will be examined in order to quantify their impact on performance on the attitude estimation algorithms. 
+
+\end{abstract}
+
+\begin{centering}
+	\begin{figure}[Hh]
+	\hspace{2.5cm}
+		\includegraphics[width=12cm]{\rootdir PrettyTraj.png} 
+	\end{figure}
+\end{centering}
+
+\vspace{2cm}
+
+\section*{Nomenclature}
+
+\begin{tabbing}
+  XXX \= \kill% this line sets tab stop
+  $i$ \> 		Orbit Inclination Angle 			\\
+  $\Omega$ \> 	Longitude of the Ascending Node 	\\
+  $\theta$ \> 	Orbit Position Angle 				\\
+  $r$ \> 		Orbit Radius 					\\
+  $r_E$ \> 		Mean Radius of the Earth			\\
+  $\mu$ \> 	Gravitational Constant 			\\
+  $n$ \> 		Mean Orbit Rate				\\
+  $[XY]$ \> 	DCM Mapping Y to X Frames 		\\
+  $^Xx$ \>  	x expressed in X frame components \\
+
+\textit{Left Superscript}\\
+  $N$ \> 		Inertial Frame 					\\
+  $B$ \> 		Body Frame 					\\
+  $T$ \> 		Topographical \{n,e,d\} Frame 		\\
+ \end{tabbing}
+
+\section{Introduction}
+
+The spacecraft in question for this examination is equipped only with sun and magnetic field direction sensors. Numerical simulations of measurements taken from both of these devices in the $B$ frame, as well as the $N$ frame. Relating measurements between frames, and ultimately providing a measure of the spacecraft's attitude, will be done with the Optimal Linear Attitude Estimation (OLAE) method. Through this numerical simulation, the affect of sensor noise, errors in the orbit parameters, and other sources of error will be examined and quantified. 
+
+\begin{centering}
+	\begin{figure}[Hh]
+	\hspace{2.5cm}
+		\includegraphics[width=12cm]{\rootdir SunSensor.png}
+		\caption{Satellite Sun Sensor Visual}
+		\label{fig: Satellite Sun Sensor}
+	\end{figure}
+\end{centering}
+
+
+The spacecraft itself is orbiting the Earth in a pure circular orbit, and is tumbling free of any active attitude control. The inertial frame position of the satellite is given by:
+
+\begin{equation}
+	^Nr = \arrayp{c}{     \cos{\Omega} \cos{\theta} - \sin{\Omega} \sin{\theta} \cos{i} 	\\
+				      \sin{\Omega} \cos{\theta} + \cos{\Omega} \sin{\theta} \cos{i} \\
+									\sin{\theta}\sin{i}}
+	\label{eq:Inertial Orbit Position Equations}
+\end{equation}  
+
+where 
+
+\begin{displaymath}
+	\begin{array}{c}
+		\Omega=2^o \\
+		i = 75^o	\\
+	\end{array}
+\end{displaymath}
+
+For this simulation, the longitude of the ascending node is $\Omega$, the orbit inclination is $i$, and $\theta$ is the orbit position angle relative to the equatorial crossing point. As the orbit is circular, its governing equation is:
+
+\begin{equation}
+	\theta(t) = \theta_0 + nt
+	\label{eq:Theta(t)}
+\end{equation} 
+
+where $n$ is the mean orbit rate, $r$ is the constant orbit radius, and $mu$ is the Earth's gravitational constant. 
+
+\begin{displaymath}
+	\begin{array}{c}
+		n=\sqrt{\frac{\mu}{r^3}}  						\\
+		r = 6878 \textnormal{km}						\\
+		\mu = 398600   \textnormal{km}^3/\textnormal{s}^2	\\
+	\end{array}
+\end{displaymath}
+
+The spacecraft is axially symmetric, and has the inertia tensor given in body frame components:
+
+\begin{displaymath}
+^BI = 
+	\arrayb{c c c}{
+		 25  & 2.5 & 0.5	\\
+		 2.5 & 20  &   0   \\
+		 0.5 & 0    &   15  
+	}
+	\textnormal{kg m$^2$}
+\end{displaymath}
+
+The spacecraft also is experiencing no external torques, and has initial 3-2-1 Euler angles and initial angular rates defined as:
+
+\begin{displaymath}
+	\begin{array}{c | c}
+		\begin{array}{c c}
+			\arrayb{c}{
+			\psi_0 	\\ 	\theta_0 		\\ \phi_0
+			}
+			=
+			\arrayb{c}{
+			5^o	\\ 	10^o		\\ -5^o
+			}
+		\end{array}
+		&
+		^B\omega_0 	=
+			\arrayb{c}{
+			0.4 	\\ 	0.3	\\  0.2
+			}  \textnormal{deg/s}
+	\end{array}
+\end{displaymath}
+
+
+
+%\subsection{Background}
+%
+%This background section is here only to demonstrate \verb|\subsection|
+%usage.
+%And following this, the next section level will need to be demonstrated.
+%
+%\subsubsection{Detail}
+%
+%Here is a \verb|\subsubsection| that would normally come in pairs of two
+%according to the requirements of an outline, but for the sake of
+%demonstration, we are only showing a single \verb|\subsubsection|.
+%
+%\section{Model}
+%
+%We should probably include some math.
+%Here we begin with Eq.~(\ref{e:function}) that demonstrates some math
+%typesetting.
+%\begin{equation}
+% \label{e:function}
+% \int_{0}^{r_{2}} F(r,\varphi) \, dr \, d\varphi =
+%    \left[ \sigma r_{2}/(2\mu_{0}) \right] \cdot
+%    \int_{0}^{\infty} \exp(-\rho|z_{j}-z_{i}|) \, \lambda^{-1} 
+%\end{equation}
+%Eq.~(\ref{e:function}) is grand.
+%Some say it is due to Rebek.\cite{rebek:82bk}
+%
+
+%Results-------------------------------------------------------
+%----------------------------------------------------
+%----------------------------------------------------
+\section{Results}
+In this section, the development, testing, and simulation of various subprocess in the attitude determination process will be discussed. Unless otherwise mentioned, all numerical calculations, simulations, and visualizations were all performed in Matlab, and all code can be found in \ref{APP:Code}.
+
+%----------------------------------------------------
+%Part A-------------------------------------------------------------
+%----------------------------------------------------
+\subsection{Part A}
+The first step in setting up a numerical simulation of the satellite was to obtain its position in orbit for an arbitrary time. Using EQ \ref{eq:Inertial Orbit Position Equations}, solutions for the satellite positions were found over a ten minute period. Figure \ref{fig:Satellite Position} shows the result of this simulation. 
+
+\begin{centering}
+	\begin{figure}[Hh]
+		\includegraphics[width=\textwidth]{\rootdir SatPosition.eps}
+		\caption{Orbit Position in Time}
+		\label{fig:Satellite Position}
+	\end{figure}
+\end{centering}
+
+
+
+
+
+
+%----------------------------------------------------
+%Part B-------------------------------------------------------------
+%----------------------------------------------------
+\subsection{Part B}
+Next, a routine was written to take a body orientation as a set of MRPs $\bf{\sigma}_{B/N}$, and with the known inertial sun direction vector $^N\hat{s}=(0,-1,0)^T$, compute the simulated sun direction measurement in body coordinates. 
+
+This problem essentially boils down to rotating a measurement in one frame into another frame. In general, this is done by multiplying one observation by the appropriate rotation matrix. 
+
+\begin{displaymath}
+	^Xa = [XY] {^Yx}
+\end{displaymath}
+
+Where in this case, the two frames are the body $B$ and inertial $N$ frames, and the vector quantity being rotated is the measured sun direction vector $\hat{s}$.
+
+\begin{displaymath}
+	^B\hat{s} = [BN] {^N\hat{s}}
+\end{displaymath}
+
+In the above equation, $[BN]$ is the 3x3 rotation matrix, or DCM, which describes the three dimensional rotation between the $B$ and $N$ frames. In this case, this rotation is given as a set of MRPs. From lecture notes, the 3x3 DCM can be extracted from a set of MRPs through the relationship in EQ \ref{eq:MRP2DCM}.
+
+\begin{equation}\label{eq:MRP2DCM}
+	[BN] = [I_{3x3}] + \frac{8[\tilde{\sigma}]^2 - 4(1-\sigma^2)[\tilde{\sigma}]}{(1+\sigma^2)^2}
+\end{equation}
+
+This conversion was provided with the course's computational toolbox, and was implemented in Matlab here. The code for this routine is found in Appendix \ref{APP:Code for Part B}.
+
+
+%----------------------------------------------------
+%Part C-------------------------------------------------------------
+%----------------------------------------------------
+\subsection{Part C}
+\label{sec:C}
+The frame for the satellite to be used in this simulation is a North-East-Down (NED) topographic frame $\tau$. Another main frame of interest is the Earth-fixed frame $\epsilon$.
+
+\begin{displaymath}
+	\tau : \{\hat{n} , \hat{e}, \hat{d}\} 	
+\end{displaymath}
+\begin{displaymath}
+	\epsilon : \{\hat{e}_1 , \hat{e}_2, \hat{e}_3\}
+\end{displaymath}
+
+This frame is illustrated in 
+
+\begin{centering}
+	\begin{figure}[Hh]
+		\includegraphics[width=\textwidth]{\rootdir NED.png}
+		\caption{North East Down Frame}
+		\label{fig:NED}
+	\end{figure}
+\end{centering}
+
+In order to describe the arbitrary rotation between the two frames, a DCM was constructed. Starting at the $\epsilon$ frame, I first rotated $\lambda$ about the third axis, $\hat{e}_3 = \hat{n}_3$. 
+
+\begin{equation}
+	\label{EQ:NED Rot 1}
+	[M_3(\lambda)] = 
+	\arrayb{c c c}{
+		\cos{\lambda} 	& 	\sin{\lambda} 	&	0	\\
+		-\sin{\lambda} 	&	\cos{\lambda} 	& 	0	\\
+		0			&		0		&	1			
+	}
+\end{equation}
+
+Now, $\hat{e}_2' = \hat{e}$. The next rotation is about $\hat{e}$ needs to be a negative rotation of magnitude $\theta$. However, this rotation produces a frame in which $\hat{e}_3'' = \hat{n}$. By adding another $\pi/2$ rotation to the previous, all three axes of the $\epsilon''$ frame align with the new NED $\tau$ frame. 
+
+\begin{equation}
+	\label{EQ:NED Rot 2}
+	[M_2(-\phi\pi/2)] = 
+	\arrayb{c c c}{
+		\cos{(-\phi\pi/2)} 	& 	0	&	-\sin{(-\phi\pi/2)}	\\
+		0				&	1	& 				0	\\
+		\sin{(-\phi-\pi/2)}	&	0	& 	\cos{(-\phi\pi/2)} 			
+	}
+\end{equation}
+
+With no orbit inclination, these two orbit inclinations are all that are necessary to rotate the $\tau$ frame into the $\epsilon$ frame. The resulting DCM is computed by multiplying EQ \ref{EQ:NED Rot 2} by EQ \ref{EQ:NED Rot 1}.
+
+\begin{equation}
+	\label{EQ:NED DCM}
+	[TE] = [M_2][M_3]% = \arrayb{c c c}{}
+\end{equation}
+
+
+%----------------------------------------------------
+%Part D-------------------------------------------------------------
+%----------------------------------------------------
+\subsection{Part D}
+Like in the previous section, another frame of interest is the earth-centered-inertial (ECI) frame. For the purpose of this exercise, the ECI frame differs from the ECEF frame by the angle $\gamma$, the Greenwich local sidereal time. It is assumed that this angle is a constant function of time, and only has components in the $\hat{e}_3$ direction. 
+
+\begin{equation}
+		\gamma(t) = \gamma_{t_0} + \omega_{E/N}	
+		\label{eq:local sidereal}
+\end{equation}
+
+\begin{displaymath}
+	\omega_{E/N} = 361 \textnormal{deg/day}
+\end{displaymath}
+
+Now, to rotate between the ECI and ECEF frames, a rotation matrix DCM can be built in the same manner as before in section \ref{sec:C}. But now, the rotation angle $\gamma$ is a function of time.
+
+\begin{equation}
+	\label{EQ:ECI2ECF DCM}
+	[EN]=[M_3(\gamma(t))] = 
+	\arrayb{c c c}{
+		\cos{\gamma(t)} 	& 	\sin{\gamma(t)} 	&	0	\\
+		-\sin{\gamma(t)} 	&	\cos{\gamma(t)} 	& 	0	\\
+		0			&		0		&	1			
+	}
+\end{equation}
+
+The Matlab code for this computation is included in Appendix \ref{APP:Code for Part D}.
+
+
+
+%----------------------------------------------------
+%Part E-------------------------------------------------------------
+%----------------------------------------------------
+\subsection{Part E}
+Combining many of the above sections, now a routine was written in which the magnetic field unit direction vector in inertial frame components $^NM$ was solved for, given inputs $^Nr$ and $t$. 
+
+The magnetic field vector was given in NED frame components in EQ \ref{eq:Mag NED}.
+
+\begin{equation}
+	\label{eq:Mag NED}
+	\arrayb{c}{M_{north} \\ M_{east} \\ M_{down}\\} 
+	=
+	[\ddots]\arrayb{c}{29900 \\ 1900 \\ -5530\\} \textnormal{nT}
+\end{equation}
+
+$r_{eq}$ is the earth's mean equatorial radius, $r$ is the mean orbit radius, $\lambda$ is the satellite longitude relative to ECEF, and $\phi$ is the satellite latitude. 
+
+Since EQ \ref{eq:Mag NED} is given, and from the orbit position vector, both $\lambda$ and $\phi$ can be calculated, the task now is to rotate the computed magnetic field components from the NED (T) frame to the N frame. In the previous sections, I discussed how the [TE] and [EN] frames were constructed, as functions of $\lambda$, $\phi$, and $t$. In this routine, those routines were used to get a final inertial representation of the earth's magnetic field at a point in time along the orbit, as shown in EQ \ref{eq:Mag N}.
+
+\begin{equation}
+	\label{eq:Mag N}
+	\arrayb{c}{M_{\hat{n}_1} \\ M_{\hat{n}_2} \\ M_{\hat{n}_3}\\} 
+	=
+	[EN]^T [TE]^T \arrayb{c}{M_{north} \\ M_{east} \\ M_{down}\\} 
+\end{equation}
+
+A simulation of this calculation was made for ten minutes of an orbit, and the resulting plot is shown in Figure \ref{fig:Mag}. The code for this computation is included in Appendix \ref{APP:Code for Part E}.
+
+
+\begin{centering}
+	\begin{figure}[Hh]
+		\includegraphics[width=\textwidth]{\rootdir Mag.eps}
+		\caption{Manetic Field Elements}
+		\label{fig:Mag}
+	\end{figure}
+\end{centering}
+
+
+
+
+
+
+
+
+
+\section{Conclusion}
+
+Here I shall conclude! 
+
+\section{Appendix}
+\label{APP:Code}
+
+\subsection{Appendix A: Code for part A}
+\label{APP:Code for Part A}
+\begin{lstlisting}
+function r_N = computeR_N(t)
+%>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 
+%                           computeR_N.m
+% Author:   Zach Dischner
+% Date:     April 1, 2013
+% 
+% Usage:
+%   r_N = computeR_N(t)
+%
+% Description:  Computes orbit position vector in inertial frame components
+%               for ASEN 5010 project circular orbit
+% 
+% Inputs:  t    ==> Time value array [s]. Either row or column vector
+%
+% Outputs: r_N  ==> Orbit position in N frame components
+%                   | r1(t1)    r2(t1)  r3(t1) |
+%                   | r1(t2)    r2(t2)  r3(t2) |
+%                   | r1(t3)    r2(t3)  r3(t3) |
+%                                ...
+%<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+%% Orbit Parameters
+Omega   = deg2rad(20);      % RAAN?                     [rad]
+i       = deg2rad(75);      % Orbit Inclination Angle   [rad]
+mu      = 398600;           % Gravatational Parameter   [km^3/s^2]
+r       = 6878;             % Circular Orbit Radius     [km]
+n       = sqrt(mu/r^3);     % Mean Orbit Rate           [s]
+theta_0 = 0;                % Initial Angle             [rad]
+
+%% Compute r_N(t)
+if ~iscolumn(t)
+    t=t';
+end
+
+theta   = theta_0 + n*t;
+
+r_N = r*[ cos(Omega).*cos(theta)-sin(Omega).*sin(theta).*cos(i) , ...
+        sin(Omega).*cos(theta)+cos(Omega).*sin(theta).*cos(i) , ...
+                            sin(theta).*sin(i)                  ];
+        
+\end{lstlisting}
+
+
+
+
+\subsection{Appendix B: Code for part B}
+
+\label{APP:Code for Part B}
+\begin{lstlisting}
+	function s_B = computeSunVec_B(sigma_BN)
+%>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 
+%                           computeSunVec_B.m
+% Author:   Zach Dischner
+% Date:     April 4, 2013
+% 
+% Usage:
+%   s_B = computeSunVec_B(sigma_BN)
+%
+% Description:  Computes the sun attitude attitude as seen by the satellite 
+%               body. It does so with a constant inertial sun attitude, and
+%               the MRP set sigma_B/N.
+% 
+%               Given s_N, and BN, get s_B
+% 
+% Inputs:  sigma_BN    ==> MRP set describing rotation between B and N
+%                          frames
+%
+% Outputs: s_B  ==> Sun direction vector in B frame components
+% 
+%<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+%% Data Masseuse 
+if ~iscolumn(sigma_BN)
+    sigma_BN = sigma_BN';
+end
+
+%% Define Sun Position Vector
+s_N = [ 0 ; -1 ; 0 ];
+
+%% Convert MRPs into [BN] DCM
+BN  = MRP2C(sigma_BN);
+
+%% Get the Rotation
+s_B = BN*s_N;
+\end{lstlisting}
+
+
+\subsection{Appendix C: Code for part C}
+
+\label{APP:Code for Part C}
+\begin{lstlisting}
+function TE = Earth2TopoDCM( lambda, phi)
+%>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 
+%                           Earth2TopoDCM.m
+% Author:   Zach Dischner
+% Date:     April 4, 2013
+% 
+% Usage:
+%   TE = Earth2TopoDCM( lambda, phi, inclination )
+%
+% Description:  Maps the earth-fixed frame [EN] to a topographic frame 
+%               [TE] ==> {n e d}
+% 
+%               Lamens ==> Rotation matrix between earth-fixed and
+%                          topographic frame
+% 
+% Inputs:  lambda ==> Angle between grenwich and equator orbit crossing
+%          phi    ==> Along-track angle between satellite and equator plane
+%                     (satellite latitude)
+% ???      inclination ==> Orbit inclination?
+%
+% Outputs: TE     ==> DCM from earth fixed frame to the topographic frame
+% 
+%<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+%% Define Individual Rotations
+% First: Rotate LAMBDA about e^3
+rot1    = Euler3(lambda);
+
+% Second: Rotate (-PHI  - pi/2)about e^2' (Can be done in just one
+% rotation.
+rot2    = Euler2(-phi - pi/2);
+
+% Third: Inclination angle? 
+inclination = 0;
+rot3    = Euler1( inclination );
+
+%% Assemble the Rotation Matrix
+TE = rot3*rot2*rot1;
+\end{lstlisting}
+
+
+
+\subsection{Appendix D: Code for part D}
+
+\label{APP:Code for Part D}
+\begin{lstlisting}
+function EN = ECI2ECF( t )
+%>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 
+%                           ECI2ECF.m
+% Author:   Zach Dischner
+% Date:     April 6, 2013
+% 
+% Usage:
+%   EN = ECI2ECF( t )
+%
+% Description:  Maps the earth-centered inerital frame [N] to an
+%               earth-centered earth-fixed frame [E]. Assumes constant
+%               rotational rate
+% 
+%               Lamens ==> Rotates ECI to ECF by [EN]
+% 
+% Inputs:  t  ==> Time that has passed since grenwich 0:00:00 ???
+%
+% Outputs: EN ==> DCM from ECI to ECEF.
+% 
+%<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+%% Obtain Rotation Rate
+w_EN = 361 *(pi/180)*(1/24)*(1/3600); %rotation [deg/day][rad/deg][day/hour][hour/sec]
+
+%% Obtain Rotation Angle
+gamma_t0 = deg2rad(20);
+
+gamma    = gamma_t0 + w_EN*t;
+
+%% Assemble DCM
+EN       = Euler3(gamma);
+\end{lstlisting}
+
+
+\subsection{Appendix E: Code for part E}
+
+\label{APP:Code for Part E}
+\begin{lstlisting}
+function M_N = r2MagVec( r_N, t )
+%>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 
+%                           r2MagVec.m
+% Author:   Zach Dischner
+% Date:     April 6, 2013
+% 
+% Usage:
+%   M_N = r2MagVec( r_N, t )
+%
+% Description:  Compute the Magnetic field vector for a given satellite
+%               position and time
+% 
+%               Lamens ==> Find the magnetic field vector at a point in
+%                          space and time
+% 
+% Inputs:   r_N  ==> Inertial satellite position vector [r1 r2 r3]
+%           t    ==> Time that has passed since grenwich 0:00:00 ???
+%
+% Outputs:  M_N  ==> Magnetic field vector in N frame components
+% 
+%<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+%% Defines and Constants
+r_E     = 6378; % Earth's Equatorial Radius [km]
+r_orbit = norm(r_N);
+% lam     = 0.001*sin(t);
+% phi     = 0.1*cos(t);
+lam     = atan2(r_N(2), r_N(1)); % *look at it again
+phi     = asin(r_N(3)/r_orbit);
+
+%% Calculate Magnetic Field Vector
+M_T     = -(r_E/r_orbit)^3.*...
+                        [ -cos(phi)     sin(phi)*cos(lam)     sin(phi)*sin(lam);...
+                            0             sin(lam)              -cos(lam)   ;...
+                       -2*sin(phi)  -2*cos(phi)*cos(lam)   -2*cos(phi)*sin(lam)]...
+                       *[29900; 1900; -5530];       % nT
+                   
+                   
+EN      = ECI2ECF(t);
+TE      = Earth2TopoDCM(lam,phi);
+
+M_N     = EN'*TE'*M_T;
+\end{lstlisting}
+
+
+
+An appendix, if needed, should appear before the acknowledgments.
+Use the 'starred' version of the \verb|\section| commands to avoid
+section numbering.
+
+\section*{Acknowledgments}
+
+A place to recognize others.
+
+\begin{thebibliography}{9}% maximum number of references (for label width)
+ \bibitem{rebek:82bk}
+ Rebek, A., {\it Fickle Rocks}, Fink Publishing, Chesapeake, 1982.
+\end{thebibliography}
+
+\end{document}
