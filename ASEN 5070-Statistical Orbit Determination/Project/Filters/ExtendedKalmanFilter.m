@@ -104,7 +104,7 @@ end
 %---------------------------------------------
 
 %% Switch to Extended Kalman Filter 
- cutoff_time=5*60;
+ cutoff_time=68*60;
  
 % Initialize Extended Kalman Filter
 %---------------------------------------------
@@ -267,9 +267,9 @@ textprogressbar('EKF Progress : ');
             xhat(:,jj) = K1*y1(:,jj);
          end
 %         xhat(:,:,jj) = xbar(:,:,jj) + K1*(y1(:,jj) - Htilde*xbar(:,:,jj));
-%         P(:,:,jj) = (eye(size(K1*Htilde)) - K1*Htilde)*P(:,:,jj)*(eye(size(K1*Htilde))-K1*Htilde)' + K1*R*K1';
+        P(:,:,jj) = (eye(size(K1*Htilde)) - K1*Htilde)*P(:,:,jj)*(eye(size(K1*Htilde))-K1*Htilde)' + K1*R*K1';
 %         P(:,:,jj) = (eye(size(K1*Htilde)) - K1*Htilde)*P(:,:,jj);
-        P(:,:,jj) = ComputeP(Htilde,P(:,:,jj),R,Xstar,ystar,'joseph');
+%         P(:,:,jj) = ComputeP(Htilde,P(:,:,jj),R,Xstar,ystar,'joseph');
         %---------------------------------------------
         
         % Update Nominal Trajectory
@@ -316,18 +316,18 @@ textprogressbar('EKF Progress : ');
     subplot(num_iterations,2,2*ii-1)
     plot(y1(1,:))
     hold on
-    plot(StSw(:,1),y1_sw,'r.','MarkerSize',20)
+%     plot(StSw(:,1),y1_sw,'r.','MarkerSize',20)
     ylabel('$\rho$ residules')
     xlabel('Observation Number')
-    legend('Residules','Station Switchover')
+%     legend('Residules','Station Switchover')
     
     subplot(num_iterations,2,2*ii)
     plot(y1(2,:))
     hold on
-    plot(StSw(:,1),y2_sw,'r.','MarkerSize',20)
+%     plot(StSw(:,1),y2_sw,'r.','MarkerSize',20)
     ylabel('$\dot{\rho}$ residules')
     xlabel('Observation Number')
-    legend('Residules','Station Switchover')
+%     legend('Residules','Station Switchover')
     
     
     figure(2)

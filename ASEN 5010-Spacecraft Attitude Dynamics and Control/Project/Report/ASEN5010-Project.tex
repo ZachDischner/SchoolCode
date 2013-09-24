@@ -1,11 +1,4 @@
-% Try to reduce the number of latex support calls from people who
-% don't read the included documentation.
-%
-%\typeout{}\typeout{If latex fails to find aiaa-tc, read the README file!}
-%
-
-
-\documentclass[]{aiaa-tc}% insert '[draft]' option to show overfull boxes
+\documentclass[11pt]{aiaa-tc}% insert '[draft]' option to show overfull boxes
 
 %%%%%%%%%%%%%%%%%  << MATLAB INCLUSION>>  %%%%%%%%%%%%%%%%%
 \usepackage[]{mcode}
@@ -77,7 +70,7 @@
 \maketitle
 
 \begin{abstract}
-The essence of attitude determination is the estimation of a body's pointing relative to a known frame, given one or more observations taken in different frames. This paper will discuss the development and theoretical testing of attitude estimation algorithms for a satellite two such sensors. Numerical simulations will simulate measurements taken in various frames, and from them determine the spacecraft's attitude relative to the inertial frame. Various parameters such as measurement noise, and orbit characteristics will be examined in order to quantify their impact on performance on the attitude estimation algorithms. 
+The essence of attitude determination is the estimation of a body's pointing relative to a known frame, given one or more observations taken in different frames. This paper will discuss the development and theoretical testing of attitude estimation algorithms for a satellite with two such sensors. Numerical simulations will simulate measurements taken in various frames, and from them determine the spacecraft's attitude relative to the inertial frame using the OLAE method. At the same time, spacecraft equations of motion will be developed to find the evolution of the satellite's attitude in time. Various parameters such as measurement noise, and orbit characteristics will be examined in order to quantify their impact on performance on the OLAE algorithm. 
 
 \end{abstract}
 
@@ -103,6 +96,7 @@ The essence of attitude determination is the estimation of a body's pointing rel
   $n$ \> 		Mean Orbit Rate				\\
   $[XY]$ \> 	DCM Mapping Y to X Frames 		\\
   $^Xx$ \>  	x expressed in X frame components \\
+  $SNR$ \> 	Signal-to-Noise Ratio			\\
 
 \textit{Left Superscript}\\
   $N$ \> 		Inertial Frame 					\\
@@ -111,6 +105,7 @@ The essence of attitude determination is the estimation of a body's pointing rel
  \end{tabbing}
 
 \section{Introduction}
+\label{sec:Intro}
 
 The spacecraft in question for this examination is equipped only with sun and magnetic field direction sensors. Numerical simulations of measurements taken from both of these devices in the $B$ frame, as well as the $N$ frame. Relating measurements between frames, and ultimately providing a measure of the spacecraft's attitude, will be done with the Optimal Linear Attitude Estimation (OLAE) method. Through this numerical simulation, the affect of sensor noise, errors in the orbit parameters, and other sources of error will be examined and quantified. 
 
@@ -250,6 +245,7 @@ The first step in setting up a numerical simulation of the satellite was to obta
 %Part B-------------------------------------------------------------
 %----------------------------------------------------
 \subsection{Part B}
+\label{sec:Sun}
 Next, a routine was written to take a body orientation as a set of MRPs $\bf{\sigma}_{B/N}$, and with the known inertial sun direction vector $^N\hat{s}=(0,-1,0)^T$, compute the simulated sun direction measurement in body coordinates. 
 
 This problem essentially boils down to rotating a measurement in one frame into another frame. In general, this is done by multiplying one observation by the appropriate rotation matrix. 
@@ -309,15 +305,15 @@ In order to describe the arbitrary rotation between the two frames, a DCM was co
 	}
 \end{equation}
 
-Now, $\hat{e}_2' = \hat{e}$. The next rotation is about $\hat{e}$ needs to be a negative rotation of magnitude $\theta$. However, this rotation produces a frame in which $\hat{e}_3'' = \hat{n}$. By adding another $\pi/2$ rotation to the previous, all three axes of the $\epsilon''$ frame align with the new NED $\tau$ frame. 
+Now, $\hat{e}_2' = \hat{e}$. The next rotation is about $\hat{e}$ needs to be a negative rotation of magnitude $\theta$. However, this rotation produces a frame in which $\hat{e}_3'' = \hat{n}$. By adding another $\pi/2$ rotation to the previous, all three axes of the $\epsilon''$ frame align with the new NED $\tau$ frame. Essentially, this step combines two rotations about $\hat{e}$, so that instead of a 3-2-2 rotation, we just have a more intelligent 3-2 rotation set. 
 
 \begin{equation}
 	\label{EQ:NED Rot 2}
-	[M_2(-\phi\pi/2)] = 
+	[M_2(-\phi-\pi/2)] = 
 	\arrayb{c c c}{
-		\cos{(-\phi\pi/2)} 	& 	0	&	-\sin{(-\phi\pi/2)}	\\
+		\cos{(-\phi-\pi/2)} 	& 	0	&	-\sin{(-\phi-\pi/2)}	\\
 		0				&	1	& 				0	\\
-		\sin{(-\phi-\pi/2)}	&	0	& 	\cos{(-\phi\pi/2)} 			
+		\sin{(-\phi-\pi/2)}	&	0	& 	\cos{(-\phi-\pi/2)} 			
 	}
 \end{equation}
 
@@ -364,6 +360,7 @@ The Matlab code for this computation is included in Appendix \ref{APP:Code for P
 %Part E-------------------------------------------------------------
 %----------------------------------------------------
 \subsection{Part E}
+\label{sec:Mag}
 Combining many of the above sections, now a routine was written in which the magnetic field unit direction vector in inertial frame components $^NM$ was solved for, given inputs $^Nr$ and $t$. 
 
 The magnetic field vector was given in NED frame components in EQ \ref{eq:Mag NED}.
@@ -372,7 +369,11 @@ The magnetic field vector was given in NED frame components in EQ \ref{eq:Mag NE
 	\label{eq:Mag NED}
 	\arrayb{c}{M_{north} \\ M_{east} \\ M_{down}\\} 
 	=
-	[\ddots]\arrayb{c}{29900 \\ 1900 \\ -5530\\} \textnormal{nT}
+	\parens{\frac{r_{eq}}{r}}^3
+	\arrayb{ccc}{ -\cos{\phi} 		& 	\sin{\phi}\cos{\lambda} 		& 	\sin{\phi}\sin{\lambda}	\\
+				0			&		\sin{\lambda}			&		-\cos{\lambda} 		\\
+				-2\sin{\phi} 	&	-2\cos{\phi}\cos{\lambda}		&	-2\cos{\phi}\sin{\lambda} }
+	\arrayb{c}{29900 \\ 1900 \\ -5530\\} \textnormal{nT}
 \end{equation}
 
 $r_{eq}$ is the earth's mean equatorial radius, $r$ is the mean orbit radius, $\lambda$ is the satellite longitude relative to ECEF, and $\phi$ is the satellite latitude. 
@@ -398,17 +399,293 @@ A simulation of this calculation was made for ten minutes of an orbit, and the r
 \end{centering}
 
 
+%----------------------------------------------------
+%Part F-------------------------------------------------------------
+%----------------------------------------------------
+\subsection{Part F}
+\label{sec:Att Ang Vel True}
+Next, the equations of motion for a rigid body were used to simulate the spacecraft's true attitude by means of numerical integration.  To integrate the satellite's attitude in time, both the angular velocity and angualr position quantities need to be described by a set of equations of motion. Those for the angular velocity are the standard equations of motion of a rigidly rotating body, expressed in equation \ref{eq:EOM}. $I$ is the satellite's inertia tensor, and $L$ is the sum of external torques acting on the body. In this case, the external torques are zero. 
+
+\begin{equation}
+	\label{eq:EOM}
+	I\dot{\omega} = -[\tilde{w}] I \omega + L
+\end{equation}
+
+To integrate the spacecraft's attitude in time in terms of the initially given 3-2-1 Euler angles, equation \ref{eq:EOMw} was used. $[B(\theta)] $ is the matrix described in the course textbook\cite{schaub2003analytical} that is used to relate the angular velocity of a body $\omega$ to the rate of change of the body's attitude $\dot{\theta}$. 
+
+\begin{equation}
+	\label{eq:EOMw}
+	\dot{\theta} =[B(\theta)] * \omega
+\end{equation}
+
+Together, these two equations allow for the integration in time of the spacecraft's attitude (in 3-2-1 Euler angles) and angular velocity vectors. The attitude was converted into MRPs during the integration to check for the need for a shadow set switchover. Integrations were performed in Matlab, using initial conditions and spacecraft properties discussed in section \ref{sec:Intro}. A plot for the orbit attitudes and angular velocities over a 10 minute duration can be seen in Figure \ref{fig:Attitude and Angular Velocity}. There is one switchover between MRP shadow sets in this time period. This simulation is not long enough to garner any more insight into the attitude or angular velocity evolution of this system. 
+
+\begin{centering}
+	\begin{figure}[Hh]
+		\includegraphics[width=\textwidth]{\rootdir AttAngVel.eps}
+		\caption{Numerical Integration of Attitude and Angular Velocity}
+		\label{fig:Attitude and Angular Velocity}
+	\end{figure}
+\end{centering}
+
+
+
+
+%----------------------------------------------------
+%Part G-------------------------------------------------------------
+%----------------------------------------------------
+\subsection{Part G}
+\label{sec:Mag Sun Truth}
+Next, the sun sensor and magnetic field sensor measurements outlined in section \ref{sec:Sun} and section \ref{sec:Mag} were integrated into the simulation of the equations of motion. These measurements don't arise from system dynamics, but can be calculated as a result of the spacecraft's attitude. Without any sensor noise or modeled sources of error, these are a purely numerical expectation of these two sensors' readings. Figure \ref{fig:Mag Sun True} shows these two expected measurements, as seen by the body frame. 
+
+\begin{centering}
+	\begin{figure}[Hh]
+		\includegraphics[width=\textwidth]{\rootdir MagSun.eps}
+		\caption{Expected Magnetic Field and Sun Sensor Measurements}
+		\label{fig:Mag Sun True}
+	\end{figure}
+\end{centering}
+
+The simulation for all attitude investigations is found in the code appendix, section \ref{APP:SIM}. The single script performs all investigations necessary, and will offer different results based on tunable parameters. 
+
+%----------------------------------------------------
+%Part H-------------------------------------------------------------
+%----------------------------------------------------
+\subsection{Part H}
+\label{sec:OLAE Truth}
+The actual attitude estimation process is one that compares the estimated attitude, given by numerical simulations and models, with the observed attitude, typically given by in-situ sensor measurements. Section \ref{sec:Att Ang Vel True} outlines the results of modeling the spacecraft's attitude, while section \ref{sec:Mag Sun Truth} outlines how we have simulated perfect measurements from two different sensors onboard the spacecraft. The gap needed to fill in comparing modeled and observed attitudes is in converting various body-frame measurements into actual attitude coordinates. This represents one of the fundamental tasks in attitude estimation. Parsing multiple observations into a single attitude estimation has been performed with the Triad method, and later by solving Wahba's problem with the Q-method and QUEST algorithms. More recently, the Optimized Linear Attitude Estimator (OLAE) has garnered some interest, and will be discussed here. 
+
+Recall that each observation must satisfy
+
+\begin{equation}
+		^B\hat{v}_i =[BN] ^N\hat{v}_i	
+		\label{eq:Linear Attitude}
+\end{equation}
+
+$[BN]$ is the desired attitude estimate. Decomposing $[BN]$ with the Cayley transformation, equation \ref{eq:Cayley BN} shows the elegantly simple result. 
+
+
+\begin{equation}
+		[BN] = (I_{3 \times 3} + [\tilde{\bar{q}}] )^{-1} ( I_{3 \times 3} - [\tilde{\bar{q}}]  ) 
+		\label{eq:Cayley BN}
+\end{equation}
+
+
+Applying equation \ref{eq:Cayley BN} to equation \ref{eq:Linear Attitude} and multiplying by $(I_{3 \times 3} + [\tilde{\bar{q}}] )$ yields 
+
+\begin{equation}
+		^B\hat{v}_i - ^N\hat{v}_i	= -[\tilde{\bar{q}}] ( ^B\hat{v}_i - ^N\hat{v}_i )
+		\label{eq:Linear Attitude2}
+\end{equation}
+
+Now, the desired attitude estimate is described by $\bar{q}$. By defining the summation and difference matrices as
+
+
+\begin{equation}
+		\textbf{d}_i=(^B\hat{v}_i - ^N\hat{v}_i)
+		\label{eq:Diff}
+\end{equation}
+\begin{equation}
+		\textbf{s}_i=(^B\hat{v}_i + ^N\hat{v}_i)
+		\label{eq:Sum}
+\end{equation}
+
+Now, rewriting equation \ref{eq:Linear Attitude2} with equations \ref{eq:Diff} and \ref{eq:Sum}, the surprisingly simple linear result is found to be
+
+\begin{equation}
+		\textbf{d}_i=[\tilde{\textbf{s}}_i]\bar{q}
+		\label{eq:Single OLAE}
+\end{equation}
+
+As is to be expected with solving for attitudes, a single observation fed into equation \ref{eq:Single OLAE} will not yield a full 3d attitude solution. In this convenient linear form, it is simple enough to augment equation \ref{eq:Single OLAE} to accommodate $N$ number of observations, which allows for $\bar{q}$ to be solved for analytically using least squares. This formulation also allows for weightings to be applied to each observation set, which is crucial in trying to determine attitude from various sensors with different accuracies. 
+
+For $N$ measurements, each with its own weighting value $w_k$, the matrix components of equation \ref{eq:Single OLAE} are formed in the following manner. The $\textbf{d}$ matrix is stacked to become a $3N \times 1$ matrix of differences. $[\textbf{S}]$ becomes a $3N \times 3$ summation tilde matrix, and the weighting values are arranged into a $3N \times 3N$ matrix. 
+
+\begin{equation}
+	\begin{array}{c c c}
+		\textbf{d} = \arrayb{c}{\textbf{d}_1 \\ \textbf{d}_2 \\ \vdots \\ \textbf{d}_N}
+		&
+		[\textbf{S} ]= \arrayb{c}{\tilde{\textbf{s}}_1 \\ \tilde{\textbf{s}}2 \\ \vdots \\ \tilde{\textbf{s}}_N}
+		&
+		W = \arrayb{ccc}{w_1I_{3 \times 3} 	& 	0I_{3 \times 3}  	&	\cdots 			\\
+					  0I_{3 \times 3}  	&	\cdots 		& 	 0I_{3 \times 3}  	\\
+						\cdots 		&	 0I_{3 \times 3}  & 	w_NI_{3 \times 3}	}
+	\end{array}
+	\label{eq:OLAE Matrices}
+\end{equation}
+
+
+Now, rearranging and solving for $\bar{q}$, the optimal CRP attitude can be solved using a least squares solution. 
+
+\begin{equation}
+		\bar{q} = ( [S]^T [W] [S] ) ^{-1} [S]^T [W] \textbf{d}
+		\label{eq:OLAE}
+\end{equation}
+
+This solution is very powerful in that it is a purely linear solution, and includes variable weights through which a fine solution can be found. However, as it does use CRPs, the singularities at 180 degrees must be addressed in the same manner as in the QUEST algorithm. More details into the mathematics of this and other algorithms are discussed further in the project description document\cite{5010ProjectDescription}. 
+
+The OLAE method was integrated into my simulation discussed in previous sections. I wrote a function that takes arbitrary $N$ number of body frame and inertial frame observations, as well as optional weighting. With them, I dynamically construct the matrices in equation \ref{eq:OLAE Matrices}. The code for this operation is surprisingly simple and short, and can be found in the code appendix, section \ref{APP:OLAE}. 
+
+At this point in the simulation there are $N$ frame measurements for the sun and magnetic field sensors, calculated theoretically. $B$ frame measurements are also available. Both are calculated purely based off of the simulation data, so the 'true' simulated attitude ($\beta$) should perfectly match the estimated body attitude ($\bar{\beta}$) found from the OLAE algorithm, since all measurements are perfectly computed (to machine precision). 
+
+In Figure \ref{fig:MRP No Noise}, the true and estimated attitudes are presented overlaid, in terms of their MRP components. It looks like there is just a single plotted value, but that is because the estimated and true values are nearly identical. 
+
+\begin{centering}
+	\begin{figure}[Hh]
+		\includegraphics[width=\textwidth]{\rootdir MRPCompareNoNoise.eps}
+		\caption{MRP Comparision Without Observation Noise}
+		\label{fig:MRP No Noise}
+	\end{figure}
+\end{centering}
+
+Perhaps more informative is a plot of the residuals of the true and OLAE attitude computations. Figure \ref{fig:Res No Noise} shows just that. For almost the entire simulation, the residual is nonexistent. On the order of $10^{-15}$. There is a blip visible right at the MRP shadow set switchover, but it is still such a small magnitude that the residual is assumed to still be zero. 
+
+Thus, with perfect observations from both frames, the OLAE method proves to be a perfect attitude estimator (to numerical precision). But real systems will have biases, timing errors, and sensor noise. So OLAE's performance must be examined with these things in mind.
+
+\begin{centering}
+	\begin{figure}[Hh]
+		\includegraphics[width=\textwidth]{\rootdir ResNoNoise.eps}
+		\caption{MRP Residules Without Observation Noise}
+		\label{fig:Res No Noise}
+	\end{figure}
+\end{centering}
 
 
 
 
 
+%----------------------------------------------------
+%Part I-------------------------------------------------------------
+%----------------------------------------------------
+\subsection{Part I}
+\label{sec:OLAE Experiment}
+Now, sensor corruption must be included in my simulation, to see its effect on the estimated attitude found via OLAE. Sensor corruption can come from a variety of sources. There can be miss-calibration biases, modeling errors, optical and electrical noise, resolution-induced variability, and many other places. Simply adding random numbers to the simulation is not adequate. 
 
+The method I chose to induce sensor corruption was based around the Signal-to-Noise-Ratio (SNR). No matter what is being measured, whether microvolt EM field vectors, kilometer-ranged vectors from GPS, or essentially infinite star-tracker attitude vectors, every signal has some ratio of its signal over the cumulative background noise from the sensor the signal originates from. So with a given signal, I chose to use Matlab's \emph{awgn} function to augment a given signal with random white noise, constrained by a given signal-to-noise requirement for the signal. This is very flexible in that it can be used to augment any signal, no matter the magnitude, in an intelligent way. Unit vectors and nano-unit vectors get the same relative treatment. 
+
+With this as my sensor corruption approach, I made a few other assumptions. I assumed that the inertial measurements were perfect, and that all noise is applied to the body-frame measurements. I did this assuming more thorough modeling and more sensitive instruments are providing inertial measurements, but also chose to do this to better isolate variables in order to see a more direct cause-effect relationship in the noise and OLAE results. I also assumed that noise wasn't time or position varying, and stayed at the same order of magnitude throughout the entire orbit. 
+
+With these assumptions in mind, I modified the simulation to add noise as constrained by a given SNR to each body-frame $B$ observation computed. The desired SNR for each instrument was chosen due to legacy stats on some sun sensors and magnetic field sensors. I found an acceptable SNR for sun sensors to be around 60dB\cite{SunTracker}. For magnetic field sensors, I found a newer high-sensitivity magnetic field sensor to have a SNR of 200dB\cite{MagSensor}. These values are reasonable for modern sensors, but are still on the cutting edge compared to many older legacy instruments currently in operation. 
+
+Now, I re-performed the simulation with white noise being generated for each body and observation of the sun and magnetic field vectors. With these high SNR values, the OLAE estimated attitude is still very close to the truth value. Figure \ref{fig:Res Noise} shows the new residual differences between the true and estimated attitudes. Compared with Figure \ref{fig:Res No Noise}, it is clear that adding noise has made the residuals worse by many orders of magnitudes. The differences are still on the order of mili-radians, which may be fine for a given mission, or it may be out of spec. Again, there is a spike right at the MRP switchover. This simulation also ignores weighting of the different measurements. Weighting's effect will be discussed shortly. 
+
+\begin{centering}
+	\begin{figure}[Hh]
+		\includegraphics[width=\textwidth]{\rootdir ResCuttingEdge.eps}
+		\caption{MRP Residules With Observation Noise}
+		\label{fig:Res Noise}
+	\end{figure}
+\end{centering}
+
+\begin{center}
+\label{table:Simulation No Noise}
+\begin{tabular}{ |l|l| }
+  \hline
+	  \multicolumn{2}{|c|}{Simulation Summary Without Noise or Weights} \\
+	  \hline
+	  Magnetic Field Sensor SNR & 200dB \\
+	  Sun Sensor SNR & 60dB \\
+	  Magnetic Field Sensor Weight & 1 \\
+	  Sun Sensor Weight & 1 \\
+	  Mean of Residuals & 0.000384 rad\\
+	  \hline
+	\end{tabular}
+\end{center}
+
+The takeaway here is that for newer, clean sensors, the OLAE method still provides a good solution for the spacecraft's attitude, accurate to the milli-radian level. 
+
+From personal experience, I know that similar sensors often operate at much magnitude lower SNRs. Some of the lower cost, smaller instruments on CubeSats can sometimes operate at orders of magnitude lower SNR. To try and get a better idea of how the OLAE algorithm performs on a more realistic system, I decided simulate a sun sensor with a SNR of 30dB and a magnetic field sensor with a SNR of 10dB.
+
+At this point, when dealing with imperfect measurements, forgoing the use of weighting in the OLAE algorithm is unacceptable. It is formulated as a weighted least squares, and will perform best when the weighting is applied. I chose to dynamically create the weighting values for each sensor measurement based on the relative SNR of each. This way, the measurement with a higher SNR will be weighted more heavily, since it implies that that sensor is the more accurate one. 
+
+\begin{centering}
+	\begin{figure}[Hh]
+		\includegraphics[width=\textwidth]{\rootdir MRPCompareNoise1.eps}
+		\caption{MRP Comparision With Observation Noise}
+		\label{fig:MRP Noise}
+	\end{figure}
+\end{centering}
+
+Figure \ref{fig:MRP Noise} shows the overlaid truth and OLAE computed MRP components throughout the simulation. Clearly, in contrast with Figure \ref{fig:MRP No Noise}, the OLAE attitude is now variable about the truth solution. In addition, at the time of MRP switchover, the OLAE estimated attitude is very unsteady. At the point of switchover, the computed attitude with noise can cross back and forth across the switchover bound. 
+
+Figure \ref{fig:Res Noise1} shows the average MRP residuals for this case. Now, the residuals are on the order of hundreds of mili-radians. At the switchover, this becomes a residual of nearly 2 radians. Clearly, for a noisy system, further measures need to be taken to get rid of these anomalies around the shadow set switch. 
+
+\begin{centering}
+	\begin{figure}[Hh]
+		\includegraphics[width=\textwidth]{\rootdir ResNoise1.eps}
+		\caption{MRP Residules With Observation Noise and Weighting}
+		\label{fig:Res Noise1}
+	\end{figure}
+\end{centering}
+
+Table \ref{table:Simulation Noise Weights} summarizes this simulation's findings. With sensor noise and weightings, this setup yields residuals that are almost 2 orders of magnitude larger than with the cutting edge instruments. Again, this is for just two sensors operating on a satellite with no more advanced estimation algorithms. That being said, the results are still on track with the truth values.
+
+\begin{center}
+\label{table:Simulation Noise Weights}
+\begin{tabular}{ |l|l| }
+  \hline
+	  \multicolumn{2}{|c|}{Simulation Summary With Noise and Weights} \\
+	  \hline
+	  Magnetic Field Sensor SNR & 10dB \\
+	  Sun Sensor SNR & 30dB \\
+	  Magnetic Field Sensor Weight & 0.25 \\
+	  Sun Sensor Weight & 0.75 \\
+	  Mean of Residuals & 0.166410 rad\\
+	  \hline
+	\end{tabular}
+\end{center}
+
+Next, I wanted to investigate what happens with inappropriate weightings. To do this, I used the same lopsided SNR ratios as before, but switched their weighting values. This way, the magnetic field sensor (with worse SNR and worse performance) was weighted heavier in the OLAE's weighted least squares estimation of the spacecraft's attitude $\bar{\beta}$. 
+
+
+\begin{centering}
+	\begin{figure}[Hh]
+		\includegraphics[width=\textwidth]{\rootdir ResNoise2.eps}
+		\caption{MRP Residules With Observation Noise and False Weighting}
+		\label{fig:Res Noise2}
+	\end{figure}
+\end{centering}
+
+
+Figure \ref{fig:Res Noise2} Shows these results. Compared to Figure \ref{fig:Res Noise1}, the residuals are different, but not notably worse. Looking at the mean of residuals is where the difference becomes visible. 
+
+
+\begin{center}
+\label{table:Simulation Noise False Weights}
+\begin{tabular}{ |l|l| }
+  \hline
+	  \multicolumn{2}{|c|}{Simulation Summary With Noise and False Weights} \\
+	  \hline
+	  Magnetic Field Sensor SNR & 10dB \\
+	  Sun Sensor SNR & 30dB \\
+	  Magnetic Field Sensor Weight & 0.75 \\
+	  Sun Sensor Weight & 0.25 \\
+	  Mean of Residuals & 0.184266 rad\\
+	  \hline
+	\end{tabular}
+\end{center}
+
+The takeaway here is that, at least in this simulation, false weights do have an effect. The mean of the residual error increased by about 10\% by applying higher weighting to the worse sensor. This is interesting to see, in that the exact same data sets can yield different results depending on your interpretation and setup. So if an instrument the satellite depends on for an attitude observation has been miss-calibrated, or suffers from some degradation in flight, the computed attitude can become skewed. 
+
+
+\newpage
 
 \section{Conclusion}
+This investigation was very insightful. Matlab was used to create a simulation of a tumbling satellite given some initial angular position and rate conditions. Equations of motion were used to then propagate its attitude in time. At the same time, methods were developed to determine inertial and body observations of both a sun sensor and a magnetic field sensor based on the time/position in orbit of the satellite. These were all used to test the behavior of a newer attitude determination method, OLAE. With this method, I was able to determine that with perfect observations in both the body and inertial frames, the $[BN]$ rotation set between the two frames could be perfectly determined. 
 
-Here I shall conclude! 
+However, when noise is added to the sensor measurements, the accuracy of the OLAE method starts to degrade. More so is the degradation when inaccurate weighting schemes are used to add calculation bias to one sensor or another. 
 
+The investigation into OLAE's performance was a limited one, however. It only investigated how consistently random noise applied to each sensor's measurement (while remaining in a given SRN) skews the estimated attitude. As such, this is a perfect place to implement an intelligent estimator, or Kalman Filtering algorithm to help and tone down the residual errors. In addition, no sensor corruptions beyond a white noise addition was examined. A more thorough work would look into sensor biases, pattern noise, and time varying noise measurements. However, the simple case looked at did provide good insight into the performance of the OLAE algorithm, and the project as a whole gave a good starting point as far as a numerical simulation of a satellite's attitude determination performance in orbit. 
+
+\newpage
+\bibliographystyle{abbrv}
+\bibliography{report}
+
+
+
+
+
+\newpage
 \section{Appendix}
 \label{APP:Code}
 
@@ -587,6 +864,7 @@ EN       = Euler3(gamma);
 \end{lstlisting}
 
 
+
 \subsection{Appendix E: Code for part E}
 
 \label{APP:Code for Part E}
@@ -635,19 +913,268 @@ TE      = Earth2TopoDCM(lam,phi);
 M_N     = EN'*TE'*M_T;
 \end{lstlisting}
 
+\subsection{Appendix F: Code for part H-OLAE Algorithm}
+
+\label{APP:OLAE}
+\begin{lstlisting}
+function q = OLAE(Vb, Vi, w)
+
+%>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 
+%                           OLAE.m
+% Author:   Zach Dischner
+% Date:     April 20, 2013
+% 
+% Usage:
+%   q = OLAE( Vb, Vi ) (W is optional)
+%
+% Description:  Uses the Optimal Linear Attitude Estimation (OLAE)
+%               algorithm to find a least squares solution for the DCM 
+%               between the B and N frames. 
+% 
+%               Lamens ==> Solves Wabba's problem in a super cool linear 
+%                          way. Finds [BN] 
+% 
+% Inputs:  Vb  ==> Body frame vectors for different measurements
+%                       Looks like [ Vb1 Vb2 ...Vbn ]
+%                       where Vbn is a column vector
+%          Vi  ==> Corresponding inertial frame vectors for different measurements
+%                       Looks like [ Vi1 Vi2 ...Vin ]
+%                       where Vin is a column vector
+% %        W   ==> Optional weights to apply to each measurement
+%                   [W1 W2...] becomes | W1 0 ... |
+%                                      |  0 W2 ...|
+% Outputs: q   ==> Classical Rodriguez param representing rotation between
+%                   B and N frames
+% 
+%<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+%% Assemble Weighting Matrix
+numvecs = size(Vb,2);
+if nargin < 3
+    w = ones(numvecs,1);
+end
+
+W = zeros(3*length(w), 3*length(w/norm(w)));
+for ii = 1:length(w)
+    W(1+3*(ii-1):3+3*(ii-1),1+3*(ii-1):3+3*(ii-1)) = w(ii)*eye(3,3);
+end
 
 
-An appendix, if needed, should appear before the acknowledgments.
-Use the 'starred' version of the \verb|\section| commands to avoid
-section numbering.
+%% Assemble 'd' and 'S' matrices
+d = Vb - Vi;
+d = reshape(d,numel(d),1);
 
-\section*{Acknowledgments}
+s = Vb + Vi;
+S = zeros(3*numvecs,3);
 
-A place to recognize others.
+for ii=1:numvecs
+    S(1+3*(ii-1):3+3*(ii-1),1:3) = tilde(s(:,ii));
+end
 
-\begin{thebibliography}{9}% maximum number of references (for label width)
- \bibitem{rebek:82bk}
- Rebek, A., {\it Fickle Rocks}, Fink Publishing, Chesapeake, 1982.
-\end{thebibliography}
+%% Solve it brah!
+q = (S'*W*S)\(S'*W*d);
+
+
+\end{lstlisting}
+
+
+
+
+\subsection{Appendix G: Code for part F,G,H and I-Numerical Simulations}
+
+\label{APP:SIM}
+\begin{lstlisting}
+
+%>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 
+%                           intMRPW.m
+% Author:   Zach Dischner
+% Date:     April 20, 2013
+% 
+% Usage:
+%   intMRPW;
+%
+% Description:  Numerically integrate attitude and omega. Project part f
+% 
+% Inputs:  
+%
+% Outputs: 
+% 
+%<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+clc;clear all; close all;
+
+SNR_M = mag2db(1e20);     % SNR of magnetic field vector
+SNR_S = mag2db(1e20);     % SNR of sun field vector
+weights = [SNR_M SNR_S];  % Weighting matrix is defined relative to the SNR
+                        % So a high SNR on the magnetic field vector makes
+                        % the relative weighting of that observation go up
+weights = [1 1];
+
+% Variables 
+%---------------------------------------------
+% Initial Attitude
+euler321_init    = deg2rad([5 10 -5])';     % Rad    % Assumes relative to inertial!
+% Initial Rate
+w_init      = deg2rad([0.4 0.3 0.2])';      % Rad/s
+I           = [ 25     2.5       0.5;...
+                2.5     20        0;...
+                0.5     0         15];
+%---------------------------------------------
+
+% Integration
+%---------------------------------------------
+t       = linspace(0,60*10,1000);
+X_init  = [w_init ; euler321_init];
+X       = zeros(length(t),length(X_init));
+X(1,:)  = X_init;
+sigma   = zeros(length(t),length(euler321_init));
+sigma(1,:) = MRPswitch( Euler3212MRP(euler321_init),1);
+w       = zeros(length(t), length(w_init));
+w(1,:)  = w_init;
+
+% Initial Values at t=0
+s_B     = zeros(length(t),3); 
+s_B(1,:)= awgn( computeSunVec_B( sigma(1,:) ), SNR_S);
+
+M_B     = zeros(length(t),3);
+
+r_N     = computeR_N(t(1));
+EN      = ECI2ECF( t(1) );
+
+r_ECEF  = EN*r_N';
+M_N     = r2MagVec( r_ECEF, t(1) );
+
+
+r_orbit = norm(r_N);
+lam     = atan2(r_ECEF(2), r_ECEF(1)); 
+phi     = asin(r_ECEF(3)/r_orbit);
+                 
+
+TE      = Earth2TopoDCM(lam,phi);
+
+BN = MRP2C(sigma(1,:)');
+
+M_B(1,:)= awgn(BN*M_N,SNR_M);
+s_N     = [0 -1 0]'; % EN'*TE'*s_B(1,:)';
+VB = [M_B(1,:)',s_B(1,:)'];
+VN = [M_N,s_N];
+sigma_OLAE(1,:)  = MRPswitch( Gibbs2MRP( OLAE(VB,VN,weights)),1)';
+
+
+
+for ii=2:length(t)
+    
+    %% Integrate
+   % Find the Derivative
+   Xprime = diff321w(t(ii-1),X(ii-1,:),I);
+   
+   % General linear integration:
+   %    x_(n+1) = x_(n) + x'*delta_t
+   X(ii,:) = X(ii-1,:) + Xprime'*(t(ii)-t(ii-1));
+   sigma(ii,:) = MRPswitch( Euler3212MRP(X(ii,4:6)),1);
+   w(ii,:) = X(ii,1:3);
+   
+   %% Get Sun and Magnetic Field Vectors
+   s_B(ii,:)= awgn(computeSunVec_B( sigma(ii,:) ),SNR_S);
+
+%     s_B(ii,:)= computeSunVec_B( sigma(ii,:) ),SNR_S);
+
+   % Variable to hold Magnetic Field vector computations
+   r_N     = computeR_N( t(ii-1) );
+   r_orbit = norm( r_N );
+   lam     = atan2(r_ECEF(2), r_ECEF(1)); % *look at it again
+   phi     = asin(r_ECEF(3)/r_orbit);
+   EN      = ECI2ECF( t(ii) );
+   TE      = Earth2TopoDCM(lam,phi);
+   
+   r_ECEF  = EN*r_N';
+   M_N     = r2MagVec( r_ECEF, t(ii) );
+   
+   BN = MRP2C(sigma(ii,:)');
+
+   M_B(ii,:)= awgn(BN*M_N,SNR_M);
+
+%    M_B(ii,:)=BN*M_N;
+   s_N     = [0 -1 0]'; %EN'*TE'*s_B(ii,:)';   % N frame, s is always [0 -1 0]
+   
+   
+%    sigmaTrue(ii,:)   = MRPswitch( C2MRP(TE*EN)' ,1 );
+   VB = [M_B(ii,:)',s_B(ii,:)'];
+   VN = [M_N,s_N];
+   sigma_OLAE(ii,:)  = MRPswitch( Gibbs2MRP( OLAE(VB,VN,weights)),1)';
+%    sigmaDiff(:,ii) = sigmaTrue-sigma_OLAE;
+   
+%    sigma(ii,:) = MRPswitch(sigma(ii-1,:) + sigmaprime'*(t(ii)-t(ii-1)),1);
+
+    %% Compare OLAE
+end
+
+%% MRP and Rate Simulation
+figure;set(gcf,'Color',[1 1 1], 'Position',[10 (900)  900 500])
+subplot(2,1,1)
+plot(t,sigma)
+title('MRP Simulation $\sigma_{B/N}$')
+xlabel('Time [s]'); ylabel('Modified Rodreguizes')
+legend('$\sigma_1$','$\sigma_2$','$\sigma_3$','location','best')
+
+subplot(2,1,2)
+plot(t,w);title('Rate Simulation $w_{B/N}$')
+xlabel('Time [s]'); ylabel('[Rad/S]')
+legend('$w_1$','$w_2$','$w_3$','location','best')
+
+%% Field Vector Sets
+figure;set(gcf,'Color',[1 1 1], 'Position',[10 (900)  900 500])
+subplot(2,1,1)
+plot(t,s_B)
+title('Simulated Sun Vector $^Bs$')
+xlabel('Time [s]'); ylabel('Sun Vector Components')
+legend('$^Bs_1$','$^Bs_2$','$^Bs_3$','location','best')
+
+subplot(2,1,2)
+plot(t,M_B)
+title('Simulated Magnetic $^BM$')
+xlabel('Time [s]'); ylabel('Magnetic Field Vector Components')
+legend('$^BM_1$','$^BM_2$','$^BM_3$','location','best')
+
+
+%% Difference in Attitudes
+figure;set(gcf,'Color',[1 1 1], 'Position',[10 (900)  900 500])
+subplot(3,1,1)
+plot(t,sigma_OLAE(:,1),t,sigma(:,1))
+title('Attitude Estimation Algorithms')
+xlabel('Time [s]'); ylabel('$\sigma_1$')
+legend('OLAE','True','location','best')
+
+subplot(3,1,2)
+plot(t,sigma_OLAE(:,2),t,sigma(:,2))
+title('Attitude Estimation Algorithms')
+xlabel('Time [s]'); ylabel('$\sigma_2$')
+legend('OLAE','True','location','best')
+
+subplot(3,1,3)
+plot(t,sigma_OLAE(:,3),t,sigma(:,3))
+title('Attitude Estimation Algorithms')
+xlabel('Time [s]'); ylabel('$\sigma_3$')
+legend('OLAE','True','location','best')
+
+tmp = sigma_OLAE-sigma;
+for ii = 1:length(tmp)
+   res(ii) = norm(tmp(ii,:));
+end
+
+figure;set(gcf,'Color',[1 1 1], 'Position',[10 (900)  900 500])
+plot(t,res);
+title('Residule ($\sigma_{OLAE} - \sigma_{TRUE}$)')
+xlabel('Time [S]'); ylabel('$\sigma_{OLAE} - \sigma_{TRUE}$')
+
+
+\end{lstlisting}
+
 
 \end{document}
+
+
+
+
+
+
+

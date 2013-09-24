@@ -35,7 +35,7 @@ if nargin < 3
     w = ones(numvecs,1);
 end
 
-W = zeros(3*length(w), 3*length(w));
+W = zeros(3*length(w), 3*length(w/norm(w)));
 for ii = 1:length(w)
     W(1+3*(ii-1):3+3*(ii-1),1+3*(ii-1):3+3*(ii-1)) = w(ii)*eye(3,3);
 end

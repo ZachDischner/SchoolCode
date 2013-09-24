@@ -72,11 +72,16 @@ for i = 1:5:size(X_star,2)
             xs = X_star(16,end);
             ys = X_star(17,end);
             zs = X_star(18,end);
+           
             
     end
     
     % Create the line
     line([X_star(1,i) xs],[X_star(2,i) ys],[X_star(3,i) zs]);
+    
+%     if mod(i,10) == 0
+%         error_ellipse(P(1:3,1:3,i),[X_star(1,i),X_star(2,i),X_star(3,i)]);
+%     end
 
 end
 

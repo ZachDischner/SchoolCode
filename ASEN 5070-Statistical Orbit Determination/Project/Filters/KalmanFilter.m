@@ -10,6 +10,7 @@
 
 clc; clear all;close all; format compact;tic
 warning off MATLAB:nearlySingularMatrix
+res = [];
 
 %% First, Load and Parse Observation Data
 load('Observations.mat');
@@ -54,7 +55,7 @@ findrhodotstar   = @(x,y,z,xdot,ydot,zdot,Xsite,Ysite,Zsite,theta,theta_dot,rho)
 % System Constants
 %---------------------------------------------
 Phi_Init    = eye(18,18);
-tol         = 1e-9;
+tol         = 1e-13;
 uE          = 3.986004415e14;        % m^3/s^2
 J2          = 1.082626925638815e-3;  % []
 Cd          = 2;                     % []
@@ -99,6 +100,8 @@ Phi_tk_t0   = Phi_Init;%ones(size(Phi_Init));
 num_iterations = 3;
  for ii = 1:num_iterations
      tr=[];
+     tr_J = [];
+     tr_P = [];
     P(:,:,1)          = Pbar0;
     
     % Dynamical Integration
@@ -205,17 +208,21 @@ num_iterations = 3;
         % Measurement Update
         %---------------------------------------------
         xhat(:,:,jj) = xbar(:,:,jj) + K1*(y1(:,jj) - Htilde*xbar(:,:,jj));
-%          P(:,:,jj) = (eye(size(K1*Htilde)) - K1*Htilde)*P(:,:,jj)*(eye(size(K1*Htilde))-K1*Htilde)' + K1*R*K1';
-%        P(:,:,jj) = (eye(size(K1*Htilde)) - K1*Htilde)*P(:,:,jj);
-        P(:,:,jj) = ComputeP(Htilde,P(:,:,jj),R,Xstar(jj,1:18),ystar,'potter');
+%        P(:,:,jj) = (eye(size(K1*Htilde)) - K1*Htilde)*P(:,:,jj)*(eye(size(K1*Htilde))-K1*Htilde)' + K1*R*K1';
+       P(:,:,jj) = (eye(size(K1*Htilde)) - K1*Htilde)*P(:,:,jj);
+%        P_P(:,:,jj) = ComputeP(Htilde,P(:,:,jj),R,Xstar(jj,1:18),ystar,'potter');
+       
+%         P(:,:,jj) = ComputeP(Htilde,P(:,:,jj),R,Xstar(jj,1:18),ystar,'potter');
         %---------------------------------------------
               
         tr = [tr,trace(P(1:3,1:3,jj))];
+%         tr_J = [tr_J,trace(P_J(1:3,1:3,jj))];
+%         tr_P = [tr_P,trace(P_J(1:3,1:3,jj))];
                                                                
     end   % End observation loop
     
             
-        
+    P_full=P;    
     % Update Best Guess of Initial Conditions
     %---------------------------------------------%     
      Xstar0 = [Xstar0(1:18) + inv(Phi(:,:,end))*xhat(:,:,end); (reshape(Phi_Init,length(Phi_Init)^2,1))];
@@ -242,25 +249,45 @@ num_iterations = 3;
     ylabel('$\dot{\rho}$ residules')
     xlabel('Observation Number')
     
+    if ii == 1
+        tr_J = load('Kalman.mat');
+        figure(2)
+        subplot(1,2,1)
+        semilogy(tr2)
+        xlabel('Observation Number');ylabel('Trace( $P_{xyz}$ )');title('Standard Formulation')
+        subplot(1,2,2)
+        semilogy(tr)
+        xlabel('Observation Number');ylabel('Trace( $P_{xyz}$ )');title('Joseph Formulation')
+%          subplot(1,3,3)
+%         semilogy(tr_P)
+%         xlabel('Observation Number');ylabel('Trace( $P_{xyz}$ )');title('Potter Formulation')
+    end
     
-    figure(2)
-    subplot(num_iterations,1,ii)
-    loglog(tr)
-    xlabel('Observation Number')
-    ylabel('Trace( $P_{xyz}$ )')
+    res = [res,[rms(y1(1,:));rms(y1(2,:))]];
     
  end
 
  % epic function by Pierce Martin
  RE     = 6378136.3;     % m    Radius of earth
  plot_X_star(Xstar',RE,station)
+ 
+ figure
+ hold on
+ for ii=1:length(time)
+    if mod(ii,30) == 0 
+        error_ellipse(P_J(1:3,1:3,ii),[ii*20,0,0]);
+    end
+ end
+ xlabel('X (and time)');ylabel('Y');zlabel('Z'); title('Covariance Evolution')
 
 fprintf('\n\nRunning Time for Kalman Filter : %3.5f\n\n',toc)
 
+changeK = Xstar0(1:18)-[RV_Init , Const_Init , Station_Init]';
 
 
 
-
+% Output stuff
+matrix2latex(res,'table.txt')
 
 
 

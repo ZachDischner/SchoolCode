@@ -66,7 +66,9 @@ sigma_rho   = 0.01;                  % rms std
 sigma_rhodot= 0.001;                 % rms std
 R           = [sigma_rho^2  ,         0        ; ...
                     0       ,    sigma_rhodot^2];
-W = inv(R);                
+W = inv(R); 
+% Range only
+% W(2,2)=0;
 Pbar0       = diag([1e6,1e6,1e6,1e6,1e6,1e6,1e20,1e6,1e6,1e-10,1e-10,1e-10,1e6,1e6,1e6,1e6,1e6,1e6]);
 %---------------------------------------------
 
@@ -92,6 +94,7 @@ xbar0       = zeros(18,1);
 
 %% Perform Batch Loop
 num_iterations = 3;
+res=[];
 for ii = 1:num_iterations
     
     % Dynamical Integration
@@ -222,22 +225,31 @@ for ii = 1:num_iterations
     figure(1)
     subplot(num_iterations,2,2*ii-1)
     plot(y_res(1,:))
-    ylabel('rho residules')
+    ylabel('$\rho$ residuals')
     xlabel('observation number')
     
     subplot(num_iterations,2,2*ii)
     plot(y_res(2,:))
-    ylabel('rho residules')
+    ylabel('$\dot{\rho}$ residuals')
     xlabel('observation number')
+    
+    res = [res,[rms(y_res(1,:));rms(y_res(2,:))]];
     
 end
 
 fprintf('\n\nRunning Time for Batch Processor : %3.5f\n\n',toc)
 
+% For output stuff
+% table=[Xstar0(1:18),diag(inv(Lam))];
+Pfinal = Phi*inv(Lam)*Phi';
+state=Xstar0(1:18);
+cov     = diag(inv(Lam));
+change = Xstar0(1:18)-[RV_Init , Const_Init , Station_Init]';
+ save('Batch.mat','state','cov','Pfinal','change');
 
+% figure_awesome('save','eps')
 
-
-
+% t=[Xstar0(1:18),Xstar0(1:18)-[RV_Init , Const_Init , Station_Init]', diag(inv(Lam))]
 
 
 
