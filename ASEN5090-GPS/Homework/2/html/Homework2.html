@@ -1,0 +1,557 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Homework2</title><meta name="generator" content="MATLAB 8.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-09-17"><meta name="DC.source" content="Homework2.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Problem 1</a></li><li><a href="#3">Problem 2</a></li></ul></div><pre class="codeinput"><span class="comment">%&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;</span>
+<span class="comment">%                        HW2.m</span>
+<span class="comment">% Author      : Zach Dischner</span>
+<span class="comment">% Date        : 9/15/2013</span>
+<span class="comment">% Description : Matlat script for all calculations required for</span>
+<span class="comment">%               ASEN 5090 Homework 2</span>
+<span class="comment">%</span>
+<span class="comment">%                 __...____________________          ,</span>
+<span class="comment">%                `(\ [ ===NCC-1700===--|__|) ___..--"_`--.._____</span>
+<span class="comment">%                  `"""""""""""""""""| |""` [_""_-___________"_/</span>
+<span class="comment">%                                    | |   /..../`'-._.-'`</span>
+<span class="comment">%                                ____| |__/::..'_</span>
+<span class="comment">%                               |\ ".`"` '_____//\</span>
+<span class="comment">%                               `"'-.   """""  \\/</span>
+<span class="comment">%                                    `""""""""""`</span>
+<span class="comment">% &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</span>
+
+
+
+clc;clear <span class="string">all</span>;close <span class="string">all</span>
+screen_size = get(0,<span class="string">'ScreenSize'</span>);
+sw = screen_size(3);    <span class="comment">% Screen Width</span>
+sh = screen_size(4);    <span class="comment">% Screen Height</span>
+figColor = [0.99 0.99 0.98];
+</pre><h2>Problem 1<a name="2"></a></h2><pre class="codeinput"><span class="comment">% 1a-PRN19</span>
+<span class="comment">%---------------------------------------------</span>
+sat = 19;
+PRN(sat,:) = PRNGenerator(sat);
+figure(); subplot(1,2,1)
+plotBinaryWave(PRN(sat,1:16));
+legendStr=[<span class="string">'PRN '</span>,num2str(sat)];
+xlabel(<span class="string">'Bit Number'</span>);ylabel(<span class="string">'C/A Bit Value'</span>);
+legend(legendStr,<span class="string">'location'</span>,<span class="string">'best'</span>);title(<span class="string">'First 16 bits'</span>)
+subplot(1,2,2)
+plotBinaryWave(PRN(sat,end-16:end),[length(PRN(sat,:))-16:length(PRN(sat,:))]);
+xlabel(<span class="string">'Bit Number'</span>);ylabel(<span class="string">'C/A Bit Value'</span>);
+legend(legendStr,<span class="string">'location'</span>,<span class="string">'best'</span>);title(<span class="string">'Last 16 bits'</span>)
+fprintf(<span class="string">'&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Problem 1 &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;'</span>);
+fprintf(<span class="string">'\nProblem 1a:\n'</span>)
+fprintf(<span class="string">'\tFirst 16bits of PRN %d''s chip code is: \n\t\tPRN ==&gt; [%s...]\n\n'</span>,<span class="keyword">...</span>
+    sat,num2str(PRN(sat,1:16)));
+set(gcf,<span class="string">'Color'</span>,figColor, <span class="string">'Position'</span>,[10+gcf*10 sh-600-gcf*10   1000 500])
+subplotsqueeze(gcf,1.4,1)
+<span class="comment">%---------------------------------------------</span>
+
+<span class="comment">% 1b-PRN19 epoch 1024-2046</span>
+<span class="comment">%---------------------------------------------</span>
+figure()
+PRN19_9 = PRNGenerator(19,1024);
+subplot(2,1,1)
+plotBinaryWave(PRN19_9(1:20))
+xlabel(<span class="string">'Bit Number'</span>);ylabel(<span class="string">'C/A Bit Value'</span>);
+title(<span class="string">'PRN19 at 1024-2046 Epoch'</span>)
+subplot(2,1,2)
+plotBinaryWave(PRN(19,(1:20)))
+xlabel(<span class="string">'Bit Number'</span>);ylabel(<span class="string">'C/A Bit Value'</span>);
+title(<span class="string">'PRN19 at 0-1023 Epoch'</span>)
+set(gcf,<span class="string">'Color'</span>,figColor, <span class="string">'Position'</span>,[10+gcf*10 sh-600-gcf*10   1000 500])
+fprintf(<span class="string">'\nProblem 1b:\n'</span>)
+fprintf(<span class="string">'\tThe difference between the two epochs is that the C/A code generated'</span>)
+fprintf(<span class="string">'\n\tat the 0-1024 epoch is 1 bit shifted right 1 bit (in plot space), relative to\n'</span>)
+fprintf(<span class="string">'\tthe C/A code generated at epoch 1024-2046\n'</span>)
+<span class="comment">%---------------------------------------------</span>
+
+
+<span class="comment">% 1c-d: Redo part a for satellite 5,25</span>
+<span class="comment">%---------------------------------------------</span>
+<span class="keyword">for</span> sat = [25,5]
+    PRN(sat,:) = PRNGenerator(sat);
+    figure(); subplot(1,2,1)
+    plotBinaryWave(PRN(sat,1:16));
+    legendStr=[<span class="string">'PRN '</span>,num2str(sat)];
+    xlabel(<span class="string">'Bit Number'</span>);ylabel(<span class="string">'C/A Bit Value'</span>);
+    legend(legendStr,<span class="string">'location'</span>,<span class="string">'best'</span>);title(<span class="string">'First 16 bits'</span>)
+    subplot(1,2,2)
+    plotBinaryWave(PRN(sat,end-16:end),<span class="keyword">...</span>
+        [length(PRN(sat,:))-16:length(PRN(sat,:))]);
+    xlabel(<span class="string">'Bit Number'</span>);ylabel(<span class="string">'C/A Bit Value'</span>);
+    legend(legendStr,<span class="string">'location'</span>,<span class="string">'best'</span>);title(<span class="string">'Last 16 bits'</span>)
+    fprintf(<span class="string">'\nProblem 1c and 1d:\n'</span>)
+    fprintf(<span class="string">'\tFirst 16bits of PRN %d''s chip code is: \n\t\tPRN ==&gt; [%s...]\n\n'</span>,<span class="keyword">...</span>
+        sat,num2str(PRN(sat,1:16)));
+    set(gcf,<span class="string">'Color'</span>,figColor, <span class="string">'Position'</span>,[10+gcf*10 sh-600-gcf*10   1000 500])
+    subplotsqueeze(gcf,1.4,1)
+<span class="keyword">end</span>
+<span class="comment">%---------------------------------------------</span>
+</pre><pre class="codeoutput">&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Problem 1 &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+Problem 1a:
+	First 16bits of PRN 19's chip code is: 
+		PRN ==&gt; [1  1  1  0  0  1  1  0  1  1  0  1  0  1  1  0...]
+
+
+Problem 1b:
+	The difference between the two epochs is that the C/A code generated
+	at the 0-1024 epoch is 1 bit shifted right 1 bit (in plot space), relative to
+	the C/A code generated at epoch 1024-2046
+
+Problem 1c and 1d:
+	First 16bits of PRN 25's chip code is: 
+		PRN ==&gt; [1  1  1  1  1  0  0  0  1  1  1  1  0  1  0  0...]
+
+
+Problem 1c and 1d:
+	First 16bits of PRN 5's chip code is: 
+		PRN ==&gt; [1  0  0  1  0  1  1  0  1  1  0  0  0  1  0  0...]
+
+</pre><img vspace="5" hspace="5" src="Homework2_01.png" alt=""> <img vspace="5" hspace="5" src="Homework2_02.png" alt=""> <img vspace="5" hspace="5" src="Homework2_03.png" alt=""> <img vspace="5" hspace="5" src="Homework2_04.png" alt=""> <h2>Problem 2<a name="3"></a></h2><p>2a: Plot autocorrelation of C/A code 19</p><pre class="codeinput"><span class="comment">%---------------------------------------------</span>
+PRN19n = PRNNorm(PRN(19,:));
+PRN19=PRN(19,:);
+[R19,lags] = xcorr(PRN19n);
+figure()
+plot(lags,R19);
+set(gcf,<span class="string">'Color'</span>,figColor, <span class="string">'Position'</span>,[10+gcf*10 sh-600-gcf*10  500 500])
+title(<span class="string">'PRN 19 Autocorrelation'</span>);xlabel(<span class="string">'Lag'</span>);ylabel(<span class="string">'Correlation'</span>);legend(<span class="string">'R^{(19)}'</span>);
+<span class="comment">%---------------------------------------------</span>
+
+<span class="comment">% 2b: Plot autocorrelation of C/A Code 19 delayed by 200 chips</span>
+<span class="comment">%---------------------------------------------</span>
+PRN19n_200 = [PRN19n(end-199:end),PRN19n(1:end-200)];
+[lags, R19_200] = cyc_corr2(PRN19n_200,PRN19n);
+figure()
+plot(lags,R19_200);
+set(gcf,<span class="string">'Color'</span>,figColor, <span class="string">'Position'</span>,[10+gcf*10 sh-600-gcf*10  600 500])
+title(<span class="string">'PRN 19 Cyclic Cross With 200 chip Lag PRN 19'</span>);xlabel(<span class="string">'Lag'</span>);
+ylabel(<span class="string">'Correlation'</span>);legend(<span class="string">'R^{(19,19_{-200})}'</span>);
+fprintf(<span class="string">'&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Problem 2 &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;'</span>);
+fprintf(<span class="string">'\nProblem 2b:\n'</span>)
+fprintf(<span class="string">'\tThe cross correlation puts the correlation between the C/A'</span>)
+fprintf(<span class="string">'\n\t 19 and delayd C/A 19 at exactly 200 away from 0. This is \n'</span>)
+fprintf(<span class="string">'\twhat intuition says it should be, as we induced a 200 chip delay\n'</span>)
+<span class="comment">%---------------------------------------------</span>
+
+<span class="comment">% 2c: Plot autocorrelation of C/A Code 19  with C/A Code 25</span>
+<span class="comment">%---------------------------------------------</span>
+PRN25n = PRNNorm(PRN(25,:));
+[lags, R25_R19] = cyc_corr2(PRN19n,PRN25n);
+figure()
+plot(lags,R25_R19);
+set(gcf,<span class="string">'Color'</span>,figColor, <span class="string">'Position'</span>,[10+gcf*10 sh-600-gcf*10  600 500])
+title(<span class="string">'PRN 19 Cyclic Cross  PRN 25'</span>);xlabel(<span class="string">'Lag'</span>);
+ylabel(<span class="string">'Correlation'</span>);legend(<span class="string">'R^{(19,25)}'</span>);
+fprintf(<span class="string">'\nProblem 2c:\n'</span>)
+fprintf(<span class="string">'\tThe PRN19/PRN25 cross correlation yields pretty much just white'</span>)
+fprintf(<span class="string">'\n\tnoise. There is no correlation between the two signals, so \n'</span>)
+fprintf(<span class="string">'\tas opposed to the plots in a) and b), there should be no spikes\n'</span>)
+fprintf(<span class="string">'\tsince you can shift the signal by any amount to get the signals\n'</span>)
+fprintf(<span class="string">'\tto match up\n'</span>)
+<span class="comment">%---------------------------------------------</span>
+
+<span class="comment">% 2d: Plot autocorrelation of C/A Code 19  with C/A Code 5</span>
+<span class="comment">%---------------------------------------------</span>
+PRN5n = PRNNorm(PRN(5,:));
+[lags, R5_R19] = cyc_corr2(PRN19n,PRN5n);
+figure()
+plot(lags,R5_R19);
+set(gcf,<span class="string">'Color'</span>,figColor, <span class="string">'Position'</span>,[10+gcf*10 sh-600-gcf*10  600 500])
+title(<span class="string">'PRN 19 Cyclic Cross PRN 5'</span>);xlabel(<span class="string">'Lag'</span>);
+ylabel(<span class="string">'Correlation'</span>);legend(<span class="string">'R^{(19,5)}'</span>);
+fprintf(<span class="string">'\nProblem 2d:\n'</span>)
+fprintf(<span class="string">'\tThe PRN19/PRN5 cross correlation yields pretty much just white'</span>)
+fprintf(<span class="string">'\n\tnoise. This is the same as in part c). There is no shift that \n'</span>)
+fprintf(<span class="string">'\twill allow the two signals to properly correlate\n'</span>)
+<span class="comment">%---------------------------------------------</span>
+
+<span class="comment">% 2e: Correlate 3 summed and delayed signals</span>
+<span class="comment">%---------------------------------------------</span>
+x1 = delayPRN(PRN(19,:),350);
+x2 = delayPRN(PRN(25,:),905);
+x3 = delayPRN(PRN(5,:),75);
+
+[lags, R5_25_19_19] = cyc_corr2(PRN19n,PRNNorm(x1+x2+x3));
+figure()
+plot(lags,R5_25_19_19);
+set(gcf,<span class="string">'Color'</span>,figColor, <span class="string">'Position'</span>,[10+gcf*10 sh-600-gcf*10  700 500])
+title(<span class="string">'Cyclic Cross $ \Sigma(PRN5_{-75} PRN19_{-350} PRN25_{-905}$)'</span>);xlabel(<span class="string">'Lag'</span>);
+ylabel(<span class="string">'Correlation'</span>);legend(<span class="string">'R^{(19,(5_{-75}+9_{-350}+25_{-905}))}'</span>);
+fprintf(<span class="string">'\nProblem 2e:\n'</span>)
+fprintf(<span class="string">'\tThe PRN19/(x1+y1+z1) correlation is exactly where I expect.\n'</span>)
+fprintf(<span class="string">'\n\tEven when adding signals, the summed signal correlates with \n'</span>)
+fprintf(<span class="string">'\tC/A 19 at the 350 chip offset. C/A 19 is still in the summed\n'</span>)
+fprintf(<span class="string">'\tsignal, just shifted by 350 chips. So the plot matches intuition\n'</span>)
+<span class="comment">%---------------------------------------------</span>
+
+<span class="comment">% 2f: Add noise</span>
+<span class="comment">%---------------------------------------------</span>
+noise = 4*randn(1,1023);
+figure();subplot(4,1,1)
+plotBinaryWave(x1);ylabel(<span class="string">'$x_1$'</span>);axis([0 1023 -3 3])
+lines = sort(findobj(gca,<span class="string">'Type'</span>,<span class="string">'line'</span>));set(lines,  <span class="string">'LineWidth'</span>,1)
+subplot(4,1,2)
+plotBinaryWave(x2);ylabel(<span class="string">'$x_2$'</span>);axis([0 1023 -3 3])
+lines = sort(findobj(gca,<span class="string">'Type'</span>,<span class="string">'line'</span>));set(lines,  <span class="string">'LineWidth'</span>,1)
+subplot(4,1,3)
+plotBinaryWave(x3);ylabel(<span class="string">'$x_3$'</span>);axis([0 1023 -3 3])
+lines = sort(findobj(gca,<span class="string">'Type'</span>,<span class="string">'line'</span>));set(lines,  <span class="string">'LineWidth'</span>,1)
+subplot(4,1,4)
+plot(noise);ylabel(<span class="string">'noise'</span>);axis([0 1023 -1 2])
+lines = sort(findobj(gca,<span class="string">'Type'</span>,<span class="string">'line'</span>));set(lines,  <span class="string">'LineWidth'</span>,1)
+set(gcf,<span class="string">'Color'</span>,figColor, <span class="string">'Position'</span>,[10+gcf*10 sh-600-gcf*10  800 700])
+<span class="comment">%---------------------------------------------</span>
+
+<span class="comment">% 2g: Add noise and correlate</span>
+<span class="comment">%---------------------------------------------</span>
+[lags, R5_25_19_19_N] = cyc_corr2(PRN19n,PRNNorm(x1+x2+x3+noise));
+figure()
+plot(lags,R5_25_19_19_N);set(gcf,<span class="string">'Color'</span>,figColor, <span class="string">'Position'</span>,[10+gcf*10 sh-600-gcf*10  700 500])
+title(<span class="string">'Cyclic Cross $ \Sigma(PRN5_{-75} PRN19_{-350} PRN25_{-905}$ Noise)'</span>);xlabel(<span class="string">'Lag'</span>);
+ylabel(<span class="string">'Correlation'</span>);legend(<span class="string">'R^{(19,(5_{-75}+9_{-350}+25_{-905}+Noise))}'</span>);
+fprintf(<span class="string">'\nProblem 2e:\n'</span>)
+fprintf(<span class="string">'\tThe PRN19/(x1+y1+z1+noise) correlation is still where I expect.\n'</span>)
+fprintf(<span class="string">'\n\tEven when adding noise and multiple signals, I can still pull \n'</span>)
+fprintf(<span class="string">'\tOut a correlation between the original C/A 19 shifted signal and C/A 19\n'</span>)
+fprintf(<span class="string">'\tI am not surprised that this can be done, since it is the basis\n'</span>)
+fprintf(<span class="string">'\tfor our ability to sort out multiple signals on the same frequency\n'</span>)
+fprintf(<span class="string">'\tbut I will say I am very impressed that it works so well\n'</span>)
+fprintf(<span class="string">'\n\tThis shows how robust cross correlation is to noisy, overlayed signals\n'</span>)
+fprintf(<span class="string">'\tHOWEVER! I ran this sim many times, and occationally, there was no correlation\n'</span>)
+fprintf(<span class="string">'\tevident. I guess this is the nature of noise! Sometimes it is \n'</span>)
+fprintf(<span class="string">'\tprecisely the wrong kind of noise\n'</span>)
+<span class="comment">%---------------------------------------------</span>
+
+<span class="comment">% [lag,R19] = cyc_corr2(PRNNorm(PRN19),PRNNorm(PRN19));</span>
+<span class="comment">% figure</span>
+<span class="comment">% subplot(1,2,1)</span>
+<span class="comment">% plot(R19); title('$R^{(19)}$');</span>
+<span class="comment">% subplot(1,2,2)</span>
+<span class="comment">% plot(R19); title('Lag');</span>
+<span class="comment">% set(gcf,'Color',[0.95 0.95 0.98], 'Position',[10 500  1000 500])</span>
+<span class="comment">% subplotsqueeze(gcf,1.4,1);</span>
+</pre><pre class="codeoutput">&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; Problem 2 &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+Problem 2b:
+	The cross correlation puts the correlation between the C/A
+	 19 and delayd C/A 19 at exactly 200 away from 0. This is 
+	what intuition says it should be, as we induced a 200 chip delay
+
+Problem 2c:
+	The PRN19/PRN25 cross correlation yields pretty much just white
+	noise. There is no correlation between the two signals, so 
+	as opposed to the plots in a) and b), there should be no spikes
+	since you can shift the signal by any amount to get the signals
+	to match up
+
+Problem 2d:
+	The PRN19/PRN5 cross correlation yields pretty much just white
+	noise. This is the same as in part c). There is no shift that 
+	will allow the two signals to properly correlate
+
+Problem 2e:
+	The PRN19/(x1+y1+z1) correlation is exactly where I expect.
+
+	Even when adding signals, the summed signal correlates with 
+	C/A 19 at the 350 chip offset. C/A 19 is still in the summed
+	signal, just shifted by 350 chips. So the plot matches intuition
+
+Problem 2e:
+	The PRN19/(x1+y1+z1+noise) correlation is still where I expect.
+
+	Even when adding noise and multiple signals, I can still pull 
+	Out a correlation between the original C/A 19 shifted signal and C/A 19
+	I am not surprised that this can be done, since it is the basis
+	for our ability to sort out multiple signals on the same frequency
+	but I will say I am very impressed that it works so well
+
+	This shows how robust cross correlation is to noisy, overlayed signals
+	HOWEVER! I ran this sim many times, and occationally, there was no correlation
+	evident. I guess this is the nature of noise! Sometimes it is 
+	precisely the wrong kind of noise
+</pre><img vspace="5" hspace="5" src="Homework2_05.png" alt=""> <img vspace="5" hspace="5" src="Homework2_06.png" alt=""> <img vspace="5" hspace="5" src="Homework2_07.png" alt=""> <img vspace="5" hspace="5" src="Homework2_08.png" alt=""> <img vspace="5" hspace="5" src="Homework2_09.png" alt=""> <img vspace="5" hspace="5" src="Homework2_10.png" alt=""> <img vspace="5" hspace="5" src="Homework2_11.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+%                        HW2.m
+% Author      : Zach Dischner
+% Date        : 9/15/2013
+% Description : Matlat script for all calculations required for
+%               ASEN 5090 Homework 2
+%
+%                 __...____________________          ,
+%                `(\ [ ===NCC-1700===REPLACE_WITH_DASH_DASH|__|) ___..REPLACE_WITH_DASH_DASH"_`REPLACE_WITH_DASH_DASH.._____
+%                  `"""""""""""""""""| |""` [_""_-___________"_/
+%                                    | |   /..../`'-._.-'`
+%                                ____| |__/::..'_
+%                               |\ ".`"` '_____//\
+%                               `"'-.   """""  \\/
+%                                    `""""""""""`
+% <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+clc;clear all;close all
+screen_size = get(0,'ScreenSize');
+sw = screen_size(3);    % Screen Width
+sh = screen_size(4);    % Screen Height
+figColor = [0.99 0.99 0.98];
+
+%% Problem 1
+
+% 1a-PRN19
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+sat = 19;
+PRN(sat,:) = PRNGenerator(sat);
+figure(); subplot(1,2,1)
+plotBinaryWave(PRN(sat,1:16));
+legendStr=['PRN ',num2str(sat)];
+xlabel('Bit Number');ylabel('C/A Bit Value');
+legend(legendStr,'location','best');title('First 16 bits')
+subplot(1,2,2)
+plotBinaryWave(PRN(sat,end-16:end),[length(PRN(sat,:))-16:length(PRN(sat,:))]);
+xlabel('Bit Number');ylabel('C/A Bit Value');
+legend(legendStr,'location','best');title('Last 16 bits')
+fprintf('>>>>>>>>>>>>>>>>>>>>>>>> Problem 1 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+fprintf('\nProblem 1a:\n')
+fprintf('\tFirst 16bits of PRN %d''s chip code is: \n\t\tPRN ==> [%s...]\n\n',...
+    sat,num2str(PRN(sat,1:16)));
+set(gcf,'Color',figColor, 'Position',[10+gcf*10 sh-600-gcf*10   1000 500])
+subplotsqueeze(gcf,1.4,1)
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+% 1b-PRN19 epoch 1024-2046
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+figure()
+PRN19_9 = PRNGenerator(19,1024);
+subplot(2,1,1)
+plotBinaryWave(PRN19_9(1:20))
+xlabel('Bit Number');ylabel('C/A Bit Value');
+title('PRN19 at 1024-2046 Epoch')
+subplot(2,1,2)
+plotBinaryWave(PRN(19,(1:20)))
+xlabel('Bit Number');ylabel('C/A Bit Value');
+title('PRN19 at 0-1023 Epoch')
+set(gcf,'Color',figColor, 'Position',[10+gcf*10 sh-600-gcf*10   1000 500])
+fprintf('\nProblem 1b:\n')
+fprintf('\tThe difference between the two epochs is that the C/A code generated')
+fprintf('\n\tat the 0-1024 epoch is 1 bit shifted right 1 bit (in plot space), relative to\n')
+fprintf('\tthe C/A code generated at epoch 1024-2046\n')
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+
+% 1c-d: Redo part a for satellite 5,25
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+for sat = [25,5]
+    PRN(sat,:) = PRNGenerator(sat);
+    figure(); subplot(1,2,1)
+    plotBinaryWave(PRN(sat,1:16));
+    legendStr=['PRN ',num2str(sat)];
+    xlabel('Bit Number');ylabel('C/A Bit Value');
+    legend(legendStr,'location','best');title('First 16 bits')
+    subplot(1,2,2)
+    plotBinaryWave(PRN(sat,end-16:end),...
+        [length(PRN(sat,:))-16:length(PRN(sat,:))]);
+    xlabel('Bit Number');ylabel('C/A Bit Value');
+    legend(legendStr,'location','best');title('Last 16 bits')
+    fprintf('\nProblem 1c and 1d:\n')
+    fprintf('\tFirst 16bits of PRN %d''s chip code is: \n\t\tPRN ==> [%s...]\n\n',...
+        sat,num2str(PRN(sat,1:16)));
+    set(gcf,'Color',figColor, 'Position',[10+gcf*10 sh-600-gcf*10   1000 500])
+    subplotsqueeze(gcf,1.4,1)
+end
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+%% Problem 2
+% 2a: Plot autocorrelation of C/A code 19
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+PRN19n = PRNNorm(PRN(19,:));
+PRN19=PRN(19,:);
+[R19,lags] = xcorr(PRN19n);
+figure()
+plot(lags,R19);
+set(gcf,'Color',figColor, 'Position',[10+gcf*10 sh-600-gcf*10  500 500])
+title('PRN 19 Autocorrelation');xlabel('Lag');ylabel('Correlation');legend('R^{(19)}');
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+% 2b: Plot autocorrelation of C/A Code 19 delayed by 200 chips 
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+PRN19n_200 = [PRN19n(end-199:end),PRN19n(1:end-200)];
+[lags, R19_200] = cyc_corr2(PRN19n_200,PRN19n);
+figure()
+plot(lags,R19_200);
+set(gcf,'Color',figColor, 'Position',[10+gcf*10 sh-600-gcf*10  600 500])
+title('PRN 19 Cyclic Cross With 200 chip Lag PRN 19');xlabel('Lag');
+ylabel('Correlation');legend('R^{(19,19_{-200})}');
+fprintf('>>>>>>>>>>>>>>>>>>>>>>>> Problem 2 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+fprintf('\nProblem 2b:\n')
+fprintf('\tThe cross correlation puts the correlation between the C/A')
+fprintf('\n\t 19 and delayd C/A 19 at exactly 200 away from 0. This is \n')
+fprintf('\twhat intuition says it should be, as we induced a 200 chip delay\n')
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+% 2c: Plot autocorrelation of C/A Code 19  with C/A Code 25
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+PRN25n = PRNNorm(PRN(25,:));
+[lags, R25_R19] = cyc_corr2(PRN19n,PRN25n);
+figure()
+plot(lags,R25_R19);
+set(gcf,'Color',figColor, 'Position',[10+gcf*10 sh-600-gcf*10  600 500])
+title('PRN 19 Cyclic Cross  PRN 25');xlabel('Lag');
+ylabel('Correlation');legend('R^{(19,25)}');
+fprintf('\nProblem 2c:\n')
+fprintf('\tThe PRN19/PRN25 cross correlation yields pretty much just white')
+fprintf('\n\tnoise. There is no correlation between the two signals, so \n')
+fprintf('\tas opposed to the plots in a) and b), there should be no spikes\n')
+fprintf('\tsince you can shift the signal by any amount to get the signals\n')
+fprintf('\tto match up\n')
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+% 2d: Plot autocorrelation of C/A Code 19  with C/A Code 5
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+PRN5n = PRNNorm(PRN(5,:));
+[lags, R5_R19] = cyc_corr2(PRN19n,PRN5n);
+figure()
+plot(lags,R5_R19);
+set(gcf,'Color',figColor, 'Position',[10+gcf*10 sh-600-gcf*10  600 500])
+title('PRN 19 Cyclic Cross PRN 5');xlabel('Lag');
+ylabel('Correlation');legend('R^{(19,5)}');
+fprintf('\nProblem 2d:\n')
+fprintf('\tThe PRN19/PRN5 cross correlation yields pretty much just white')
+fprintf('\n\tnoise. This is the same as in part c). There is no shift that \n')
+fprintf('\twill allow the two signals to properly correlate\n')
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+% 2e: Correlate 3 summed and delayed signals
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+x1 = delayPRN(PRN(19,:),350);
+x2 = delayPRN(PRN(25,:),905);
+x3 = delayPRN(PRN(5,:),75);
+
+[lags, R5_25_19_19] = cyc_corr2(PRN19n,PRNNorm(x1+x2+x3));
+figure()
+plot(lags,R5_25_19_19);
+set(gcf,'Color',figColor, 'Position',[10+gcf*10 sh-600-gcf*10  700 500])
+title('Cyclic Cross $ \Sigma(PRN5_{-75} PRN19_{-350} PRN25_{-905}$)');xlabel('Lag');
+ylabel('Correlation');legend('R^{(19,(5_{-75}+9_{-350}+25_{-905}))}');
+fprintf('\nProblem 2e:\n')
+fprintf('\tThe PRN19/(x1+y1+z1) correlation is exactly where I expect.\n')
+fprintf('\n\tEven when adding signals, the summed signal correlates with \n')
+fprintf('\tC/A 19 at the 350 chip offset. C/A 19 is still in the summed\n')
+fprintf('\tsignal, just shifted by 350 chips. So the plot matches intuition\n')
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+% 2f: Add noise
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+noise = 4*randn(1,1023);
+figure();subplot(4,1,1)
+plotBinaryWave(x1);ylabel('$x_1$');axis([0 1023 -3 3])
+lines = sort(findobj(gca,'Type','line'));set(lines,  'LineWidth',1)
+subplot(4,1,2)
+plotBinaryWave(x2);ylabel('$x_2$');axis([0 1023 -3 3])
+lines = sort(findobj(gca,'Type','line'));set(lines,  'LineWidth',1)
+subplot(4,1,3)
+plotBinaryWave(x3);ylabel('$x_3$');axis([0 1023 -3 3])
+lines = sort(findobj(gca,'Type','line'));set(lines,  'LineWidth',1)
+subplot(4,1,4)
+plot(noise);ylabel('noise');axis([0 1023 -1 2])
+lines = sort(findobj(gca,'Type','line'));set(lines,  'LineWidth',1)
+set(gcf,'Color',figColor, 'Position',[10+gcf*10 sh-600-gcf*10  800 700])
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+% 2g: Add noise and correlate
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+[lags, R5_25_19_19_N] = cyc_corr2(PRN19n,PRNNorm(x1+x2+x3+noise));
+figure()
+plot(lags,R5_25_19_19_N);set(gcf,'Color',figColor, 'Position',[10+gcf*10 sh-600-gcf*10  700 500])
+title('Cyclic Cross $ \Sigma(PRN5_{-75} PRN19_{-350} PRN25_{-905}$ Noise)');xlabel('Lag');
+ylabel('Correlation');legend('R^{(19,(5_{-75}+9_{-350}+25_{-905}+Noise))}');
+fprintf('\nProblem 2e:\n')
+fprintf('\tThe PRN19/(x1+y1+z1+noise) correlation is still where I expect.\n')
+fprintf('\n\tEven when adding noise and multiple signals, I can still pull \n')
+fprintf('\tOut a correlation between the original C/A 19 shifted signal and C/A 19\n')
+fprintf('\tI am not surprised that this can be done, since it is the basis\n')
+fprintf('\tfor our ability to sort out multiple signals on the same frequency\n')
+fprintf('\tbut I will say I am very impressed that it works so well\n')
+fprintf('\n\tThis shows how robust cross correlation is to noisy, overlayed signals\n')
+fprintf('\tHOWEVER! I ran this sim many times, and occationally, there was no correlation\n')
+fprintf('\tevident. I guess this is the nature of noise! Sometimes it is \n')
+fprintf('\tprecisely the wrong kind of noise\n')
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+% [lag,R19] = cyc_corr2(PRNNorm(PRN19),PRNNorm(PRN19));
+% figure
+% subplot(1,2,1)
+% plot(R19); title('$R^{(19)}$');
+% subplot(1,2,2)
+% plot(R19); title('Lag');
+% set(gcf,'Color',[0.95 0.95 0.98], 'Position',[10 500  1000 500])
+% subplotsqueeze(gcf,1.4,1);
+
+
+
+
+##### SOURCE END #####
+--></body></html>

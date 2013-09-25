@@ -1,0 +1,1088 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 9.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[     38440,       1079]
+NotebookOptionsPosition[     35532,        976]
+NotebookOutlinePosition[     35940,        994]
+CellTagsIndexPosition[     35897,        991]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["ASEN 5090 ", "Title",
+ CellChangeTimes->{{3.5875782539816113`*^9, 3.587578258743971*^9}}],
+
+Cell["\<\
+Zach Dischner
+Homework 1\
+\>", "Subtitle",
+ CellChangeTimes->{{3.587578261964809*^9, 3.587578263664423*^9}, {
+  3.58773462959507*^9, 3.587734637388393*^9}}],
+
+Cell["Problem 1", "Section",
+ CellChangeTimes->{{3.587578278312586*^9, 3.587578279559741*^9}, {
+  3.587578472132249*^9, 3.587578484192851*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ StyleBox["\n", "Text"],
+ "\nHow many sig figs must be included in degrees to fa fix accurate to 1cm?"
+}], "Subsubtitle",
+ CellChangeTimes->{{3.587578266160138*^9, 3.587578271391432*^9}, {
+   3.587578494906293*^9, 3.587578531961006*^9}, 3.5875797745503597`*^9, 
+   3.587580680000657*^9}],
+
+Cell["\<\
+
+1 minute is equal to 1852 meters\
+\>", "Text",
+ CellChangeTimes->{{3.587580697276051*^9, 3.587580703438754*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"DegAccuracy", " ", "=", " ", 
+    RowBox[{"1", "/", 
+     RowBox[{"(", 
+      RowBox[{"1852", 
+       RowBox[{"m", "/", "min"}], "*", "100", 
+       RowBox[{"cm", "/", "m"}], "*", "60.0", 
+       RowBox[{"min", "/", "deg"}]}], ")"}]}]}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]"}]}]], "Input",
+ CellChangeTimes->{{3.5875783456294727`*^9, 3.587578400479361*^9}, 
+   3.587578492566461*^9, {3.587578852169384*^9, 3.5875788580654783`*^9}, {
+   3.587578927750771*^9, 3.5875789314380217`*^9}, {3.587579130413692*^9, 
+   3.587579149873541*^9}, {3.587579357014196*^9, 3.587579366683322*^9}, {
+   3.5875795689511337`*^9, 3.5875795964075127`*^9}, {3.587579645485667*^9, 
+   3.587579721147852*^9}, {3.587580097881673*^9, 3.587580198205467*^9}}],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{"8.999280057595393`*^-8", " ", "deg"}], "cm"]], "Output",
+ CellChangeTimes->{3.587692351853293*^9, 3.587692627073901*^9}]
+}, Open  ]],
+
+Cell[TextData[StyleBox["By looking at the Exponent, to get down to the CM \
+level, the degree measurement must have at least 8 sig figs ",
+ FontWeight->"Bold",
+ Background->RGBColor[0.88, 1, 0.88]]], "Text",
+ CellChangeTimes->{{3.587579450992231*^9, 3.587579511886194*^9}, {
+  3.587579769688225*^9, 3.587579771701963*^9}, {3.587579839356619*^9, 
+  3.587579870845758*^9}, {3.5875803423873997`*^9, 3.5875804023575573`*^9}, {
+  3.587583979554285*^9, 3.5875839866008987`*^9}, {3.5877346613001204`*^9, 
+  3.587734668379918*^9}},
+ TextAlignment->Center,
+ Background->RGBColor[0.88, 1, 0.88]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+How many sig digits are required after decimal in the arc-second field if \
+latitude is represented in deg, arc min, and arc-sec to describe fix accurate \
+to 1cm?\
+\>", "Subsubtitle",
+ CellChangeTimes->{{3.587579794685186*^9, 3.587579833020837*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"ArcSecAccuracy", "=", 
+  RowBox[{"DegAccuracy", "*", "60", 
+   RowBox[{"min", "/", "deg"}], " ", "*", " ", "60", " ", 
+   RowBox[{"sec", "/", "min"}]}]}]], "Input",
+ CellChangeTimes->{{3.5875800566303988`*^9, 3.587580088723836*^9}, {
+  3.587580120917767*^9, 3.587580145324319*^9}, {3.5875802637120523`*^9, 
+  3.5875802659473877`*^9}}],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{"0.00032397408207343413`", " ", "sec"}], "cm"]], "Output",
+ CellChangeTimes->{3.587692351937851*^9, 3.587692627111991*^9}]
+}, Open  ]],
+
+Cell[TextData[StyleBox[" By looking at the Exponent, to get down to the CM \
+level, the arc-sec measurement must have at least 4 sig figs ",
+ FontWeight->"Bold",
+ Background->RGBColor[0.88, 1, 0.88]]], "Text",
+ CellChangeTimes->{{3.587579450992231*^9, 3.587579511886194*^9}, {
+  3.587579769688225*^9, 3.587579771701963*^9}, {3.587579839356619*^9, 
+  3.587579870845758*^9}, {3.5875803423873997`*^9, 3.5875804023575573`*^9}, {
+  3.587580651856267*^9, 3.587580658278566*^9}, {3.587581769486836*^9, 
+  3.587581774486351*^9}, {3.587583954500266*^9, 3.587583960509911*^9}, {
+  3.58773467503988*^9, 3.587734676204948*^9}},
+ TextAlignment->Center,
+ Background->RGBColor[0.88, 1, 0.88]],
+
+Cell[CellGroupData[{
+
+Cell["Problem 2", "Section",
+ CellChangeTimes->{{3.587578278312586*^9, 3.587578279559741*^9}, {
+  3.587578451764936*^9, 3.587578452402474*^9}}],
+
+Cell[TextData[{
+ "Observer is constrained to lie between two pseudolites, PL1 and PL2, \
+separated by 1KM. Both have perfectly synchronized clocks, but observer may \
+not. \n\na. ",
+ StyleBox["Given pseudoranges of 550m, 500m, find observer\[CloseCurlyQuote]s \
+position and clock bias:\n", "Subsubtitle"],
+ Cell[BoxData[
+  GraphicsBox[{PointBox[{0.22341579861111108`, 0.499978298611111}], 
+    LineBox[{{0.22361111111111112`, 0.5013888888888889}, {1.1752278645833336`,
+      0.5012044270833331}}], 
+    PointBox[{1.1742621527777781`, 0.4996310763888887}], InsetBox[
+     StyleBox[Cell["PL1",
+       GeneratedCell->False,
+       CellAutoOverwrite->False,
+       CellBaseline->Baseline,
+       TextAlignment->Left],
+      Background->GrayLevel[1.]], {0.1763888888888889, 0.5666449652777777}, {
+     Left, Baseline},
+     Alignment->{Left, Top}], InsetBox[
+     StyleBox[Cell["PL2",
+       GeneratedCell->False,
+       CellAutoOverwrite->False,
+       CellBaseline->Baseline,
+       TextAlignment->Left],
+      Background->GrayLevel[1.]], {1.1392361111111113`, 0.5736111111111113}, {
+     Left, Baseline},
+     Alignment->{Left, Top}], InsetBox[
+     StyleBox[
+      TagBox[
+       RowBox[{"x1", " ", "=", " ", "0"}],
+       "RawBoxes"],
+      Background->GrayLevel[
+       1.]], {0.18472222222222226`, 0.45972222222222237`}, {Left, Baseline},
+     Alignment->{Left, Top}], InsetBox[
+     StyleBox[
+      TagBox[
+       RowBox[{"x2", " ", "=", " ", "1000"}],
+       "RawBoxes"],
+      Background->GrayLevel[
+       1.]], {1.1513888888888892`, 0.45972222222222237`}, {Left, Baseline},
+     Alignment->{Left, Top}], 
+    {EdgeForm[{GrayLevel[0.], Opacity[1.], AbsoluteThickness[1]}], EdgeForm[
+     None], DiskBox[{0.7760959201388891, 0.5020399305555558}, \
+{0.023621961805555536`, 0.027604166666666874`}]}, 
+    InsetBox["xobs", {0.7605794270833341, 0.440277777777778}, {
+     Left, Baseline}, {0.09010416666666668, 0.02542317708333334}, {{1., 0.}, {
+     0., 1.}},
+     Alignment->{Left, Top}]},
+   ContentSelectable->True,
+   ImagePadding->{{0., 0.}, {0., 0.}},
+   ImageSize->{431.5546875, 325.},
+   PlotRange->{{0., 1.3333333333333335`}, {0., 1.}},
+   PlotRangePadding->Automatic]]],
+ "\n",
+ StyleBox["\[Rho]1  = ",
+  Background->GrayLevel[0.85]],
+ Cell[BoxData[
+  FormBox[
+   SqrtBox[
+    SuperscriptBox[
+     RowBox[{"(", 
+      RowBox[{"x1", "-", "xobs"}], ")"}], "2"]], TraditionalForm]],
+  FormatType->"TraditionalForm",
+  Background->GrayLevel[0.85]],
+ StyleBox[" - b",
+  Background->GrayLevel[0.85]],
+ "\n\tturns into\n",
+ StyleBox["\[Rho]1  = ",
+  Background->GrayLevel[0.85]],
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"|", 
+    RowBox[{"x1", "-", "xobs"}], "|"}], TraditionalForm]],
+  FormatType->"TraditionalForm",
+  Background->GrayLevel[0.85]],
+ StyleBox[" - b",
+  Background->GrayLevel[0.85]],
+ "\n\twhich can be expressed in two forms \n",
+ StyleBox["\[Rho]1  = ",
+  Background->GrayLevel[0.85]],
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"x1", "-", "xobs", " "}], TraditionalForm]],
+  FormatType->"TraditionalForm",
+  Background->GrayLevel[0.85]],
+ StyleBox["- b \t\tor \t\t\[Rho]1  = ",
+  Background->GrayLevel[0.85]],
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"x1", " ", "+", " ", "xobs"}], TraditionalForm]],
+  FormatType->"TraditionalForm",
+  Background->GrayLevel[0.85]],
+ StyleBox[" - b\n\t",
+  Background->GrayLevel[0.85]],
+ "Likewise, for pseudolite number 2\n",
+ StyleBox["\[Rho]2  = ",
+  Background->GrayLevel[0.85]],
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"x2", "-", "xobs", " "}], TraditionalForm]],
+  FormatType->"TraditionalForm",
+  Background->GrayLevel[0.85]],
+ StyleBox["- b \t\tor \t\t\[Rho]2  = ",
+  Background->GrayLevel[0.85]],
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"x2", " ", "+", " ", "xobs"}], TraditionalForm]],
+  FormatType->"TraditionalForm",
+  Background->GrayLevel[0.85]],
+ StyleBox[" - b",
+  Background->GrayLevel[0.85]],
+ "\n"
+}], "Text",
+ CellChangeTimes->{{3.587580731598374*^9, 3.5875807941141167`*^9}, {
+  3.587581133226112*^9, 3.5875811687514133`*^9}, {3.587693317207658*^9, 
+  3.587693317503481*^9}, {3.587735664662265*^9, 3.5877358537039557`*^9}, {
+  3.587735892945697*^9, 3.587735899947701*^9}, {3.58773593130128*^9, 
+  3.587736248710361*^9}}],
+
+Cell["\<\
+Build 2 Equations, 2 unknowns using the absolute value equations\
+\>", "Text",
+ CellChangeTimes->{{3.587735122346053*^9, 3.587735130631742*^9}, {
+  3.587736262466579*^9, 3.587736285778111*^9}, {3.5877370586940317`*^9, 
+  3.587737076396164*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"x1", " ", "=", " ", "0"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"x2", " ", "=", " ", "1000"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"rho1", " ", "=", " ", "500"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"rho2", " ", "=", " ", "550"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"sol", "=", 
+  RowBox[{"Solve", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"rho1", "\[Equal]", 
+      RowBox[{
+       RowBox[{"Abs", "[", 
+        RowBox[{"x1", "-", "xobs"}], "]"}], "-", "b"}]}], "&&", 
+     RowBox[{"rho2", "\[Equal]", 
+      RowBox[{
+       RowBox[{"Abs", "[", 
+        RowBox[{"x2", "-", "xobs"}], "]"}], "-", "b"}]}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"xobs", ",", "b"}], "}"}]}], "]"}]}]}], "Input",
+ CellChangeTimes->{{3.587735136524528*^9, 3.587735319348073*^9}, {
+  3.587735356999511*^9, 3.5877353958114557`*^9}, {3.587735426108109*^9, 
+  3.587735441545128*^9}, {3.587735476425304*^9, 3.587735479289072*^9}, {
+  3.5877355493835287`*^9, 3.587735594902272*^9}, {3.587736774704547*^9, 
+  3.5877368184311028`*^9}, {3.5877368756000433`*^9, 3.587737024623275*^9}, {
+  3.587737079528163*^9, 3.58773707991183*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"xobs", "\[Rule]", "475"}], ",", 
+    RowBox[{"b", "\[Rule]", 
+     RowBox[{"-", "25"}]}]}], "}"}], "}"}]], "Output",
+ CellChangeTimes->{
+  3.587692903645691*^9, {3.587692935386498*^9, 3.5876929519049273`*^9}, {
+   3.587693063672317*^9, 3.587693076554153*^9}, {3.5876931652416573`*^9, 
+   3.587693212002859*^9}, {3.587735363247429*^9, 3.587735396555593*^9}, {
+   3.587735434382497*^9, 3.587735442698154*^9}, 3.587735479929003*^9, {
+   3.587735552580621*^9, 3.5877355955879803`*^9}, 3.587736819674778*^9, {
+   3.587736893508341*^9, 3.587736980782104*^9}, {3.587737012133552*^9, 
+   3.5877370253932447`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"xobs", "\[Rule]", "475"}], ",", 
+    RowBox[{"b", "\[Rule]", 
+     RowBox[{"-", "25"}]}]}], "}"}], "}"}]], "Output",
+ CellChangeTimes->{
+  3.587692903645691*^9, {3.587692935386498*^9, 3.5876929519049273`*^9}, {
+   3.587693063672317*^9, 3.587693076554153*^9}, {3.5876931652416573`*^9, 
+   3.587693212002859*^9}, {3.587735363247429*^9, 3.587735396555593*^9}, {
+   3.587735434382497*^9, 3.587735442698154*^9}, 3.587735479929003*^9, {
+   3.587735552580621*^9, 3.5877355955879803`*^9}, 3.587736819674778*^9, {
+   3.587736893508341*^9, 3.587736980782104*^9}, {3.587737012133552*^9, 
+   3.587737025395521*^9}}]
+}, Open  ]],
+
+Cell[TextData[{
+ "\t",
+ StyleBox["                Observer position is at      475m. \tClock Bias is \
+at             -25m                           ",
+  FontWeight->"Bold",
+  Background->RGBColor[0.88, 1, 0.88]]
+}], "Text",
+ CellChangeTimes->{{3.587579450992231*^9, 3.587579511886194*^9}, {
+  3.587579769688225*^9, 3.587579771701963*^9}, {3.587579839356619*^9, 
+  3.587579870845758*^9}, {3.5875803423873997`*^9, 3.5875804023575573`*^9}, {
+  3.587580651856267*^9, 3.587580658278566*^9}, {3.587581769486836*^9, 
+  3.587581826973374*^9}, {3.587583912594391*^9, 3.5875839247795343`*^9}, {
+  3.587735469120569*^9, 3.587735536949404*^9}, {3.587736339529883*^9, 
+  3.587736382447434*^9}},
+ TextAlignment->Center,
+ Background->RGBColor[0.88, 1, 0.88]],
+
+Cell["", "Text",
+ CellChangeTimes->{{3.587735452728196*^9, 3.587735453111286*^9}}],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{
+   RowBox[{"b", ".", " ", "Given"}], " ", "pseudoranges", " ", "of", " ", 
+   "400", "m", " ", "1400", "m", " ", "find", " ", 
+   RowBox[{"observer", "'"}], "s", " ", "position", " ", "and", " ", "clock", 
+   " ", 
+   RowBox[{"bias", ":"}]}], "Subsubtitle"]], "Input",
+ CellChangeTimes->{{3.587693300766644*^9, 3.5876933454572487`*^9}}],
+
+Cell["\<\
+Can rewrite in terms of 2 of the 4 expanded absolute value equations\
+\>", "Text",
+ CellChangeTimes->{{3.587737221341543*^9, 3.587737239897099*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"rho1", " ", "=", " ", "400"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"rho2", " ", "=", " ", "1400"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"sol", "=", 
+  RowBox[{"Solve", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"rho1", "\[Equal]", 
+      RowBox[{"x1", "-", "xobs", "-", "b"}]}], "&&", 
+     RowBox[{"rho2", "\[Equal]", 
+      RowBox[{"x2", "+", "xobs", "-", "b"}]}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"xobs", ",", "b"}], "}"}]}], 
+   "]"}]}], "\[IndentingNewLine]"}], "Input",
+ CellChangeTimes->{{3.58769335537411*^9, 3.587693358562832*^9}, {
+  3.587736389199088*^9, 3.587736471086775*^9}, {3.5877370832638273`*^9, 
+  3.587737101751463*^9}, {3.587737142544347*^9, 3.5877371972693043`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"xobs", "\[Rule]", "0"}], ",", 
+    RowBox[{"b", "\[Rule]", 
+     RowBox[{"-", "400"}]}]}], "}"}], "}"}]], "Output",
+ CellChangeTimes->{
+  3.5876933623296347`*^9, {3.587736420235262*^9, 3.587736471620377*^9}, {
+   3.58773709751488*^9, 3.5877371024511642`*^9}, {3.587737143806566*^9, 
+   3.587737197744207*^9}}]
+}, Open  ]],
+
+Cell[TextData[{
+ "\t",
+ StyleBox["                Observer position is at      0m. \tClock Bias is \
+at             -400m                           ",
+  FontWeight->"Bold",
+  Background->RGBColor[0.88, 1, 0.88]]
+}], "Text",
+ CellChangeTimes->{{3.587579450992231*^9, 3.587579511886194*^9}, {
+  3.587579769688225*^9, 3.587579771701963*^9}, {3.587579839356619*^9, 
+  3.587579870845758*^9}, {3.5875803423873997`*^9, 3.5875804023575573`*^9}, {
+  3.587580651856267*^9, 3.587580658278566*^9}, {3.587581769486836*^9, 
+  3.587581826973374*^9}, {3.587583912594391*^9, 3.5875839247795343`*^9}, {
+  3.587735469120569*^9, 3.587735536949404*^9}, {3.587736339529883*^9, 
+  3.587736382447434*^9}, {3.587736500358458*^9, 3.5877365106120367`*^9}},
+ TextAlignment->Center,
+ Background->RGBColor[0.88, 1, 0.88]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Problem 3", "Section",
+ CellChangeTimes->{{3.587581451009404*^9, 3.587581461536724*^9}}],
+
+Cell["\<\
+
+Driving, set out from town A and go to B 120KM away. Odomoter is inaccurate, \
+watch is accurate but has some bias. Don\[CloseCurlyQuote]t know what time it \
+really is. \
+\>", "Text",
+ CellChangeTimes->{{3.5875814671704187`*^9, 3.587581550573225*^9}, {
+  3.587581631962482*^9, 3.587581633050188*^9}}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+a. Odomoter says I\[CloseCurlyQuote]ve traveled 56KM. Estimate Position:\
+\>", "Subsubtitle",
+ CellChangeTimes->{{3.5875816393546953`*^9, 3.587581677216942*^9}}],
+
+Cell[TextData[{
+ "\t",
+ StyleBox["                                                   Estimated \
+Position = 56 KM                                               ",
+  FontWeight->"Bold",
+  Background->RGBColor[0.88, 1, 0.88]]
+}], "Text",
+ CellChangeTimes->{{3.587579450992231*^9, 3.587579511886194*^9}, {
+  3.587579769688225*^9, 3.587579771701963*^9}, {3.587579839356619*^9, 
+  3.587579870845758*^9}, {3.5875803423873997`*^9, 3.5875804023575573`*^9}, {
+  3.587580651856267*^9, 3.587580658278566*^9}, {3.587581769486836*^9, 
+  3.587581826973374*^9}, {3.587583912594391*^9, 3.5875839247795343`*^9}},
+ TextAlignment->Center,
+ Background->RGBColor[0.88, 1, 0.88]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "Subsubtitle"],
+
+Cell["\<\
+b. Bus comes by, Exactly 21 minutes past the hour (leaving time) traveling at \
+3km/min. Can you estimate position?\
+\>", "Subsubtitle",
+ CellChangeTimes->{{3.5875816893789988`*^9, 3.587581747983049*^9}}],
+
+Cell[TextData[StyleBox[" Yes, you can estimate your position. The estimation \
+will have a bias because your watch is not perfectly calibrated. But it is an \
+\[OpenCurlyQuote]estimate\[CloseCurlyQuote] after all.                        \
+                 ",
+ FontWeight->"Bold",
+ Background->RGBColor[0.88, 1, 0.88]]], "Text",
+ CellChangeTimes->{{3.587579450992231*^9, 3.587579511886194*^9}, {
+  3.587579769688225*^9, 3.587579771701963*^9}, {3.587579839356619*^9, 
+  3.587579870845758*^9}, {3.5875803423873997`*^9, 3.5875804023575573`*^9}, {
+  3.587580651856267*^9, 3.587580658278566*^9}, {3.587581769486836*^9, 
+  3.5875818697396*^9}, {3.587583905323811*^9, 3.5875839281958847`*^9}, {
+  3.587736725294331*^9, 3.587736747517706*^9}, {3.587737245076529*^9, 
+  3.5877372612002087`*^9}},
+ TextAlignment->Center,
+ Background->RGBColor[0.88, 1, 0.88]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+c. Estimate position and clock bias given current information:\
+\>", "Subsubtitle",
+ CellChangeTimes->{{3.587581874860797*^9, 3.587581895219713*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"busTravelTime", "=", "21"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"busSpeed", " ", "=", " ", "3"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"estFromOdometer", "=", "56"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"estDistanceFromTime", " ", "=", " ", 
+    RowBox[{"busTravelTime", " ", "*", " ", "busSpeed"}]}], ";"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"Have", " ", "two", " ", "estimates", " ", "for", " ", "the", " ", 
+     RowBox[{"position", ".", " ", "1"}], " ", "depends", " ", "on", " ", 
+     "time"}], ",", " ", 
+    RowBox[{"so", " ", "has", " ", "a", " ", "time", " ", 
+     RowBox[{"bias", ".", " ", "Solve"}], " ", "this", " ", "system", " ", 
+     "of", " ", "two", " ", "equations"}], ",", " ", 
+    RowBox[{"2", " ", "unknowns"}]}], "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{"sol", "=", 
+  RowBox[{"Solve", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"X", "\[Equal]", "estFromOdometer"}], " ", "&&", " ", 
+     "\[IndentingNewLine]", "\t\t", 
+     RowBox[{"X", "\[Equal]", 
+      RowBox[{"estDistanceFromTime", "-", 
+       RowBox[{"busSpeed", "*", "tBias"}]}]}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{"X", ",", "tBias"}], "}"}]}], "]"}]}]}], "Input",
+ CellChangeTimes->{{3.587581966518896*^9, 3.58758202540967*^9}, {
+  3.587582066000477*^9, 3.587582079657153*^9}, {3.58773758255896*^9, 
+  3.587737808247972*^9}, {3.587737848935307*^9, 3.58773784986233*^9}, {
+  3.5877379081244507`*^9, 3.5877380095911207`*^9}, {3.587738072098048*^9, 
+  3.5877380816407547`*^9}, {3.587738148222293*^9, 3.5877382065014067`*^9}, {
+  3.587738268459395*^9, 3.587738359040565*^9}, {3.587739140412476*^9, 
+  3.5877393130640593`*^9}, {3.58773934372264*^9, 3.587739472848428*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"X", "\[Rule]", "56"}], ",", 
+    RowBox[{"tBias", "\[Rule]", 
+     FractionBox["7", "3"]}]}], "}"}], "}"}]], "Output",
+ CellChangeTimes->{
+  3.587692352023862*^9, 3.5876926271823893`*^9, {3.587737637452961*^9, 
+   3.587737687095851*^9}, {3.5877377829048433`*^9, 3.587737809898951*^9}, 
+   3.587737850332921*^9, {3.5877379580958014`*^9, 3.587737981603053*^9}, 
+   3.587738011719116*^9, 3.587738085824233*^9, {3.5877381679678173`*^9, 
+   3.5877382069248533`*^9}, 3.587738270069579*^9, 3.587739143730473*^9, 
+   3.587739212589745*^9, 3.587739280127596*^9, 3.58773933841998*^9, 
+   3.587739386203582*^9, {3.587739418788601*^9, 3.587739428822363*^9}, 
+   3.587739474536851*^9}]
+}, Open  ]],
+
+Cell[TextData[StyleBox["Estimate for position  is 56 Km, and the clock bias \
+is 2.333 minutes                                  ",
+ FontWeight->"Bold",
+ Background->RGBColor[0.88, 1, 0.88]]], "Text",
+ CellChangeTimes->{{3.587579450992231*^9, 3.587579511886194*^9}, {
+  3.587579769688225*^9, 3.587579771701963*^9}, {3.587579839356619*^9, 
+  3.587579870845758*^9}, {3.5875803423873997`*^9, 3.5875804023575573`*^9}, {
+  3.587580651856267*^9, 3.587580658278566*^9}, {3.587581769486836*^9, 
+  3.5875818697396*^9}, {3.587583905323811*^9, 3.5875839281958847`*^9}, {
+  3.587736725294331*^9, 3.587736747517706*^9}, {3.587737245076529*^9, 
+  3.5877372864877653`*^9}, {3.587737864034718*^9, 3.587737878362603*^9}},
+ TextAlignment->Center,
+ Background->RGBColor[0.88, 1, 0.88]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+d. Now, at 25 past the hour, blue bus drives by at 2.5 km/min, going from B \
+to A. Bus leaves promptly on the hour and drives at a constant speed. \
+Estimate position and clock bias based on all information so far:\
+\>", "Subsubtitle",
+ CellChangeTimes->{{3.587581874860797*^9, 3.587581895219713*^9}, {
+  3.587738398526759*^9, 3.587738478426567*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{"Now", ",", " ", 
+    RowBox[{"use", " ", "both", " ", "time", " ", "measurements"}]}], " ", 
+   "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"bus2Speed", " ", "=", " ", "2.5"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"bus2TravelTime", " ", "=", " ", "25"}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"difference", " ", "=", " ", "120"}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"estDistanceFromTime2", " ", "=", " ", 
+     RowBox[{"difference", "-", 
+      RowBox[{"bus2Speed", "*", "bus2TravelTime"}]}]}], ";"}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"sol", "=", 
+    RowBox[{"Solve", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"X", "\[Equal]", 
+        RowBox[{
+         RowBox[{"busSpeed", "*", "busTravelTime"}], " ", "-", 
+         RowBox[{"busSpeed", "*", "tBias"}]}]}], " ", "&&", " ", 
+       "\[IndentingNewLine]", "\t\t", 
+       RowBox[{"X", "\[Equal]", 
+        RowBox[{"difference", "-", 
+         RowBox[{"bus2Speed", "*", 
+          RowBox[{"(", 
+           RowBox[{"bus2TravelTime", "-", "tBias"}], ")"}]}]}]}]}], ",", 
+      RowBox[{"{", 
+       RowBox[{"X", ",", "tBias"}], "}"}]}], "]"}]}]}]}]], "Input",
+ CellChangeTimes->{{3.587738842545933*^9, 3.587738878737915*^9}, {
+  3.587738968978302*^9, 3.587739063428913*^9}, {3.587739102695854*^9, 
+  3.587739102989209*^9}, {3.5877395226972322`*^9, 3.5877395343389587`*^9}, {
+  3.587739631881735*^9, 3.5877396866799917`*^9}, {3.587739742269108*^9, 
+  3.587739742508176*^9}, {3.5877398391144333`*^9, 3.587739883538926*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"X", "\[Rule]", "60.00000000000001`"}], ",", 
+    RowBox[{"tBias", "\[Rule]", "0.9999999999999976`"}]}], "}"}], 
+  "}"}]], "Output",
+ CellChangeTimes->{
+  3.587739020458556*^9, 3.587739065016069*^9, 3.587739103747201*^9, 
+   3.5877395382899113`*^9, 3.58773968786653*^9, 3.587739743375332*^9, {
+   3.587739856529655*^9, 3.587739884208672*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "Problem 4\n",
+ StyleBox["Compute mean and STD of each column of data in data file and \
+report why you chose the sig figs you did. ", "Subsubtitle"]
+}], "Section",
+ CellChangeTimes->{{3.587582980497156*^9, 3.587583063545623*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"data", "=", 
+   RowBox[{
+   "Import", "[", 
+    "\"\</Users/zachdischner/Desktop/Dropbox/ASEN5090-GPS/Homework/1/HW1data.\
+dat\>\"", "]"}]}], "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.587583104685842*^9, 3.587583157994914*^9}, {
+   3.587583190883388*^9, 3.587583218362174*^9}, 3.587583276598343*^9}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"0.64`", ",", "35.0495`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.23`", ",", "35.0057`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.03`", ",", "35.4955`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.95`", ",", "35.2935`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.95`", ",", "35.3393`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.47`", ",", "35.4829`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.`", ",", "35.6245`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.15`", ",", "35.4717`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.48`", ",", "35.7321`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.63`", ",", "35.4567`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.48`", ",", "35.0233`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.51`", ",", "35.7177`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.83`", ",", "35.8106`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.36`", ",", "35.3045`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.97`", ",", "35.6869`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.36`", ",", "35.0497`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.93`", ",", "35.1555`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.76`", ",", "35.715`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.77`", ",", "35.9912`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.58`", ",", "35.3015`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.22`", ",", "35.5324`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.44`", ",", "35.9756`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.51`", ",", "35.2991`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.23`", ",", "35.2881`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.5`", ",", "35.4022`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.4`", ",", "35.8123`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.99`", ",", "35.7386`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.4`", ",", "35.5481`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.6`", ",", "35.6242`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.64`", ",", "35.6057`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.15`", ",", "35.3499`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.64`", ",", "35.6078`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.74`", ",", "35.9811`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.21`", ",", "35.3705`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.`", ",", "35.3342`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.11`", ",", "35.0754`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.96`", ",", "35.9829`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.17`", ",", "35.3148`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.62`", ",", "35.2739`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.89`", ",", "35.7777`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.02`", ",", "35.9086`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.95`", ",", "35.2198`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.74`", ",", "35.6107`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.92`", ",", "35.7388`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.61`", ",", "35.0868`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.58`", ",", "35.295`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.45`", ",", "35.1099`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.1`", ",", "35.1274`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.18`", ",", "35.8981`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.27`", ",", "35.2108`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.61`", ",", "35.1533`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.2`", ",", "35.7648`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.59`", ",", "35.4782`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.86`", ",", "35.521`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.54`", ",", "35.7101`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.67`", ",", "35.9466`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.57`", ",", "35.7073`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.38`", ",", "35.8111`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.38`", ",", "35.4244`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.43`", ",", "35.0319`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.76`", ",", "35.2876`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.95`", ",", "35.028`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.39`", ",", "35.7167`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.38`", ",", "35.7858`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.05`", ",", "35.9689`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.62`", ",", "35.5488`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.2`", ",", "35.371`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.23`", ",", "35.921`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.72`", ",", "35.7704`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.73`", ",", "35.3684`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.04`", ",", "35.1719`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.19`", ",", "35.9816`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.97`", ",", "35.9579`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.73`", ",", "35.2438`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.06`", ",", "35.6814`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.76`", ",", "35.6739`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.27`", ",", "35.9643`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.07`", ",", "35.448`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.59`", ",", "35.3081`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.62`", ",", "35.3242`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.52`", ",", "35.0885`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.16`", ",", "35.4216`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.91`", ",", "35.3046`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.45`", ",", "35.2163`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.01`", ",", "35.8429`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.25`", ",", "35.1781`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.22`", ",", "35.3168`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.32`", ",", "35.2184`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.3`", ",", "35.3783`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.08`", ",", "35.4404`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.66`", ",", "35.236`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.53`", ",", "35.0452`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.94`", ",", "35.101`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.12`", ",", "35.987`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.87`", ",", "35.3898`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.98`", ",", "35.4245`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.45`", ",", "35.3079`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.29`", ",", "35.1596`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.04`", ",", "35.9471`"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.12`", ",", "35.8883`"}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{3.587692352056445*^9, 3.587692627525878*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{" ", 
+  RowBox[{
+   RowBox[{"NumberForm", "[", 
+    RowBox[{
+     RowBox[{"Mean", "[", 
+      RowBox[{"data", "[", 
+       RowBox[{"[", 
+        RowBox[{"All", ",", "1"}], "]"}], "]"}], "]"}], ",", "2"}], "]"}], 
+   "\[IndentingNewLine]", " ", 
+   RowBox[{"NumberForm", "[", 
+    RowBox[{
+     RowBox[{"StandardDeviation", "[", 
+      RowBox[{"data", "[", 
+       RowBox[{"[", 
+        RowBox[{"All", ",", "1"}], "]"}], "]"}], "]"}], ",", "2"}], 
+    "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.587583285272645*^9, 3.587583295899769*^9}, {
+  3.587583349491948*^9, 3.5875834831747293`*^9}, {3.5875835917696543`*^9, 
+  3.587583606565172*^9}, {3.587583733100337*^9, 3.587583733258298*^9}, {
+  3.58758381002671*^9, 3.587583810159452*^9}, {3.5875840879552727`*^9, 
+  3.5875842547642937`*^9}, {3.587738593329414*^9, 3.587738599514406*^9}}],
+
+Cell[BoxData[
+ TagBox[
+  InterpretationBox["\<\"0.5\"\>",
+   0.48099999999999965`,
+   AutoDelete->True],
+  NumberForm[#, 1]& ]], "Output",
+ CellChangeTimes->{3.587692352089748*^9, 3.5876926275621977`*^9}],
+
+Cell[BoxData[
+ TagBox[
+  InterpretationBox["\<\"0.3\"\>",
+   0.2953426361487158,
+   AutoDelete->True],
+  NumberForm[#, 1]& ]], "Output",
+ CellChangeTimes->{3.587692352089748*^9, 3.587692627563876*^9}]
+}, Open  ]],
+
+Cell[TextData[StyleBox["The minimum number of sig figs in column 1\
+\[CloseCurlyQuote]s data set is 2, so I am only reporting the stat to 2 sig \
+figs ",
+ FontWeight->"Bold",
+ Background->RGBColor[0.88, 1, 0.88]]], "Text",
+ CellChangeTimes->{{3.587579450992231*^9, 3.587579511886194*^9}, {
+  3.587579769688225*^9, 3.587579771701963*^9}, {3.587579839356619*^9, 
+  3.587579870845758*^9}, {3.5875803423873997`*^9, 3.5875804023575573`*^9}, {
+  3.587580651856267*^9, 3.587580658278566*^9}, {3.587581769486836*^9, 
+  3.587581774486351*^9}, {3.587583836888072*^9, 3.587583894755418*^9}, {
+  3.5877385632644367`*^9, 3.587738580408217*^9}},
+ TextAlignment->Center,
+ Background->RGBColor[0.88, 1, 0.88]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{" ", 
+  RowBox[{
+   RowBox[{"NumberForm", "[", 
+    RowBox[{
+     RowBox[{"Mean", "[", 
+      RowBox[{"data", "[", 
+       RowBox[{"[", 
+        RowBox[{"All", ",", "2"}], "]"}], "]"}], "]"}], ",", "6"}], "]"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"NumberForm", "[", 
+    RowBox[{
+     RowBox[{"StandardDeviation", "[", 
+      RowBox[{"data", "[", 
+       RowBox[{"[", 
+        RowBox[{"All", ",", "2"}], "]"}], "]"}], "]"}], ",", "4"}], 
+    "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.587738639641699*^9, 3.587738643056676*^9}, {
+  3.587740166732937*^9, 3.5877402208230877`*^9}}],
+
+Cell[BoxData[
+ TagBox[
+  InterpretationBox["\<\"35.4877\"\>",
+   35.487704,
+   AutoDelete->True],
+  NumberForm[#, 6]& ]], "Output",
+ CellChangeTimes->{
+  3.587692352139062*^9, 3.587692627595881*^9, 3.587738643452001*^9, {
+   3.587740168567103*^9, 3.587740223157899*^9}}],
+
+Cell[BoxData[
+ TagBox[
+  InterpretationBox["\<\"0.2952\"\>",
+   0.29516164033158565`,
+   AutoDelete->True],
+  NumberForm[#, 4]& ]], "Output",
+ CellChangeTimes->{
+  3.587692352139062*^9, 3.587692627595881*^9, 3.587738643452001*^9, {
+   3.587740168567103*^9, 3.5877402231600533`*^9}}]
+}, Open  ]],
+
+Cell[TextData[StyleBox["The minimum number of sig figs in column 2\
+\[CloseCurlyQuote]s data set is 4, so I am only reporting the stat to 4 sig \
+fig  for the standard deviation. And 6 sig figs for the average because of \
+the leading two digits being important",
+ FontWeight->"Bold",
+ Background->RGBColor[0.88, 1, 0.88]]], "Text",
+ CellChangeTimes->{{3.587579450992231*^9, 3.587579511886194*^9}, {
+  3.587579769688225*^9, 3.587579771701963*^9}, {3.587579839356619*^9, 
+  3.587579870845758*^9}, {3.5875803423873997`*^9, 3.5875804023575573`*^9}, {
+  3.587580651856267*^9, 3.587580658278566*^9}, {3.587581769486836*^9, 
+  3.587581774486351*^9}, {3.587583836888072*^9, 3.587583894755418*^9}, {
+  3.5875843139625387`*^9, 3.587584319713056*^9}, {3.587738573126988*^9, 
+  3.587738575479335*^9}, {3.587738610022534*^9, 3.5877386367185717`*^9}, {
+  3.587740232083768*^9, 3.587740245396171*^9}},
+ TextAlignment->Center,
+ Background->RGBColor[0.88, 1, 0.88]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{841, 852},
+WindowMargins->{{2, Automatic}, {Automatic, 0}},
+PrintingCopies->1,
+PrintingPageRange->{1, Automatic},
+FrontEndVersion->"9.0 for Mac OS X x86 (32-bit, 64-bit Kernel) (January 25, \
+2013)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[579, 22, 95, 1, 92, "Title"],
+Cell[677, 25, 166, 5, 81, "Subtitle"],
+Cell[846, 32, 143, 2, 80, "Section"],
+Cell[CellGroupData[{
+Cell[1014, 38, 303, 6, 66, "Subsubtitle"],
+Cell[1320, 46, 123, 4, 49, "Text"],
+Cell[CellGroupData[{
+Cell[1468, 54, 811, 16, 80, "Input"],
+Cell[2282, 72, 159, 3, 50, "Output"]
+}, Open  ]],
+Cell[2456, 78, 585, 10, 65, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[3078, 93, 260, 5, 49, "Subsubtitle"],
+Cell[CellGroupData[{
+Cell[3363, 102, 358, 7, 28, InheritFromParent],
+Cell[3724, 111, 160, 3, 48, "Output"]
+}, Open  ]],
+Cell[3899, 117, 677, 11, 65, "Text"],
+Cell[CellGroupData[{
+Cell[4601, 132, 143, 2, 80, "Section"],
+Cell[4747, 136, 4180, 117, 581, "Text"],
+Cell[8930, 255, 254, 5, 30, "Text"],
+Cell[CellGroupData[{
+Cell[9209, 264, 1188, 28, 97, "Input"],
+Cell[10400, 294, 675, 14, 28, "Output"],
+Cell[11078, 310, 673, 14, 28, "Output"]
+}, Open  ]],
+Cell[11766, 327, 744, 15, 46, "Text"],
+Cell[12513, 344, 82, 1, 30, "Text"],
+Cell[12598, 347, 372, 8, 36, "Input"],
+Cell[12973, 357, 158, 3, 30, "Text"],
+Cell[CellGroupData[{
+Cell[13156, 364, 750, 18, 80, "Input"],
+Cell[13909, 384, 379, 10, 28, "Output"]
+}, Open  ]],
+Cell[14303, 397, 791, 15, 46, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[15131, 417, 94, 1, 80, "Section"],
+Cell[15228, 420, 312, 7, 68, "Text"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[15589, 433, 171, 3, 29, "Subsubtitle"],
+Cell[15763, 438, 657, 13, 46, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[16457, 456, 23, 0, 29, "Subsubtitle"],
+Cell[16483, 458, 214, 4, 29, "Subsubtitle"],
+Cell[16700, 464, 847, 14, 65, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[17584, 483, 159, 3, 29, "Subsubtitle"],
+Cell[CellGroupData[{
+Cell[17768, 490, 1795, 38, 148, "Input"],
+Cell[19566, 530, 742, 15, 47, "Output"]
+}, Open  ]],
+Cell[20323, 548, 765, 12, 46, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[21125, 565, 361, 6, 49, "Subsubtitle"],
+Cell[CellGroupData[{
+Cell[21511, 575, 1648, 40, 148, "Input"],
+Cell[23162, 617, 411, 10, 28, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[23610, 632, 247, 5, 101, "Section"],
+Cell[CellGroupData[{
+Cell[23882, 641, 349, 8, 46, "Input"],
+Cell[24234, 651, 7095, 203, 352, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[31366, 859, 855, 21, 46, "Input"],
+Cell[32224, 882, 204, 6, 39, "Output"],
+Cell[32431, 890, 200, 6, 39, "Output"]
+}, Open  ]],
+Cell[32646, 899, 693, 12, 46, "Text"],
+Cell[CellGroupData[{
+Cell[33364, 915, 606, 18, 46, "Input"],
+Cell[33973, 935, 270, 8, 39, "Output"],
+Cell[34246, 945, 282, 8, 39, "Output"]
+}, Open  ]],
+Cell[34543, 956, 949, 15, 84, "Text"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)

@@ -1,0 +1,165 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 9.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[      4508,        156]
+NotebookOptionsPosition[      3677,        121]
+NotebookOutlinePosition[      4031,        137]
+CellTagsIndexPosition[      3988,        134]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["ASEN 5007-Homework 2", "Title",
+ CellChangeTimes->{{3.58782448507475*^9, 3.5878244971110783`*^9}}],
+
+Cell["Zach Dischner", "Subtitle",
+ CellChangeTimes->{{3.587824499248228*^9, 3.587824500903141*^9}}],
+
+Cell["Enter subsubtitle here", "Subsubtitle"],
+
+Cell[CellGroupData[{
+
+Cell["Problem 1 ", "Section",
+ CellChangeTimes->{{3.587824506223967*^9, 3.587824507990913*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Helpful modules", "Subsection",
+ CellChangeTimes->{{3.587828509093071*^9, 3.587828522803443*^9}}],
+
+Cell[TextData[StyleBox["Cell 7: Simple function to print output for solutions \
+in a stylazed way",
+ FontSize->12]], "Text",
+ CellChangeTimes->{{3.5878250168615837`*^9, 3.587825022435727*^9}, {
+  3.587827743369121*^9, 3.5878277582173223`*^9}},
+ Background->GrayLevel[0.85]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"PrintWithStyle", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"color", "=", "LightGreen"}], "}"}], ",", 
+    RowBox[{"Framed", "[", 
+     RowBox[{
+      RowBox[{"Style", "[", 
+       RowBox[{"x", ",", "18", ",", "Bold", ",", 
+        RowBox[{"Background", "\[Rule]", "color"}]}], "]"}], ",", 
+      "\[IndentingNewLine]", 
+      RowBox[{"Background", "\[Rule]", "color"}]}], "]"}]}], 
+   "\[IndentingNewLine]", "]"}]}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.5878277622951813`*^9, 3.587827801470587*^9}, {
+  3.5878279140382023`*^9, 3.587828037992056*^9}, {3.587828092581545*^9, 
+  3.58782809340242*^9}, {3.587828151664729*^9, 3.587828183864581*^9}, {
+  3.5878282160385027`*^9, 3.5878284333882923`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Driver Script", "Subsection",
+ CellChangeTimes->{{3.587828537564*^9, 3.5878285542014513`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"f", "[", "x_", "]"}], ":=", 
+   RowBox[{
+    RowBox[{"x", "^", "3"}], " ", "-", " ", 
+    RowBox[{"Sin", "[", "x", "]"}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"f", "'"}], "[", "x", "]"}], "\[IndentingNewLine]", 
+ RowBox[{"PrintWithStyle", "[", 
+  RowBox[{
+   RowBox[{"f", "'"}], "[", "x", "]"}], "]"}]}], "Input",
+ CellChangeTimes->{{3.587828555441372*^9, 3.587828649434019*^9}, {
+  3.587828686606474*^9, 3.5878288449686527`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"3", " ", 
+   SuperscriptBox["x", "2"]}], "-", 
+  RowBox[{"Cos", "[", "x", "]"}]}]], "Output",
+ CellChangeTimes->{{3.587828594068432*^9, 3.587828650016945*^9}, {
+  3.5878286974727087`*^9, 3.587828718670165*^9}, {3.587828757244749*^9, 
+  3.587828846144458*^9}}],
+
+Cell[BoxData[
+ FrameBox[
+  StyleBox[
+   RowBox[{
+    RowBox[{"3", " ", 
+     SuperscriptBox["x", "2"]}], "-", 
+    RowBox[{"Cos", "[", "x", "]"}]}],
+   StripOnInput->False,
+   FontSize->18,
+   FontWeight->Bold,
+   Background->RGBColor[0.88, 1, 0.88]],
+  Background->RGBColor[0.88, 1, 0.88],
+  StripOnInput->False]], "Output",
+ CellChangeTimes->{{3.587828594068432*^9, 3.587828650016945*^9}, {
+  3.5878286974727087`*^9, 3.587828718670165*^9}, {3.587828757244749*^9, 
+  3.587828846145948*^9}}]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{783, 803},
+WindowMargins->{{4, Automatic}, {Automatic, 4}},
+FrontEndVersion->"9.0 for Mac OS X x86 (32-bit, 64-bit Kernel) (January 25, \
+2013)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[579, 22, 104, 1, 92, "Title"],
+Cell[686, 25, 99, 1, 51, "Subtitle"],
+Cell[788, 28, 45, 0, 29, "Subsubtitle"],
+Cell[CellGroupData[{
+Cell[858, 32, 95, 1, 80, "Section"],
+Cell[CellGroupData[{
+Cell[978, 37, 103, 1, 44, "Subsection"],
+Cell[1084, 40, 273, 5, 44, "Text"],
+Cell[1360, 47, 816, 19, 80, "Input",
+ InitializationCell->True]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2213, 71, 100, 1, 44, "Subsection"],
+Cell[CellGroupData[{
+Cell[2338, 76, 496, 13, 63, "Input"],
+Cell[2837, 91, 294, 7, 32, "Output"],
+Cell[3134, 100, 491, 15, 48, "Output"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)

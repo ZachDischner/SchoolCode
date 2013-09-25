@@ -1,0 +1,81 @@
+                              ***ITRF 97***
+                VANDENBERG AFB 1 (VAN1),  CALIFORNIA
+
+ Retrieved from NGS DataBase on 09/11/00 at 09:19:19.
+ ____________________________________________________________________________ 
+|                                                                            |
+|         Antenna Reference Point(ARP): VANDENBERG AFB 1 CORS ARP            |
+|         -------------------------------------------------------            |
+|                             PID = AH8263                                   |
+|                                                                            |
+|                                                                            |
+| ITRF97 POSITION (EPOCH 1997.0)                                             |
+| Computed in July 2000 using every third day of data through 1999.          |
+|     X =  -2665274.967 m     latitude    =  34 49 35.80286 N                |
+|     Y =  -4513292.781 m     longitude   = 120 33 48.61235 W                |
+|     Z =   3622149.911 m     ellipsoid height =   98.882   m                |
+|                                                                            |
+| ITRF97 VELOCITY                                                            |
+| Computed in July 2000 using every third day of data through 1999.          |
+|     VX =  -0.0322 m/yr      northward =   0.0224 m/yr                      |
+|     VY =   0.0339 m/yr      eastward  =  -0.0450 m/yr                      |
+|     VZ =   0.0184 m/yr      upward    =   0.0000 m/yr                      |
+|                                                                            |
+|                                                                            |
+| NAD_83 POSITION (EPOCH 1997.0)                                             |
+| Transformed from ITRF96 (epoch 1997.0) position in Mar., 1999.             |
+|     X =  -2665274.395 m     latitude    =  34 49 35.78602 N                |
+|     Y =  -4513294.077 m     longitude   = 120 33 48.56702 W                |
+|     Z =   3622149.854 m     ellipsoid height =   99.527   m                |
+|                                                                            |
+| NAD_83 VELOCITY                                                            |
+| Transformed from ITRF96 velocity in Mar., 1999.                            |
+|     VX =  -0.0185 m/yr      northward =   0.0355 m/yr                      |
+|     VY =   0.0344 m/yr      eastward  =  -0.0334 m/yr                      |
+|     VZ =   0.0292 m/yr      upward    =   0.0000 m/yr                      |
+|____________________________________________________________________________|
+|                                                                            |
+| L1 Phase Center of the current GPS antenna: VANDENBERG AFB 1 CORS L1 PC C  |
+| -------------------------------------------------------------------------  |
+| The Geodetic III 'Whopper' (USCG) +radome antenna                          |
+| (Antenna Code = ASH700829.A1    SNOW) was installed on 02/22/99.           |
+|        The L2 phase center is 0.028 m below the L1 phase center.           |
+|                             PID = AH8264                                   |
+|                                                                            |
+|                                                                            |
+| ITRF97 POSITION (EPOCH 1997.0)                                             |
+| Computed in July 2000 using every third day of data through 1999.          |
+|     X =  -2665275.004 m     latitude    =  34 49 35.80282 N                |
+|     Y =  -4513292.843 m     longitude   = 120 33 48.61238 W                |
+|     Z =   3622149.961 m     ellipsoid height =   98.970   m                |
+|                                                                            |
+| The ITRF97 VELOCITY of the L1 PC is the same as that for the ARP.          |
+|                                                                            |
+|                                                                            |
+| NAD_83 POSITION (EPOCH 1997.0)                                             |
+| Transformed from ITRF96 (epoch 1997.0) position in Mar., 1999.             |
+|     X =  -2665274.433 m     latitude    =  34 49 35.78598 N                |
+|     Y =  -4513294.139 m     longitude   = 120 33 48.56705 W                |
+|     Z =   3622149.903 m     ellipsoid height =   99.615   m                |
+|                                                                            |
+| The NAD_83 VELOCITY of the L1 PC is the same as that for the ARP.          |
+|____________________________________________________________________________|
+   
+   
+ * Latitude, longitude and ellipsoid height are computed from their
+   corresponding cartesian coordinates using dimensions for the
+   GRS 80 ellipsoid: semi-major axis = 6,378,137.0 meters
+                          flattening = 1/298.257222101...
+   
+   
+ * WARNING: Mixing of antenna types can lead to errors of up to 10 cm.
+   in height unless antenna-phase-center variation is properly modeled.
+   
+   
+ * For additional information about the interpretation and/or derivation
+   of these positions and velocities, consult
+   http://www.ngs.noaa.gov/CORS/Derivation.html.
+   For additional information on the relation of the GPS antenna to other
+   relevant points at the site and on GPS equipment, consult the
+   link ftp://www.ngs.noaa.gov/cors/.html/van1.log.txt
+

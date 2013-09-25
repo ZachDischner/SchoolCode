@@ -1,0 +1,80 @@
+                              ***ITRF 96***
+                PIGEON POINT 1 (PPT1),  CALIFORNIA
+
+ Retrieved from NGS DataBase on 09/28/98 at 08:40:50.
+ ____________________________________________________________________________ 
+|                                                                            |
+|         Antenna Reference Point(ARP): PIGEON POINT 1 CORS ARP              |
+|         -----------------------------------------------------              |
+|                             PID = AF9554                                   |
+|                                                                            |
+|                                                                            |
+| ITRF96 POSITION (EPOCH 1997.0)                                             |
+| Computed in Mar., 1998 using 46 days of data.                              |
+|     X =  -2725252.943 m     latitude    =  37 11 13.50037 N                |
+|     Y =  -4295977.239 m     longitude   = 122 23 23.81274 W                |
+|     Z =   3833959.060 m     ellipsoid height =      7.831 m                |
+|                                                                            |
+| ITRF96 VELOCITY                                                            |
+| Computed in Mar., 1998 using 46 days of data.                              |
+|     VX =  -0.0259 m/yr      northward =   0.0201 m/yr                      |
+|     VY =   0.0308 m/yr      eastward  =  -0.0384 m/yr                      |
+|     VZ =   0.0160 m/yr      upward    =   0.0000 m/yr                      |
+|                                                                            |
+|                                                                            |
+| NAD_83 POSITION (EPOCH 1997.0)                                             |
+| Transformed from ITRF94 (epoch 1996.00) position.                          |
+|     X =  -2725252.375 m     latitude    =  37 11 13.48250 N                |
+|     Y =  -4295978.528 m     longitude   = 122 23 23.76527 W                |
+|     Z =   3833958.963 m     ellipsoid height =      8.397 m                |
+|                                                                            |
+| NAD_83 VELOCITY                                                            |
+| Predicted with HTDP_2.0 in Apr., 1996.                                     |
+|     VX =  -0.0081 m/yr      northward =   0.0377 m/yr                      |
+|     VY =   0.0321 m/yr      eastward  =  -0.0240 m/yr                      |
+|     VZ =   0.0300 m/yr      upward    =   0.0000 m/yr                      |
+|____________________________________________________________________________|
+|                                                                            |
+| L1 Phase Center of the current GPS antenna: PIGEON POINT 1 CORS L1 PC C    |
+| -----------------------------------------------------------------------    |
+| The ASHTECH GEODETIC III ANTENNA - USCG V antenna (ASH 700829.A1)          |
+|        was installed on 01/19/96.                                          |
+|        The L2 phase center is 0.032 m below the L1 phase center.           |
+|                             PID = AB6396                                   |
+|                                                                            |
+|                                                                            |
+| ITRF96 POSITION (EPOCH 1997.0)                                             |
+| Computed in Mar., 1998 using 46 days of data.                              |
+|     X =  -2725252.983 m     latitude    =  37 11 13.50035 N                |
+|     Y =  -4295977.301 m     longitude   = 122 23 23.81272 W                |
+|     Z =   3833959.115 m     ellipsoid height =      7.923 m                |
+|                                                                            |
+| The ITRF96 VELOCITY of the L1 PC is the same as that for the ARP.          |
+|                                                                            |
+|                                                                            |
+| NAD_83 POSITION (EPOCH 1997.0)                                             |
+| Transformed from ITRF94 (epoch 1996.00) position.                          |
+|     X =  -2725252.414 m     latitude    =  37 11 13.48247 N                |
+|     Y =  -4295978.591 m     longitude   = 122 23 23.76526 W                |
+|     Z =   3833959.018 m     ellipsoid height =      8.490 m                |
+|                                                                            |
+| The NAD_83 VELOCITY of the L1 PC is the same as that for the ARP.          |
+|____________________________________________________________________________|
+   
+   
+ * Latitude, longitude and ellipsoid height are computed from their
+   corresponding cartesian coordinates using dimensions for the
+   GPS 80 ellipsoid: semi-major axis = 6,378,137.0 meters
+                          flattening = 1/298.257222101...
+   
+   
+ * WARNING: Mixing of antenna types can lead to errors of up to 10 cm.
+   in height unless antenna-phase-center variation is properly modeled.
+   
+   
+ * For additional information about the interpretation and/or derivation
+   of these positions and velocities, consult http://www.ngs.noaa.gov/CORS/Derivation.html.
+   For additional information on the relation of the GPS antenna to other
+   relevant points at the site and on GPS equipment, consult the
+   link ftp://www.ngs.noaa.gov/cors/.html/sitename.log.txt
+

@@ -1,0 +1,907 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 9.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[     33783,        898]
+NotebookOptionsPosition[     32013,        836]
+NotebookOutlinePosition[     32421,        854]
+CellTagsIndexPosition[     32378,        851]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["ASEN 5007-Homework 2", "Title",
+ CellChangeTimes->{{3.58782448507475*^9, 3.5878244971110783`*^9}}],
+
+Cell["Zach Dischner && Andrew Haynes", "Subsubtitle",
+ CellChangeTimes->{{3.58792170775629*^9, 3.587921712472163*^9}, {
+  3.587921745926276*^9, 3.587921748198986*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Problem 1 ", "Section",
+ CellChangeTimes->{{3.587824506223967*^9, 3.587824507990913*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Initializer Modules ", "Subsection",
+ CellChangeTimes->{{3.587824611244199*^9, 3.587824615010516*^9}}],
+
+Cell[TextData[StyleBox["Cell 1: module to form element stiffness of \
+two-dimensional two-node bar element in global coordinates.",
+ FontSize->12]], "Text",
+ CellChangeTimes->{{3.587824625940826*^9, 3.5878246416137533`*^9}},
+ Background->GrayLevel[0.85]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"ElemStiff2DTwoNodeBar", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"x1_", ",", "y1_"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"x2_", ",", "y2_"}], "}"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"Em_", ",", "A_"}], "}"}]}], "]"}], " ", ":=", " ", 
+   RowBox[{"Module", "[", "\n", "  ", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"c", ",", "s", ",", 
+       RowBox[{"dx", "=", 
+        RowBox[{"x2", "-", "x1"}]}], ",", 
+       RowBox[{"dy", "=", 
+        RowBox[{"y2", "-", "y1"}]}], ",", "L", ",", "Ke"}], "}"}], ",", " ", 
+     "\n", "    ", 
+     RowBox[{
+      RowBox[{"L", "=", 
+       RowBox[{"Sqrt", "[", 
+        RowBox[{
+         RowBox[{"dx", "^", "2"}], "+", 
+         RowBox[{"dy", "^", "2"}]}], "]"}]}], ";", " ", 
+      RowBox[{"c", "=", 
+       RowBox[{"dx", "/", "L"}]}], ";", " ", 
+      RowBox[{"s", "=", 
+       RowBox[{"dy", "/", "L"}]}], ";", "\n", "    ", 
+      RowBox[{"Ke", "=", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"Em", "*", 
+          RowBox[{"A", "/", "L"}]}], ")"}], "*", " ", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", " ", 
+           RowBox[{
+            RowBox[{"c", "^", "2"}], ",", " ", 
+            RowBox[{"c", "*", "s"}], ",", 
+            RowBox[{"-", 
+             RowBox[{"c", "^", "2"}]}], ",", 
+            RowBox[{
+             RowBox[{"-", "c"}], "*", "s"}]}], "}"}], ",", "\n", 
+          "                  ", 
+          RowBox[{"{", " ", 
+           RowBox[{
+            RowBox[{"c", "*", "s"}], ",", " ", 
+            RowBox[{"s", "^", "2"}], ",", 
+            RowBox[{
+             RowBox[{"-", "s"}], "*", "c"}], ",", 
+            RowBox[{"-", 
+             RowBox[{"s", "^", "2"}]}]}], "}"}], ",", "\n", 
+          "                  ", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"-", 
+             RowBox[{"c", "^", "2"}]}], ",", 
+            RowBox[{
+             RowBox[{"-", "s"}], "*", "c"}], ",", " ", 
+            RowBox[{"c", "^", "2"}], ",", " ", 
+            RowBox[{"s", "*", "c"}]}], "}"}], ",", "\n", "                  ", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"-", "s"}], "*", "c"}], ",", 
+            RowBox[{"-", 
+             RowBox[{"s", "^", "2"}]}], ",", " ", 
+            RowBox[{"s", "*", "c"}], ",", " ", 
+            RowBox[{"s", "^", "2"}]}], "}"}]}], "}"}]}]}], ";", " ", "\n", 
+      "    ", 
+      RowBox[{"Return", "[", "Ke", "]"}]}]}], "\n", " ", "]"}]}], 
+  ";"}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.587824617940658*^9, 3.587824617942025*^9}},
+ Background->RGBColor[0.87, 0.94, 1]],
+
+Cell[TextData[StyleBox["Cell 2 : module to merge two - node bar element \
+stiffness into the master stiffness matrix.",
+ FontSize->12]], "Text",
+ CellChangeTimes->{{3.58782468985131*^9, 3.587824693340365*^9}},
+ Background->GrayLevel[0.85]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"MergeElemIntoMasterStiff", "[", 
+     RowBox[{"Ke_", ",", "eftab_", ",", "Kin_"}], "]"}], ":=", 
+    RowBox[{"Module", "[", " ", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"i", ",", "j", ",", "ii", ",", "jj", ",", 
+        RowBox[{"K", "=", "Kin"}]}], "}"}], ",", " ", "\n", "   ", 
+      RowBox[{
+       RowBox[{"For", " ", "[", 
+        RowBox[{
+         RowBox[{"i", "=", "1"}], ",", " ", 
+         RowBox[{"i", "<=", "4"}], ",", " ", 
+         RowBox[{"i", "++"}], ",", " ", 
+         RowBox[{
+          RowBox[{"ii", "=", 
+           RowBox[{"eftab", "[", 
+            RowBox[{"[", "i", "]"}], "]"}]}], ";", "\n", "      ", 
+          RowBox[{"For", " ", "[", 
+           RowBox[{
+            RowBox[{"j", "=", "i"}], ",", " ", 
+            RowBox[{"j", "<=", "4"}], ",", " ", 
+            RowBox[{"j", "++"}], ",", " ", 
+            RowBox[{
+             RowBox[{"jj", "=", 
+              RowBox[{"eftab", "[", 
+               RowBox[{"[", "j", "]"}], "]"}]}], ";", "\n", "           ", 
+             RowBox[{
+              RowBox[{"K", "[", 
+               RowBox[{"[", 
+                RowBox[{"jj", ",", "ii"}], "]"}], "]"}], "=", 
+              RowBox[{
+               RowBox[{"K", "[", 
+                RowBox[{"[", 
+                 RowBox[{"ii", ",", "jj"}], "]"}], "]"}], "+=", 
+               RowBox[{"Ke", "[", 
+                RowBox[{"[", 
+                 RowBox[{"i", ",", "j"}], "]"}], "]"}]}]}]}]}], " ", "\n", 
+           "      ", "]"}]}]}], "\n", "   ", "]"}], ";", " ", 
+       RowBox[{"Return", "[", "K", "]"}]}]}], "\n", "]"}]}], ";"}], 
+  " "}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.587824708797983*^9, 3.587824708799254*^9}},
+ Background->RGBColor[0.87, 0.94, 1]],
+
+Cell[TextData[StyleBox["Cell 3 : module to assemble master stiffness matrix \
+of example truss.",
+ FontSize->12]], "Text",
+ CellChangeTimes->{{3.5878247615146437`*^9, 3.587824764481262*^9}},
+ Background->GrayLevel[0.85]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"AssembleMasterStiffOfExampleTruss", "[", "]"}], ":=", " ", 
+    RowBox[{"Module", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"Ke", ",", 
+        RowBox[{"K", "=", 
+         RowBox[{"Table", "[", 
+          RowBox[{"0", ",", 
+           RowBox[{"{", "6", "}"}], ",", 
+           RowBox[{"{", "6", "}"}]}], "]"}]}], ",", 
+        RowBox[{"sl", " ", "=", " ", "8"}], ",", 
+        RowBox[{"h", "=", "3"}], ",", 
+        RowBox[{"Em", "=", "1000"}], ",", 
+        RowBox[{"A1", "=", "2"}], ",", 
+        RowBox[{"A2", "=", "4"}]}], "}"}], ",", "\n", "    ", 
+      RowBox[{
+       RowBox[{"Ke", "=", 
+        RowBox[{"ElemStiff2DTwoNodeBar", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"0", ",", "0"}], "}"}], ",", 
+            RowBox[{"{", 
+             RowBox[{
+              RowBox[{"sl", "/", "2"}], ",", "h"}], "}"}]}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"Em", ",", "A1"}], "}"}]}], "]"}]}], ";", "\n", "    ", 
+       RowBox[{"K", "=", " ", 
+        RowBox[{"MergeElemIntoMasterStiff", "[", 
+         RowBox[{"Ke", ",", 
+          RowBox[{"{", 
+           RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], ",", "K"}], 
+         "]"}]}], ";", "   ", "\n", "    ", 
+       RowBox[{"Ke", "=", 
+        RowBox[{"ElemStiff2DTwoNodeBar", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{
+              RowBox[{"sl", "/", "2"}], ",", "h"}], "}"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"sl", ",", "0"}], "}"}]}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"Em", ",", "A2"}], "}"}]}], "]"}]}], ";", "\n", "    ", 
+       RowBox[{"K", "=", " ", 
+        RowBox[{"MergeElemIntoMasterStiff", "[", 
+         RowBox[{"Ke", ",", 
+          RowBox[{"{", 
+           RowBox[{"3", ",", "4", ",", "5", ",", "6"}], "}"}], ",", "K"}], 
+         "]"}]}], ";", "\n", "    ", 
+       RowBox[{"(*", 
+        RowBox[{
+         RowBox[{"Ke", "=", 
+          RowBox[{"ElemStiff2DTwoNodeBar", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{
+              RowBox[{"{", 
+               RowBox[{"0", ",", "0"}], "}"}], ",", 
+              RowBox[{"{", 
+               RowBox[{"10", ",", "10"}], "}"}]}], "}"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"100", ",", 
+              RowBox[{"2", "*", 
+               RowBox[{"Sqrt", "[", "2", "]"}]}]}], "}"}]}], "]"}]}], ";", 
+         "\n", "    ", 
+         RowBox[{"K", "=", " ", 
+          RowBox[{"MergeElemIntoMasterStiff", "[", 
+           RowBox[{"Ke", ",", 
+            RowBox[{"{", 
+             RowBox[{"1", ",", "2", ",", "5", ",", "6"}], "}"}], ",", "K"}], 
+           "]"}]}], ";"}], " ", "*)"}], "\n", "    ", 
+       RowBox[{"Return", "[", "K", "]"}]}]}], "\n", "  ", "]"}]}], ";"}], 
+  " "}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.587824774572029*^9, 3.58782477457374*^9}, {
+  3.587825540394079*^9, 3.587825585928359*^9}, {3.587825717994079*^9, 
+  3.587825797409318*^9}, {3.587827025765603*^9, 3.5878270448233767`*^9}},
+ Background->RGBColor[0.87, 0.94, 1]],
+
+Cell["\<\
+Cell 4 :  modules to apply homogeneous, single - freedom displacement BCs on \
+master stiffness and forces.\
+\>", "Text",
+ CellChangeTimes->{{3.5878248442805157`*^9, 3.58782484688479*^9}},
+ Background->GrayLevel[0.85]],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"ModifiedMasterStiffForDBC", "[", 
+    RowBox[{"pdof_", ",", "K_"}], "]"}], " ", ":=", " ", 
+   RowBox[{"Module", "[", "\n", "  ", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"i", ",", "j", ",", "k", ",", 
+       RowBox[{"nk", "=", 
+        RowBox[{"Length", "[", "K", "]"}]}], ",", 
+       RowBox[{"np", "=", 
+        RowBox[{"Length", "[", "pdof", "]"}]}], ",", 
+       RowBox[{"Kmod", "=", "K"}]}], "}"}], ",", " ", "\n", "      ", 
+     RowBox[{
+      RowBox[{"For", " ", "[", 
+       RowBox[{
+        RowBox[{"k", "=", "1"}], ",", 
+        RowBox[{"k", "<=", "np"}], ",", 
+        RowBox[{"k", "++"}], ",", " ", 
+        RowBox[{
+         RowBox[{"i", "=", 
+          RowBox[{"pdof", "[", 
+           RowBox[{"[", "k", "]"}], "]"}]}], ";", " ", "\n", "         ", 
+         RowBox[{"For", " ", "[", 
+          RowBox[{
+           RowBox[{"j", "=", "1"}], ",", 
+           RowBox[{"j", "<=", "nk"}], ",", 
+           RowBox[{"j", "++"}], ",", " ", 
+           RowBox[{
+            RowBox[{"Kmod", "[", 
+             RowBox[{"[", 
+              RowBox[{"i", ",", "j"}], "]"}], "]"}], "=", 
+            RowBox[{
+             RowBox[{"Kmod", "[", 
+              RowBox[{"[", 
+               RowBox[{"j", ",", "i"}], "]"}], "]"}], "=", "0"}]}]}], "]"}], 
+         ";", "\n", "           ", 
+         RowBox[{
+          RowBox[{"Kmod", "[", 
+           RowBox[{"[", 
+            RowBox[{"i", ",", "i"}], "]"}], "]"}], "=", "1"}]}]}], "]"}], ";",
+       "\n", "   ", 
+      RowBox[{"Return", "[", "Kmod", "]"}]}]}], "\n", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"ModifiedMasterForcesForDBC", "[", 
+     RowBox[{"pdof_", ",", "f_"}], "]"}], " ", ":=", " ", 
+    RowBox[{"Module", "[", "\n", "  ", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"i", ",", "k", ",", 
+        RowBox[{"np", "=", 
+         RowBox[{"Length", "[", "pdof", "]"}]}], ",", 
+        RowBox[{"fmod", "=", "f"}]}], "}"}], ",", "  ", "\n", "      ", 
+      RowBox[{
+       RowBox[{"For", " ", "[", 
+        RowBox[{
+         RowBox[{"k", "=", "1"}], ",", 
+         RowBox[{"k", "<=", "np"}], ",", 
+         RowBox[{"k", "++"}], ",", " ", 
+         RowBox[{
+          RowBox[{"i", "=", 
+           RowBox[{"pdof", "[", 
+            RowBox[{"[", "k", "]"}], "]"}]}], ";", " ", 
+          RowBox[{
+           RowBox[{"fmod", "[", 
+            RowBox[{"[", "i", "]"}], "]"}], "=", "0"}]}]}], "]"}], ";", "\n", 
+       "   ", 
+       RowBox[{"Return", "[", "fmod", "]"}]}]}], "\n", "]"}]}], ";"}], 
+  " "}]}], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.5878248567589493`*^9, 3.5878248604361773`*^9}},
+ Background->RGBColor[0.87, 0.94, 1]],
+
+Cell[TextData[StyleBox["Cell 5 :  module to compute the internal force in a \
+two - dimensional two - node bar element.",
+ FontSize->12]], "Text",
+ CellChangeTimes->{{3.587824892931625*^9, 3.587824896074256*^9}},
+ Background->GrayLevel[0.85]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"IntForce2DTwoNodeBar", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"x1_", ",", "y1_"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"x2_", ",", "y2_"}], "}"}]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"Em_", ",", "A_"}], "}"}], ",", "eftab_", ",", "u_"}], "]"}], ":=",
+     " ", "\n", "  ", 
+    RowBox[{"Module", "[", " ", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"c", ",", "s", ",", 
+        RowBox[{"dx", "=", 
+         RowBox[{"x2", "-", "x1"}]}], ",", 
+        RowBox[{"dy", "=", 
+         RowBox[{"y2", "-", "y1"}]}], ",", "L", ",", "ix", ",", "iy", ",", 
+        "jx", ",", "jy", ",", "ubar", ",", "e"}], "}"}], ",", " ", "\n", 
+      "    ", 
+      RowBox[{
+       RowBox[{"L", "=", 
+        RowBox[{"Sqrt", "[", 
+         RowBox[{
+          RowBox[{"dx", "^", "2"}], "+", 
+          RowBox[{"dy", "^", "2"}]}], "]"}]}], ";", " ", 
+       RowBox[{"c", "=", 
+        RowBox[{"dx", "/", "L"}]}], ";", " ", 
+       RowBox[{"s", "=", 
+        RowBox[{"dy", "/", "L"}]}], ";", " ", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"ix", ",", "iy", ",", "jx", ",", "jy"}], "}"}], "=", 
+        "eftab"}], ";", "\n", "    ", 
+       RowBox[{"ubar", "=", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"c", "*", 
+            RowBox[{"u", "[", 
+             RowBox[{"[", "ix", "]"}], "]"}]}], "+", 
+           RowBox[{"s", "*", 
+            RowBox[{"u", "[", 
+             RowBox[{"[", "iy", "]"}], "]"}]}]}], ",", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"-", "s"}], "*", 
+            RowBox[{"u", "[", 
+             RowBox[{"[", "ix", "]"}], "]"}]}], "+", 
+           RowBox[{"c", "*", 
+            RowBox[{"u", "[", 
+             RowBox[{"[", "iy", "]"}], "]"}]}]}], ",", "\n", "          ", 
+          RowBox[{
+           RowBox[{"c", "*", 
+            RowBox[{"u", "[", 
+             RowBox[{"[", "jx", "]"}], "]"}]}], "+", 
+           RowBox[{"s", "*", 
+            RowBox[{"u", "[", 
+             RowBox[{"[", "jy", "]"}], "]"}]}]}], ",", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"-", "s"}], "*", 
+            RowBox[{"u", "[", 
+             RowBox[{"[", "jx", "]"}], "]"}]}], "+", 
+           RowBox[{"c", "*", 
+            RowBox[{"u", "[", 
+             RowBox[{"[", "jy", "]"}], "]"}]}]}]}], "}"}]}], ";", "\n", 
+       "    ", 
+       RowBox[{"e", "=", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"ubar", "[", 
+            RowBox[{"[", "3", "]"}], "]"}], "-", 
+           RowBox[{"ubar", "[", 
+            RowBox[{"[", "1", "]"}], "]"}]}], ")"}], "/", "L"}]}], ";", " ", 
+       RowBox[{"Return", "[", 
+        RowBox[{"Em", "*", "A", "*", "e"}], "]"}]}]}], "\n", "]"}]}], ";"}], 
+  " "}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.587824910207797*^9, 3.587824910210232*^9}, {
+  3.5878249458240833`*^9, 3.587824947013748*^9}},
+ Background->RGBColor[0.87, 0.94, 1]],
+
+Cell[TextData[StyleBox["Cell 6 :  module to get internal forces in members of \
+example truss.",
+ FontSize->12]], "Text",
+ CellChangeTimes->{{3.5878250168615837`*^9, 3.587825022435727*^9}},
+ Background->GrayLevel[0.85]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"IntForcesOfExampleTruss", "[", "u_", "]"}], ":=", " ", 
+   RowBox[{"Module", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"f", "=", 
+        RowBox[{"Table", "[", 
+         RowBox[{"0", ",", 
+          RowBox[{"{", "2", "}"}]}], "]"}]}], ",", 
+       RowBox[{"sl", " ", "=", " ", "8"}], ",", 
+       RowBox[{"h", "=", "3"}], ",", 
+       RowBox[{"Em", "=", "1000"}], ",", 
+       RowBox[{"A1", "=", "2"}], ",", 
+       RowBox[{"A2", "=", "4"}]}], "}"}], ",", "\n", "  ", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"f", "[", 
+        RowBox[{"[", "1", "]"}], "]"}], "=", 
+       RowBox[{"IntForce2DTwoNodeBar", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"0", ",", "0"}], "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"sl", "/", "2"}], ",", "h"}], "}"}]}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"Em", ",", "A1"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"1", ",", "2", ",", "3", ",", "4"}], "}"}], ",", "u"}], 
+        "]"}]}], ";", "\n", "  ", 
+      RowBox[{
+       RowBox[{"f", "[", 
+        RowBox[{"[", "2", "]"}], "]"}], "=", 
+       RowBox[{"IntForce2DTwoNodeBar", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"sl", "/", "2"}], ",", "h"}], "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"sl", ",", "0"}], "}"}]}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"Em", ",", "A2"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"3", ",", "4", ",", "5", ",", "6"}], "}"}], ",", "u"}], 
+        "]"}]}], ";", "\n", 
+      RowBox[{"(*", "  ", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"f", "[", 
+          RowBox[{"[", "3", "]"}], "]"}], "=", 
+         RowBox[{"IntForce2DTwoNodeBar", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"0", ",", "0"}], "}"}], ",", 
+             RowBox[{"{", 
+              RowBox[{"10", ",", "10"}], "}"}]}], "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"100", ",", 
+             RowBox[{"2", "*", 
+              RowBox[{"Sqrt", "[", "2", "]"}]}]}], "}"}], ",", "\n", 
+           "         ", 
+           RowBox[{"{", 
+            RowBox[{"1", ",", "2", ",", "5", ",", "6"}], "}"}], ",", "u"}], 
+          "]"}]}], ";"}], " ", "*)"}], "\n", "  ", 
+      RowBox[{"Return", "[", "f", "]"}]}]}], "\n", "]"}]}], ";"}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.587825030285952*^9, 3.587825030287739*^9}, {
+  3.587825992021639*^9, 3.587826051741172*^9}, {3.587827002493799*^9, 
+  3.587827008349215*^9}, {3.5878270500279627`*^9, 3.587827060884004*^9}, {
+  3.587921197582024*^9, 3.587921197659464*^9}},
+ Background->RGBColor[0.87, 0.94, 1]],
+
+Cell[TextData[StyleBox["Cell 7: Simple function to print output for solutions \
+in a stylazed way",
+ FontSize->12]], "Text",
+ CellChangeTimes->{{3.5878250168615837`*^9, 3.587825022435727*^9}, {
+  3.587827743369121*^9, 3.5878277582173223`*^9}},
+ Background->GrayLevel[0.85]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"PrintWithStyle", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"color", "=", "LightGreen"}], "}"}], ",", 
+    RowBox[{"Framed", "[", 
+     RowBox[{
+      RowBox[{"Style", "[", 
+       RowBox[{"x", ",", "18", ",", "Bold", ",", 
+        RowBox[{"Background", "\[Rule]", "color"}]}], "]"}], ",", 
+      "\[IndentingNewLine]", 
+      RowBox[{"Background", "\[Rule]", "color"}]}], "]"}]}], 
+   "\[IndentingNewLine]", "]"}]}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.5878277622951813`*^9, 3.587827801470587*^9}, {
+  3.5878279140382023`*^9, 3.587828037992056*^9}, {3.587828092581545*^9, 
+  3.58782809340242*^9}, {3.587828151664729*^9, 3.587828183864581*^9}, {
+  3.5878282160385027`*^9, 3.5878284333882923`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Problem 1 Driver Script", "Subsection",
+ CellChangeTimes->{{3.587825070931519*^9, 3.587825077263386*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\n", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"f", " ", "=", " ", 
+     RowBox[{"{", 
+      RowBox[{
+      "0", ",", " ", "0", ",", " ", "12", ",", " ", "0", ",", " ", "0", ",", 
+       " ", "0"}], "}"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"K", " ", "=", " ", 
+     RowBox[{"AssembleMasterStiffOfExampleTruss", "[", "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"Print", "[", "\"\<Master Stiffness Matrix: \>\"", "]"}], ";", 
+    " ", 
+    RowBox[{"Print", "[", 
+     RowBox[{"K", " ", "//", " ", "MatrixForm"}], "]"}], ";"}], "\n", "\n", 
+   RowBox[{"(*", 
+    RowBox[{
+     RowBox[{"Nodes", " ", "1"}], ",", "2", ",", "5", ",", " ", 
+     RowBox[{"and", " ", "6", " ", "are", " ", "fixed", " ", "in", " ", 
+      RowBox[{"position", ".", " ", "No"}], " ", "movement", " ", "can", " ", 
+      "occur"}]}], "*)"}], " ", "\n", 
+   RowBox[{
+    RowBox[{"Kmod", " ", "=", " ", 
+     RowBox[{"ModifiedMasterStiffForDBC", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"1", ",", " ", "2", ",", " ", "5", ",", " ", "6"}], "}"}], 
+       ",", " ", "K"}], "]"}]}], ";"}], " ", "\n", 
+   RowBox[{
+    RowBox[{"fmod", " ", "=", " ", 
+     RowBox[{"ModifiedMasterForcesForDBC", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"1", ",", " ", "2", ",", " ", "5", ",", " ", "6"}], "}"}], 
+       ",", " ", "f"}], "]"}]}], ";"}], " ", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"u", " ", "=", " ", 
+     RowBox[{"Simplify", "[", 
+      RowBox[{
+       RowBox[{"Inverse", "[", "Kmod", "]"}], ".", "fmod"}], "]"}]}], ";"}], 
+   "\n", 
+   RowBox[{
+    RowBox[{"Print", "[", "\"\<Computed nodal displacements:\>\"", "]"}], 
+    ";"}], "\[IndentingNewLine]", 
+   RowBox[{"PrintWithStyle", "[", "u", "]"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"f", " ", "=", " ", 
+     RowBox[{"Simplify", "[", 
+      RowBox[{"K", ".", "u"}], "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{
+    "Print", "[", "\"\<External node forces including reactions:\>\"", "]"}], 
+    ";"}], " ", "\[IndentingNewLine]", 
+   RowBox[{"PrintWithStyle", "[", "f", "]"}], "\[IndentingNewLine]", " ", 
+   RowBox[{
+    RowBox[{"p", " ", "=", " ", 
+     RowBox[{"Simplify", "[", 
+      RowBox[{"IntForcesOfExampleTruss", "[", "u", "]"}], "]"}]}], ";"}], 
+   "\n", 
+   RowBox[{"Print", "[", "\"\<Internal member forces:\>\"", "]"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"PrintWithStyle", "[", "p", "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.587825206372182*^9, 3.5878252063736677`*^9}, {
+  3.5878258529439507`*^9, 3.587825897867536*^9}, {3.5878262870016613`*^9, 
+  3.5878263179015493`*^9}, {3.587826497492518*^9, 3.587826558108082*^9}, {
+  3.587826709564641*^9, 3.587826728202977*^9}, {3.587826906838861*^9, 
+  3.587826919627653*^9}, {3.587827229172965*^9, 3.587827252955571*^9}, {
+  3.587827329035759*^9, 3.587827379252306*^9}, {3.587827409798314*^9, 
+  3.58782749636808*^9}, {3.587827536052816*^9, 3.587827714675242*^9}, {
+  3.5878278127556973`*^9, 3.58782786813468*^9}, {3.587921070005427*^9, 
+  3.587921097837268*^9}, {3.587921136282158*^9, 3.58792115835385*^9}},
+ Background->RGBColor[1, 0.9, 0.8]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"Master Stiffness Matrix: \"\>"], "Print",
+ CellChangeTimes->{
+  3.5878265702850437`*^9, {3.5878267111851377`*^9, 3.5878267292671213`*^9}, 
+   3.587826785369266*^9, {3.5878269088947906`*^9, 3.5878269303949327`*^9}, {
+   3.5878270644169273`*^9, 3.587827079230555*^9}, 3.587827244349527*^9, {
+   3.587827339006548*^9, 3.587827379673671*^9}, {3.587827426540435*^9, 
+   3.5878274970710583`*^9}, {3.587827550173441*^9, 3.587827648170191*^9}, {
+   3.58782767984328*^9, 3.587827715582398*^9}, {3.58782782015482*^9, 
+   3.587827868970151*^9}, 3.5878279208884068`*^9, {3.587827953429489*^9, 
+   3.587828040988248*^9}, 3.5878280978492413`*^9, {3.587828176870771*^9, 
+   3.5878281863838387`*^9}, {3.587828220154331*^9, 3.587828281458009*^9}, 
+   3.587828320468577*^9, {3.587828386111986*^9, 3.5878284071125727`*^9}, {
+   3.587921077295439*^9, 3.58792109271406*^9}, {3.5879211418829527`*^9, 
+   3.587921161666127*^9}, 3.587921200932344*^9}],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"(", "\[NoBreak]", GridBox[{
+     {"256", "192", 
+      RowBox[{"-", "256"}], 
+      RowBox[{"-", "192"}], "0", "0"},
+     {"192", "144", 
+      RowBox[{"-", "192"}], 
+      RowBox[{"-", "144"}], "0", "0"},
+     {
+      RowBox[{"-", "256"}], 
+      RowBox[{"-", "192"}], "768", 
+      RowBox[{"-", "192"}], 
+      RowBox[{"-", "512"}], "384"},
+     {
+      RowBox[{"-", "192"}], 
+      RowBox[{"-", "144"}], 
+      RowBox[{"-", "192"}], "432", "384", 
+      RowBox[{"-", "288"}]},
+     {"0", "0", 
+      RowBox[{"-", "512"}], "384", "512", 
+      RowBox[{"-", "384"}]},
+     {"0", "0", "384", 
+      RowBox[{"-", "288"}], 
+      RowBox[{"-", "384"}], "288"}
+    },
+    GridBoxAlignment->{
+     "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+      "RowsIndexed" -> {}},
+    GridBoxSpacings->{"Columns" -> {
+        Offset[0.27999999999999997`], {
+         Offset[0.7]}, 
+        Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+        Offset[0.2], {
+         Offset[0.4]}, 
+        Offset[0.2]}, "RowsIndexed" -> {}}], "\[NoBreak]", ")"}],
+  Function[BoxForm`e$, 
+   MatrixForm[BoxForm`e$]]]], "Print",
+ CellChangeTimes->{
+  3.5878265702850437`*^9, {3.5878267111851377`*^9, 3.5878267292671213`*^9}, 
+   3.587826785369266*^9, {3.5878269088947906`*^9, 3.5878269303949327`*^9}, {
+   3.5878270644169273`*^9, 3.587827079230555*^9}, 3.587827244349527*^9, {
+   3.587827339006548*^9, 3.587827379673671*^9}, {3.587827426540435*^9, 
+   3.5878274970710583`*^9}, {3.587827550173441*^9, 3.587827648170191*^9}, {
+   3.58782767984328*^9, 3.587827715582398*^9}, {3.58782782015482*^9, 
+   3.587827868970151*^9}, 3.5878279208884068`*^9, {3.587827953429489*^9, 
+   3.587828040988248*^9}, 3.5878280978492413`*^9, {3.587828176870771*^9, 
+   3.5878281863838387`*^9}, {3.587828220154331*^9, 3.587828281458009*^9}, 
+   3.587828320468577*^9, {3.587828386111986*^9, 3.5878284071125727`*^9}, {
+   3.587921077295439*^9, 3.58792109271406*^9}, {3.5879211418829527`*^9, 
+   3.587921161666127*^9}, 3.5879212009344063`*^9}],
+
+Cell[BoxData["\<\"Computed nodal displacements:\"\>"], "Print",
+ CellChangeTimes->{
+  3.5878265702850437`*^9, {3.5878267111851377`*^9, 3.5878267292671213`*^9}, 
+   3.587826785369266*^9, {3.5878269088947906`*^9, 3.5878269303949327`*^9}, {
+   3.5878270644169273`*^9, 3.587827079230555*^9}, 3.587827244349527*^9, {
+   3.587827339006548*^9, 3.587827379673671*^9}, {3.587827426540435*^9, 
+   3.5878274970710583`*^9}, {3.587827550173441*^9, 3.587827648170191*^9}, {
+   3.58782767984328*^9, 3.587827715582398*^9}, {3.58782782015482*^9, 
+   3.587827868970151*^9}, 3.5878279208884068`*^9, {3.587827953429489*^9, 
+   3.587828040988248*^9}, 3.5878280978492413`*^9, {3.587828176870771*^9, 
+   3.5878281863838387`*^9}, {3.587828220154331*^9, 3.587828281458009*^9}, 
+   3.587828320468577*^9, {3.587828386111986*^9, 3.5878284071125727`*^9}, {
+   3.587921077295439*^9, 3.58792109271406*^9}, {3.5879211418829527`*^9, 
+   3.587921161666127*^9}, 3.5879212009366837`*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ FrameBox[
+  StyleBox[
+   RowBox[{"{", 
+    RowBox[{"0", ",", "0", ",", 
+     FractionBox["9", "512"], ",", 
+     FractionBox["1", "128"], ",", "0", ",", "0"}], "}"}],
+   StripOnInput->False,
+   FontSize->18,
+   FontWeight->Bold,
+   Background->RGBColor[0.88, 1, 0.88]],
+  Background->RGBColor[0.88, 1, 0.88],
+  StripOnInput->False]], "Output",
+ CellChangeTimes->{{3.58782757449992*^9, 3.587827648176744*^9}, {
+   3.5878276798482924`*^9, 3.587827715588459*^9}, {3.587827820158502*^9, 
+   3.58782786897639*^9}, 3.587827920935399*^9, {3.587827953478157*^9, 
+   3.587828040991836*^9}, 3.587828097852701*^9, {3.587828176926532*^9, 
+   3.587828186389104*^9}, {3.587828220186469*^9, 3.587828281461523*^9}, 
+   3.587828320472321*^9, {3.587828386118779*^9, 3.587828407116005*^9}, {
+   3.5879210773001127`*^9, 3.587921092717659*^9}, {3.58792114188582*^9, 
+   3.5879211616695967`*^9}, 3.587921200937587*^9}],
+
+Cell[BoxData["\<\"External node forces including reactions:\"\>"], "Print",
+ CellChangeTimes->{
+  3.5878265702850437`*^9, {3.5878267111851377`*^9, 3.5878267292671213`*^9}, 
+   3.587826785369266*^9, {3.5878269088947906`*^9, 3.5878269303949327`*^9}, {
+   3.5878270644169273`*^9, 3.587827079230555*^9}, 3.587827244349527*^9, {
+   3.587827339006548*^9, 3.587827379673671*^9}, {3.587827426540435*^9, 
+   3.5878274970710583`*^9}, {3.587827550173441*^9, 3.587827648170191*^9}, {
+   3.58782767984328*^9, 3.587827715582398*^9}, {3.58782782015482*^9, 
+   3.587827868970151*^9}, 3.5878279208884068`*^9, {3.587827953429489*^9, 
+   3.587828040988248*^9}, 3.5878280978492413`*^9, {3.587828176870771*^9, 
+   3.5878281863838387`*^9}, {3.587828220154331*^9, 3.587828281458009*^9}, 
+   3.587828320468577*^9, {3.587828386111986*^9, 3.5878284071125727`*^9}, {
+   3.587921077295439*^9, 3.58792109271406*^9}, {3.5879211418829527`*^9, 
+   3.587921161666127*^9}, 3.5879212009399233`*^9}],
+
+Cell[BoxData[
+ FrameBox[
+  StyleBox[
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"-", "6"}], ",", 
+     RowBox[{"-", 
+      FractionBox["9", "2"]}], ",", "12", ",", "0", ",", 
+     RowBox[{"-", "6"}], ",", 
+     FractionBox["9", "2"]}], "}"}],
+   StripOnInput->False,
+   FontSize->18,
+   FontWeight->Bold,
+   Background->RGBColor[0.88, 1, 0.88]],
+  Background->RGBColor[0.88, 1, 0.88],
+  StripOnInput->False]], "Output",
+ CellChangeTimes->{{3.58782757449992*^9, 3.587827648176744*^9}, {
+   3.5878276798482924`*^9, 3.587827715588459*^9}, {3.587827820158502*^9, 
+   3.58782786897639*^9}, 3.587827920935399*^9, {3.587827953478157*^9, 
+   3.587828040991836*^9}, 3.587828097852701*^9, {3.587828176926532*^9, 
+   3.587828186389104*^9}, {3.587828220186469*^9, 3.587828281461523*^9}, 
+   3.587828320472321*^9, {3.587828386118779*^9, 3.587828407116005*^9}, {
+   3.5879210773001127`*^9, 3.587921092717659*^9}, {3.58792114188582*^9, 
+   3.5879211616695967`*^9}, 3.587921200941188*^9}],
+
+Cell[BoxData["\<\"Internal member forces:\"\>"], "Print",
+ CellChangeTimes->{
+  3.5878265702850437`*^9, {3.5878267111851377`*^9, 3.5878267292671213`*^9}, 
+   3.587826785369266*^9, {3.5878269088947906`*^9, 3.5878269303949327`*^9}, {
+   3.5878270644169273`*^9, 3.587827079230555*^9}, 3.587827244349527*^9, {
+   3.587827339006548*^9, 3.587827379673671*^9}, {3.587827426540435*^9, 
+   3.5878274970710583`*^9}, {3.587827550173441*^9, 3.587827648170191*^9}, {
+   3.58782767984328*^9, 3.587827715582398*^9}, {3.58782782015482*^9, 
+   3.587827868970151*^9}, 3.5878279208884068`*^9, {3.587827953429489*^9, 
+   3.587828040988248*^9}, 3.5878280978492413`*^9, {3.587828176870771*^9, 
+   3.5878281863838387`*^9}, {3.587828220154331*^9, 3.587828281458009*^9}, 
+   3.587828320468577*^9, {3.587828386111986*^9, 3.5878284071125727`*^9}, {
+   3.587921077295439*^9, 3.58792109271406*^9}, {3.5879211418829527`*^9, 
+   3.587921161666127*^9}, 3.58792120094276*^9}],
+
+Cell[BoxData[
+ FrameBox[
+  StyleBox[
+   RowBox[{"{", 
+    RowBox[{
+     FractionBox["15", "2"], ",", 
+     RowBox[{"-", 
+      FractionBox["15", "2"]}]}], "}"}],
+   StripOnInput->False,
+   FontSize->18,
+   FontWeight->Bold,
+   Background->RGBColor[0.88, 1, 0.88]],
+  Background->RGBColor[0.88, 1, 0.88],
+  StripOnInput->False]], "Output",
+ CellChangeTimes->{{3.58782757449992*^9, 3.587827648176744*^9}, {
+   3.5878276798482924`*^9, 3.587827715588459*^9}, {3.587827820158502*^9, 
+   3.58782786897639*^9}, 3.587827920935399*^9, {3.587827953478157*^9, 
+   3.587828040991836*^9}, 3.587828097852701*^9, {3.587828176926532*^9, 
+   3.587828186389104*^9}, {3.587828220186469*^9, 3.587828281461523*^9}, 
+   3.587828320472321*^9, {3.587828386118779*^9, 3.587828407116005*^9}, {
+   3.5879210773001127`*^9, 3.587921092717659*^9}, {3.58792114188582*^9, 
+   3.5879211616695967`*^9}, 3.587921200943653*^9}]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{720, 852},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+PrintingCopies->1,
+PrintingPageRange->{1, Automatic},
+FrontEndVersion->"9.0 for Mac OS X x86 (32-bit, 64-bit Kernel) (January 25, \
+2013)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[579, 22, 104, 1, 92, "Title"],
+Cell[686, 25, 167, 2, 29, "Subsubtitle"],
+Cell[CellGroupData[{
+Cell[878, 31, 95, 1, 80, "Section"],
+Cell[CellGroupData[{
+Cell[998, 36, 108, 1, 44, "Subsection"],
+Cell[1109, 39, 254, 4, 44, "Text"],
+Cell[1366, 45, 2717, 78, 181, "Input",
+ InitializationCell->True],
+Cell[4086, 125, 239, 4, 44, "Text"],
+Cell[4328, 131, 1782, 46, 164, "Input",
+ InitializationCell->True],
+Cell[6113, 179, 220, 4, 44, "Text"],
+Cell[6336, 185, 3211, 84, 215, "Input",
+ InitializationCell->True],
+Cell[9550, 271, 228, 5, 65, "Text"],
+Cell[9781, 278, 2696, 74, 232, "Input",
+ InitializationCell->True],
+Cell[12480, 354, 242, 4, 44, "Text"],
+Cell[12725, 360, 3041, 87, 147, "Input",
+ InitializationCell->True],
+Cell[15769, 449, 219, 4, 44, "Text"],
+Cell[15991, 455, 2891, 79, 198, "Input",
+ InitializationCell->True],
+Cell[18885, 536, 273, 5, 44, "Text"],
+Cell[19161, 543, 816, 19, 80, "Input",
+ InitializationCell->True]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[20014, 567, 111, 1, 44, "Subsection"],
+Cell[CellGroupData[{
+Cell[20150, 572, 3110, 73, 317, "Input"],
+Cell[CellGroupData[{
+Cell[23285, 649, 945, 13, 21, "Print"],
+Cell[24233, 664, 2068, 50, 102, "Print"],
+Cell[26304, 716, 951, 13, 22, "Print"]
+}, Open  ]],
+Cell[27270, 732, 911, 20, 69, "Output"],
+Cell[28184, 754, 963, 13, 22, "Print"],
+Cell[29150, 769, 972, 23, 68, "Output"],
+Cell[30125, 794, 942, 13, 21, "Print"],
+Cell[31070, 809, 891, 21, 68, "Output"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)

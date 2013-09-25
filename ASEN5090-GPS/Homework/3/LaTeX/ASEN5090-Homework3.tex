@@ -1,0 +1,166 @@
+\documentclass[12pt,a4paper,oneside]{article}
+%################################# Preamble ##################################%
+	%%%%%%%%%%%%%%%%%  << MATLAB INCLUSION>>  %%%%%%%%%%%%%%%%%
+	\usepackage[numbered framed]{mcode}
+	% Need mcode.sty in current directory
+	%%%%%%%%%%%%%%%%%  << MATLAB INCLUSION>>  %%%%%%%%%%%%%%%%%
+	
+	%%%%%%%%%%%%%%%%%  << IMAGE INCLUSION>>  %%%%%%%%%%%%%%%%%
+	\usepackage{graphicx}
+	%%%%%%%%%%%%%%%%%  << IMAGE INCLUSION>>  %%%%%%%%%%%%%%%%%
+	\usepackage{float}
+	\usepackage{color}
+	\usepackage{cleveref}
+	\usepackage{amsmath}
+	\usepackage{graphicx}
+	\usepackage{color}
+	% Other packages
+	%\usepackage{times, rawfonts, geometry}
+	%\usepackage{amsmath,amssymb}
+	%\usepackage{float}
+	
+	% New commands
+	\newcommand{\ignore}[1]{}  % {} empty inside = %% comment
+	
+	% Scientific notation:
+	\providecommand{\e}[1]{\ensuremath{\times 10^{#1}}}
+	
+	% General
+	\newcommand{\parens} [1] {\left(  #1  \right)}
+	\newcommand{\brackets} [1] {\left[ #1 \right]}
+	\newcommand{\rootdir}{./Figures/}
+	
+	% Array
+	\newcommand{\arrayp}[2]{\parens{ \begin{array}{#1}  #2 \end{array} } }
+	\newcommand{\arrayb}[2]{\brackets{ \begin{array}{#1}  #2 \end{array} } }
+		%Figure {HERE}   - use like:  \fig{figurename.extension}{Caption}{Label}
+	\newcommand{\figH}[3]{
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=\textwidth]{\rootdir #1}
+				\caption{#2}
+				\label{#3}
+			\end{figure}
+			}
+			
+	%Figure {not HERE}
+		\newcommand{\fig}[3]{
+			\begin{figure}
+				\centering
+				\includegraphics[width=\textwidth]{\rootdir #1}
+				\caption{#2}
+				\label{#3}
+			\end{figure}
+			}
+	
+	\begin{document}
+	
+	\title{ASEN 5090-Intro to GNSS Homework 3}
+	\author{Zach Dischner}
+	\date{9-24-2013}
+	\maketitle
+%############################### End Preamble ################################%
+
+%%%%%%%%%%%%%%%%%%%%%%  << 1 >>  %%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem 1 - YUMA Almenac File}
+The name of the YUMA file for September 20, 2012 is: \textbf{yuma0682.319488.alm}
+
+The different PRNs corresponding to each GPS satellite and their respective orbit planes (normalized, by planes) is in Table 1. 
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|}
+		\hline
+		\textbf{PRN Number} &	\textbf{Normalized Plane}	 \\\hline
+		    20, 5, 18, 22, 10, 32&     1\\\hline
+		    15, 23, 14, 26, 13 &     2\\\hline
+		    27, 9, 7, 31, 8&     3\\\hline
+		    30, 25, 12, 16, 28&     4\\\hline
+		     3, 6, 17, 29, 19&     5\\\hline
+		    11, 2, 1, 4, 21&     6\\\hline
+	\end{tabular}
+	\caption{PRN Satellites sorted by orbital plane}
+\end{table}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%  << 2 >>  %%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem 2 - ECEF2AzEL}
+I modified the function appropriately and verified that it works. The demonstration of this will come in later exercises. 
+
+%%%%%%%%%%%%%%%%%%%%%%  << 3 >>  %%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem 3 - Sat Masks} 
+I created a function to return topographical  and antenna counts of the number of satellites visible, given user-defined Az-El boundaries and antenna specifications. See Figure 1. It shows the total number of visible satellites to the antenna in time, given stats provided in the main script for this assignment. 
+
+\figH{NumVisSats.png}{Number of visible satellites}{fig:numvissats}
+
+%%%%%%%%%%%%%%%%%%%%%%  << 4 >>  %%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem 4 - Visible Satellites in Boulder}
+Using the same masks and specifications as provided in previous problems (assuming them to be relevant to Boulder's masking constraints), I was able to obtain visible satellites on September 20, 2012 at 12:00 PM. I did this by inserting breakpoints in the masking code and reporting relevant stats directly from there. These stats are summarized in Table 2, below. This was done where 12:00 local time means 18:00 GMT.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|c|}
+		\hline
+		\textbf{PRN Number} &	\textbf{Az} & \textbf{El}	 \\\hline
+		    9&     133.24& 70.75\\\hline
+		    12&     62.71& 45.46\\\hline
+		    15&     15.78& 55.69\\\hline
+		    17&     232.11& 42.69\\\hline
+		    18&     81.47& 22.86\\\hline
+	     	    22&     115.21& 16.71\\\hline
+		    25&     50.04& 15.30\\\hline
+		    26&     341.28& 27.44\\\hline
+		    27&     169.28& 79.75\\\hline
+	\end{tabular}
+	\caption{PRN and Az, El for visible Satellites}
+\end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%  << 5 >>  %%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem 5 - Visible Satellite Az El plots}
+Next, I plotted the Az and El of visible satelites at three different coordinates on the earth. I added to the \emph{GPSdata} structure to include masking indices to make the process easier. 
+
+\subsection{a) 0 N, 0 E}
+\figH{VisAzEl0-0.eps}{Az El for visible satellites at 0N 0E}{fig:AzEl00}
+At 0,0, on the equator, I see that satellites are visible along all longitudes, and only become invisible at high latitudes. The satellite orbits are designed to focus their concentration along the equator, and not so much at high latitudes. So this plot makes intuitive sense. 
+
+
+\subsection{b) 90 N, 0 E}
+\figH{VisAzEl90-0.eps}{Az El for visible satellites at 9N 0E}{fig:AzEl900}
+This plot (at the north pole) features a large spot in the center of the field where no satellite ground tracks go. This makes sense because, as described before, the GPS satellites are in non-polar orbits. So their Az El paths should never traverse over the pole. They all come within a certain radius, based on the orbit inclinations
+
+\subsection{b) 90 N, 0 E}
+\figH{VisAzElBoulder.eps}{Az El for visible satellites at Boulder}{fig:AzElBoulder}
+The track over Boulder shows that we can see the "hole" over the North Pole where satellite tracks avoid. This is enlightening, because it shows that there are certain areas in our sky that we would not want to point an antenna. 
+
+%%%%%%%%%%%%%%%%%%%%%%  << 6 >>  %%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem 6 - Highest North Pole Elevation}
+To calculate the highest elevation visible for the satellites, I used some simple trig. The GPS specifications require a 55 degree inclination, and a 26500 Km orbit radius. From there, I was able to construct a trigonometric equation for finding the maximum possible elevation. 
+ 
+\figH{Angles.png}{Visualization for Max Elevation Calculation}{fig:MaxEl}
+Using that drawing, I came up with an equation for the maximum angle allowable:
+
+\begin{equation}
+	x_2 = \tan^{-1}\parens{\frac{R_{orbit}\sin x - h}{R_{orbit}*\cos x}}
+\end{equation}
+
+With that calculation, I found the maximum elevation angle to be: \textbf{45.27 degrees}.
+
+%%%%%%%%%%%%%%%%%%%%%%  << 7 >>  %%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem 7 - Visible Satellites over Boulder at 10 Degree Elevation Mask}
+Below is the plot of the visible satellites' track over Boulder with a mask of 10 degrees in elevation. 
+\figH{VisAzElBoulder10deg.eps}{Az El for visible satellites at Boulder with Elevation Mask}{fig:AzElBoulder10deg}
+
+%%%%%%%%%%%%%%%%%%%%%%  << 7 >>  %%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem 8 - Repeatibility}
+To see how often the visibility correlates, I plotted the correlation between the number of visible sats on 9/20/2013 with that on 9/21/2013. This way, I could see what kind of offset occurs that shows repeatability in the availability pattern. 
+\figH{corr.eps}{Visibility Correlation Pattern}{fig:corr}
+From the plot, you can see that there are strong correlations between days at -4 and 147. As I went in 10 minute increments, this indicates that the pattern repeats roughly every 24.5 hours. The plot of the days themselves reinforce that conclusion. 
+
+\figH{corr2.eps}{Visibility Plot}{fig:corr2}
+
+
+
+\end{document}
+
+
+

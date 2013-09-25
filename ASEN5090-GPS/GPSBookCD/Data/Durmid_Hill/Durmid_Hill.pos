@@ -1,0 +1,109 @@
+                              ***ITRF 97***
+                DURMID HILL PGGA (DHLG),  CALIFORNIA
+
+ Retrieved from NGS DataBase on 09/11/00 at 09:10:11.
+ ____________________________________________________________________________ 
+|                                                                            |
+|         Antenna Reference Point(ARP): DURMID HILL PGGA CORS ARP            |
+|         -------------------------------------------------------            |
+|                             PID = AF9696                                   |
+|                                                                            |
+|                                                                            |
+| ITRF97 POSITION (EPOCH 1997.0)                                             |
+| Computed in July 2000 using every third day of data through 1999.          |
+|     X =  -2319099.150 m     latitude    =  33 23 23.30235 N                |
+|     Y =  -4799846.641 m     longitude   = 115 47 16.89418 W                |
+|     Z =   3490090.531 m     ellipsoid height =  -82.937   m                |
+|                                                                            |
+| ITRF97 VELOCITY                                                            |
+| Computed in July 2000 using every third day of data through 1999.          |
+|     VX =  -0.0133 m/yr      northward =  -0.0112 m/yr                      |
+|     VY =  -0.0004 m/yr      eastward  =  -0.0118 m/yr                      |
+|     VZ =  -0.0094 m/yr      upward    =   0.0000 m/yr                      |
+|                                                                            |
+|                                                                            |
+| NAD_83 POSITION (EPOCH 1997.0)                                             |
+| Transformed from ITRF97 (epoch 1997.0) position in July 2000.              |
+|     X =  -2319098.588 m     latitude    =  33 23 23.28501 N                |
+|     Y =  -4799847.975 m     longitude   = 115 47 16.85215 W                |
+|     Z =   3490090.521 m     ellipsoid height =  -82.143   m                |
+|                                                                            |
+| NAD_83 VELOCITY                                                            |
+| Transformed from ITRF97 velocity in July 2000.                             |
+|     VX =   0.0014 m/yr      northward =   0.0025 m/yr                      |
+|     VY =   0.0012 m/yr      eastward  =   0.0007 m/yr                      |
+|     VZ =   0.0019 m/yr      upward    =  -0.0004 m/yr                      |
+|____________________________________________________________________________|
+|                                                                            |
+| L1 Phase Center of the current GPS antenna: DURMID HILL PGGA CORS L1 PC C  |
+| -------------------------------------------------------------------------  |
+| The D/M element,REV.B,chokerings antenna                                   |
+| (Antenna Code = ASH701945B_M) was installed on 04/06/00.                   |
+|        The L2 phase center is 0.019 m above the L1 phase center.           |
+|                             PID = AI7432                                   |
+|                                                                            |
+|                                                                            |
+| ITRF97 POSITION (EPOCH 1997.0)                                             |
+| Computed in July 2000 using every third day of data through 1999.          |
+|     X =  -2319099.189 m     latitude    =  33 23 23.30237 N                |
+|     Y =  -4799846.723 m     longitude   = 115 47 16.89417 W                |
+|     Z =   3490090.591 m     ellipsoid height =  -82.828   m                |
+|                                                                            |
+| The ITRF97 VELOCITY of the L1 PC is the same as that for the ARP.          |
+|                                                                            |
+|                                                                            |
+| NAD_83 POSITION (EPOCH 1997.0)                                             |
+| Transformed from ITRF97 (epoch 1997.0) position in July 2000.              |
+|     X =  -2319098.628 m     latitude    =  33 23 23.28502 N                |
+|     Y =  -4799848.057 m     longitude   = 115 47 16.85214 W                |
+|     Z =   3490090.582 m     ellipsoid height =  -82.034   m                |
+|                                                                            |
+| The NAD_83 VELOCITY of the L1 PC is the same as that for the ARP.          |
+|____________________________________________________________________________|
+|                                                                            |
+|         Monument: DURMID HILL PGGA CORS POINT                              |
+|         -------------------------------------                              |
+|                             PID = AF9698                                   |
+|         Inscribed: NONE                                                    |
+|                                                                            |
+|                                                                            |
+| ITRF97 POSITION (EPOCH 1997.0)                                             |
+| Computed in July 2000 using every third day of data through 1999.          |
+|     X =  -2319099.106 m     latitude    =  33 23 23.30235 N                |
+|     Y =  -4799846.550 m     longitude   = 115 47 16.89418 W                |
+|     Z =   3490090.464 m     ellipsoid height =  -83.058   m                |
+|                                                                            |
+| The ITRF97 VELOCITY of the monument is the same as that for the ARP.       |
+|                                                                            |
+|                                                                            |
+| NAD_83 POSITION (EPOCH 1997.0)                                             |
+| Transformed from ITRF97 (epoch 1997.0) position in July 2000.              |
+|     X =  -2319098.544 m     latitude    =  33 23 23.28501 N                |
+|     Y =  -4799847.884 m     longitude   = 115 47 16.85215 W                |
+|     Z =   3490090.455 m     ellipsoid height =  -82.264   m                |
+|                                                                            |
+| The NAD_83 VELOCITY of the monument is the same as that for the ARP.       |
+|____________________________________________________________________________|
+   
+   
+ * Latitude, longitude and ellipsoid height are computed from their
+   corresponding cartesian coordinates using dimensions for the
+   GRS 80 ellipsoid: semi-major axis = 6,378,137.0 meters
+                          flattening = 1/298.257222101...
+   
+   
+ * WARNING: Mixing of antenna types can lead to errors of up to 10 cm.
+   in height unless antenna-phase-center variation is properly modeled.
+   
+   
+ * For additional information about the interpretation and/or derivation
+   of these positions and velocities, consult
+   http://www.ngs.noaa.gov/CORS/Derivation.html.
+   For additional information on the relation of the GPS antenna to other
+   relevant points at the site and on GPS equipment, consult the
+   link ftp://www.ngs.noaa.gov/cors/.html/dhlg.log.txt
+
+
+ * The NAD_83 position & velocity were revised in July 2000.
+
+
