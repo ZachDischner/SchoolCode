@@ -23,19 +23,19 @@ function [az,el,range] = ASEN5090_ecef2azelrange(r_sat,r_site,latgd,lon)
 
 
 % Range vector, ECEF
-pECF = r_sat - r_site;
+rhoECF = r_sat - r_site;
 
 % Convert to SEZ
-pSEZ = rotmat(2, pi/2 - latgd*pi/180)*rotmat(3, lon*180/pi)*pECF';
+rhoSEZ = rotmat(2, pi/2 - latgd*pi/180)*rotmat(3, lon*180/pi)*rhoECF';
 
 % Range
-range = norm(pSEZ);
+range = norm(rhoSEZ);
 
 % Azimuth
-az = wrapTo360( atan2d(pSEZ(2), -pSEZ(1)) );
+az = wrapTo360( atan2d(rhoSEZ(2), -rhoSEZ(1)) );
 
 % Elevation
-el = asind(pSEZ(3)/range);
+el = asind(rhoSEZ(3)/range);
 
 
 end %function

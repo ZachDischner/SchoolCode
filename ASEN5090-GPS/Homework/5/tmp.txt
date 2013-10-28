@@ -1,0 +1,1 @@
+prn,M0,delta_n,ecc,sqrt_a,Loa,incl,perigee,ra_rate,i_rate,Cuc,Cus,Crc,Crs,Cic,Cis,Toe,IODE,GPS_week,Toc,Af0,Af1,Af2,nil,health

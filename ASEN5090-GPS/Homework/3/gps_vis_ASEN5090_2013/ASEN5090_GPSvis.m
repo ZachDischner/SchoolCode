@@ -200,15 +200,8 @@ end % END of PRN loop -----------------------------------------------------
 % PUT IN YOUR CALCULATIONS FOR VISIBLE SATELLITES HERE:
 
 % =========================================================================
-% for nn = 1:prnlist
 mysize = size(GPSdata.topo_el);
-GPSdata = GPSMask(GPSdata,mysize(1), topomaskmin,topomaskmax, antmask, ant_enu);
-    
-    
-
-    
-           
-% end
+GPSdata = GPSMask(GPSdata,mysize(1), topomaskmin, topomaskmax, antmask, ant_enu);
 %==========================================================================
 %==========================================================================
 

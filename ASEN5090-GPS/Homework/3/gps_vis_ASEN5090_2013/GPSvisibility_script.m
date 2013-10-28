@@ -25,7 +25,7 @@ navfilename = generate_GPSyuma_name(GPSvec);
 
 
 % Grab duration and time step =============================================
-durationhrs = 50;
+durationhrs = 24;
 
 dt_sec = 600;
 

@@ -1,0 +1,416 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Homework5_main</title><meta name="generator" content="MATLAB 8.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-10-17"><meta name="DC.source" content="Homework5_main.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Setup Work Space</a></li><li><a href="#3">Setup Problem</a></li><li><a href="#4">Get GPS Time from UTC time</a></li><li><a href="#5">Calculate Satellite Position</a></li><li><a href="#6">SUPPORTING FUNCTION - date2GPSTime.m</a></li><li><a href="#7">SUPPORTING FUNCTION - findNearestEphem.m</a></li><li><a href="#8">SUPPORTING FUNCTION - calculateSatellitePosition.m</a></li></ul></div><pre class="codeinput"><span class="comment">%&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;</span>
+<span class="comment">%                        Homework5_main.m</span>
+<span class="comment">% Author      : Zach Dischner</span>
+<span class="comment">% Date        : 10/10/2013</span>
+<span class="comment">% Description : Matlat script for all calculations required for</span>
+<span class="comment">%               ASEN 5090 Homework 5</span>
+<span class="comment">%</span>
+<span class="comment">%                 __...____________________          ,</span>
+<span class="comment">%                `(\ [ ===NCC-1700===--|__|) ___..--"_`--.._____</span>
+<span class="comment">%                  `"""""""""""""""""| |""` [_""_-___________"_/</span>
+<span class="comment">%                                    | |   /..../`'-._.-'`</span>
+<span class="comment">%                                ____| |__/::..'_</span>
+<span class="comment">%                               |\ ".`"` '_____//\</span>
+<span class="comment">%                               `"'-.   """""  \\/</span>
+<span class="comment">%                                    `""""""""""`</span>
+<span class="comment">% &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</span>
+</pre><h2>Setup Work Space<a name="2"></a></h2><pre class="codeinput">clc;clear <span class="string">all</span>;close <span class="string">all</span>
+<span class="comment">% screen_size = get(0,'ScreenSize');</span>
+<span class="comment">% sw = screen_size(3);    % Screen Width</span>
+<span class="comment">% sh = screen_size(4);    % Screen Height</span>
+<span class="comment">% figColor = [0.99 0.99 0.98];</span>
+addpath <span class="string">HW5_files</span>
+</pre><h2>Setup Problem<a name="3"></a></h2><pre class="codeinput"><span class="comment">%------Define Navigation and Observation File</span>
+nav_msg  = <span class="string">'brdc2640.12n'</span>;
+obs_file = <span class="string">'test.12o'</span>;
+
+<span class="comment">%------Read navigation message content</span>
+nav_ephem = read_GPSbroadcast(nav_msg); <span class="comment">% Returns [n x 25] matrix of sat orbit information</span>
+<span class="comment">%                  col1: prn, PRN number of satellite</span>
+<span class="comment">%                  col2: M0, mean anomaly at reference time, rad</span>
+<span class="comment">%                  col3: delta_n, mean motion difference from computed value, rad/s</span>
+<span class="comment">%                  col4: ecc, eccentricity of orbit</span>
+<span class="comment">%                  col5: sqrt_a, square root of semi-major axis, m^0.5</span>
+<span class="comment">%                  col6: Loa, longitude of ascending node of orbit plane at weekly epoch, rad</span>
+<span class="comment">%                  col7: incl, inclination angle at reference time, rad</span>
+<span class="comment">%                  col8: perigee, argument of perigee, rad</span>
+<span class="comment">%                  col9: ra_rate, rate of change of right ascension, rad/s</span>
+<span class="comment">%                 col10: i_rate, rate of change of inclination angle, rad/s</span>
+<span class="comment">%                 col11: Cuc, amplitude of the cosine harmonic correction term to the argument of latitude</span>
+<span class="comment">%                 col12: Cus, amplitude of the sine harmonic correction term to the argument of latitude</span>
+<span class="comment">%                 col13: Crc, amplitude of the cosine harmonic correction term to the orbit radius</span>
+<span class="comment">%                 col14: Crs, amplitude of the sine harmonic correction term to the orbit radius</span>
+<span class="comment">%                 col15: Cic, amplitude of the cosine harmonic correction term to the angle of inclination</span>
+<span class="comment">%                 col16: Cis, amplitude of the cosine harmonic correction term to the angle of inclination</span>
+<span class="comment">%                 col17: Toe, reference time ephemeris (seconds into GPS week)</span>
+<span class="comment">%                 col18: IODE, issue of data (ephemeris)</span>
+<span class="comment">%                 col19: GPS_week, GPS Week Number (to go with Toe)</span>
+<span class="comment">%                 col20: Toc, time of clock</span>
+<span class="comment">%                 col21: Af0, satellite clock bias (sec)</span>
+<span class="comment">%                 col22: Af1, satellite clock drift (sec/sec)</span>
+<span class="comment">%                 col23: Af2, satellite clock drift rate (sec/sec/sec)</span>
+<span class="comment">%                 col24: blank (zero)</span>
+<span class="comment">%                 col25: health, satellite health (0=good and usable)</span>
+</pre><h2>Get GPS Time from UTC time<a name="4"></a></h2><pre class="codeinput"><span class="comment">%------Convert time of interest into GPS week and seconds of week</span>
+<span class="comment">% Using standard for GPS Epoch: http://tycho.usno.navy.mil/gps_week.html</span>
+<span class="comment">% Verified with online calendar: http://adn.agi.com/GNSSWeb/</span>
+emph_date      = <span class="string">'September 20 2012 02:11:00'</span>;
+[GPS_W, GPS_SOW] = date2GPSTime(emph_date);
+fprintf(<span class="string">'\n*^*^*^*^*^*^*^*^*^*^*^*^*^*^* HW5 Step 3 *^*^*^*^*^*^*^*^*^*^*^*^*^*^*\n'</span>)
+fprintf(<span class="string">'GPS Week and seconds of week: [ %d , %d ]\n'</span>,GPS_W, GPS_SOW)
+</pre><pre class="codeoutput">
+*^*^*^*^*^*^*^*^*^*^*^*^*^*^* HW5 Step 3 *^*^*^*^*^*^*^*^*^*^*^*^*^*^*
+GPS Week and seconds of week: [ 1706 , 353460 ]
+</pre><h2>Calculate Satellite Position<a name="5"></a></h2><pre class="codeinput"><span class="comment">%------Define Orbit determination parameters</span>
+params.mu = 3.986005e14;    <span class="comment">% Gravitational param [m^3/s^2]</span>
+params.we = 7.2921151467e-5;    <span class="comment">% Earth's rotation rate [rad/s]</span>
+params.Secs = GPS_SOW;      <span class="comment">% Seconds used to calculate seconds since epoch</span>
+
+<span class="comment">%------Define Satellite PRN Ranges</span>
+PRNs = [15, 17, 12];
+fprintf(<span class="string">'\n\n*^*^*^*^*^*^*^*^*^*^*^*^*^*^* HW5 Step 6 *^*^*^*^*^*^*^*^*^*^*^*^*^*^*\n\n'</span>)
+<span class="keyword">for</span> PRN = PRNs
+    <span class="comment">%------Fetch corresponding ephemeris data</span>
+    ephem = findNearestEphem(PRN,GPS_W,GPS_SOW, nav_ephem);
+    [x,y,z] = calculateSatellitePosition(ephem,params);
+    fprintf(<span class="string">'PRN: %d ===&gt; [x,y,z]: [%10.3f , %10.3f , %10.3f]m \n'</span>,PRN,x,y,z)
+    [h,pos,v,r,s,a]=broadcast2xva(nav_ephem,[GPS_W,GPS_SOW],PRN);
+    fprintf(<span class="string">'   Ben B Ref [x,y,z]: [%10.3f , %10.3f , %10.3f]m \n\n'</span>,pos)
+
+<span class="keyword">end</span>
+fprintf(<span class="string">'\n\n'</span>)
+</pre><pre class="codeoutput">
+
+*^*^*^*^*^*^*^*^*^*^*^*^*^*^* HW5 Step 6 *^*^*^*^*^*^*^*^*^*^*^*^*^*^*
+
+PRN: 15 ===&gt; [x,y,z]: [6407933.252 , -20631648.099 , 15294938.689]m 
+   Ben B Ref [x,y,z]: [6407933.252 , -20631648.099 , 15294938.689]m 
+
+PRN: 17 ===&gt; [x,y,z]: [14276106.295 , 15238381.805 , -16373240.384]m 
+   Ben B Ref [x,y,z]: [14276106.295 , 15238381.805 , -16373240.384]m 
+
+PRN: 12 ===&gt; [x,y,z]: [4674101.298 , -14021589.264 , -22087395.102]m 
+   Ben B Ref [x,y,z]: [4674101.298 , -14021589.264 , -22087395.102]m 
+
+
+
+</pre><h2>SUPPORTING FUNCTION - date2GPSTime.m<a name="6"></a></h2><pre class="codeinput">type(<span class="string">'date2GPSTime.m'</span>)
+</pre><pre class="codeoutput">
+%&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+%                        date2GPSTime.m
+% Author      : Zach Dischner
+% Date        : 10/11/2013
+% Description : Convert a date type object into [GPS_Weeks, GPS_SOW] time
+% 
+%
+%                 __...____________________          ,
+%                `(\ [ ===NCC-1700===--|__|) ___..--"_`--.._____
+%                  `"""""""""""""""""| |""` [_""_-___________"_/
+%                                    | |   /..../`'-._.-'`
+%                                ____| |__/::..'_
+%                               |\ ".`"` '_____//\
+%                               `"'-.   """""  \\/
+%                                    `""""""""""`
+% Inputs        : utcDate - Satellite PRN number
+% 
+% Outputs       : [GPS_Weeks, GPS_SOW]-weeks and seconds of week
+% &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+function [GPS_Weeks, GPS_SOW] = date2GPSTime(utcDate)
+gps_week_start = 'January 6 1980 00:00:00';
+modnum = 0; % modnum = 0 for no modulo
+tmp = mod((datenum(utcDate) - datenum(gps_week_start))/7,modnum); % (Difference in days)/7 = difference in weeks
+GPS_Weeks = floor(tmp);
+GPS_SOW = round((tmp-GPS_Weeks)*7*24*3600);
+</pre><h2>SUPPORTING FUNCTION - findNearestEphem.m<a name="7"></a></h2><pre class="codeinput">type(<span class="string">'findNearestEphem.m'</span>)
+</pre><pre class="codeoutput">
+%&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+%                        findNearestEmph.m
+% Author      : Zach Dischner
+% Date        : 10/11/2013
+% Description : Function to return all emphimeris data from a nav data
+%               array
+% 
+%
+%                 __...____________________          ,
+%                `(\ [ ===NCC-1700===--|__|) ___..--"_`--.._____
+%                  `"""""""""""""""""| |""` [_""_-___________"_/
+%                                    | |   /..../`'-._.-'`
+%                                ____| |__/::..'_
+%                               |\ ".`"` '_____//\
+%                               `"'-.   """""  \\/
+%                                    `""""""""""`
+% Inputs        : PRN - Satellite PRN number
+%                 GPSWeeks - GPS week number (modded or no?)
+%                 GPSSOW - GPS Seconds of week
+%                 navData - A full array of all emphimeris data, fetched
+%                            from navigation file
+% Outputs       : emphData - Single row (struct?) of emphemeris data for
+%                            sat PRN at time [gps_weeks, gps_seconds
+% &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+
+function emphData = findNearestEmph(PRN, GPS_Weeks, GPS_SOW, navData)
+
+% weeknums = nav_ephem(:,19);
+% secofweeks = nav_ephem(:,17)
+
+rownums = find(navData(:,17)&lt;=GPS_SOW &amp; navData(:,1)==PRN &amp; navData(:,19)==GPS_Weeks);
+emphData = navData(rownums(end),:);
+
+</pre><h2>SUPPORTING FUNCTION - calculateSatellitePosition.m<a name="8"></a></h2><pre class="codeinput">type(<span class="string">'calculateSatellitePosition.m'</span>)
+</pre><pre class="codeoutput">
+%&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+%                        calculateSatellitePosition.m
+% Author      : Zach Dischner
+% Date        : 10/11/2013
+% Description : calculate satellite position from GPS ephemeris dataset
+% 
+%
+%                 __...____________________          ,
+%                `(\ [ ===NCC-1700===--|__|) ___..--"_`--.._____
+%                  `"""""""""""""""""| |""` [_""_-___________"_/
+%                                    | |   /..../`'-._.-'`
+%                                ____| |__/::..'_
+%                               |\ ".`"` '_____//\
+%                               `"'-.   """""  \\/
+%                                    `""""""""""`
+% Inputs        : ephem - Satellite ephemeris dataset
+%                 params - structure containing keplarian specs and extra
+%                           calculations for sat position
+% 
+% Outputs       : [x,y,z]-3d ECI coordinates of satellite
+% &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+function [xk,yk,zk] = calculateSatellitePosition(ephem,params)
+
+%-----Extract all ephemeris components to make life easy and epicer
+ephem = num2cell(ephem);
+[prn,M0,delta_n,ecc,sqrt_a,Loa,incl,perigee,ra_rate,i_rate,Cuc,Cus,Crc,Crs,Cic,Cis,...
+    Toe,IODE,GPS_week,Toc,Af0,Af1,Af2,nil,health] = deal(ephem{:});
+A = sqrt_a^2;
+%------Correct Mean Motion
+n0  = sqrt(params.mu/(A)^3); % Calculated mean motion [rad/s]
+n   = n0 + delta_n;                 % Corrected Mean Motion
+
+%------Correct Time
+tk  = params.Secs-Toe;  %(Have to worry about it being less than -302400 like sheet says?)
+
+%------Mean Anomaly
+Mk = M0 + n*tk; % Mean anomaly
+
+%------Eccentric Anomaly
+options=optimset('Display','off','TolFun',1e-15,'TolX',1e-15);
+Ek = fsolve(@(Ek) (Ek)-ecc*sin(Ek)-Mk,4,options);
+
+%------True Anomaly
+vk = atan2(      (sqrt(1-ecc^2)*sin(Ek)/(1-ecc*cos(Ek))), ...
+                      ((cos(Ek)-ecc)/(1-ecc*cos(Ek)))   );
+                  
+%------Argument of Latitude
+Phik = vk + perigee;
+
+%------Second Harmonic Perturbations
+del_uk = Cus*sin(2*Phik) + Cuc*cos(2*Phik);
+del_rk = Crs*sin(2*Phik) + Crc*cos(2*Phik);
+del_ik = Cis*sin(2*Phik) + Cic*cos(2*Phik);
+
+%------Corrected argumet of latitude, radius, inclination
+uk = Phik + del_uk;
+rk = A*(1-ecc*cos(Ek)) + del_rk;
+ik = incl + del_ik + i_rate*tk;
+
+%------Position in Orbit Plane
+xkp = rk*cos(uk);
+ykp = rk*sin(uk);
+
+%------Corrected Longitude of ascending node
+Omegak = Loa + (ra_rate - params.we)*tk - params.we*Toe;
+
+%------Earth Fixed Coordinates
+xk = xkp * cos(Omegak) - ykp * cos(ik) * sin(Omegak);
+yk = xkp * sin(Omegak) + ykp * cos(ik) * cos(Omegak);
+zk = ykp * sin(ik);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+%                        Homework5_main.m
+% Author      : Zach Dischner
+% Date        : 10/10/2013
+% Description : Matlat script for all calculations required for
+%               ASEN 5090 Homework 5
+%
+%                 __...____________________          ,
+%                `(\ [ ===NCC-1700===REPLACE_WITH_DASH_DASH|__|) ___..REPLACE_WITH_DASH_DASH"_`REPLACE_WITH_DASH_DASH.._____
+%                  `"""""""""""""""""| |""` [_""_-___________"_/
+%                                    | |   /..../`'-._.-'`
+%                                ____| |__/::..'_
+%                               |\ ".`"` '_____//\
+%                               `"'-.   """""  \\/
+%                                    `""""""""""`
+% <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+%% Setup Work Space
+clc;clear all;close all
+% screen_size = get(0,'ScreenSize');
+% sw = screen_size(3);    % Screen Width
+% sh = screen_size(4);    % Screen Height
+% figColor = [0.99 0.99 0.98];
+addpath HW5_files
+
+%% Setup Problem
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHDefine Navigation and Observation File
+nav_msg  = 'brdc2640.12n';
+obs_file = 'test.12o';
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHRead navigation message content
+nav_ephem = read_GPSbroadcast(nav_msg); % Returns [n x 25] matrix of sat orbit information
+%                  col1: prn, PRN number of satellite
+%                  col2: M0, mean anomaly at reference time, rad
+%                  col3: delta_n, mean motion difference from computed value, rad/s
+%                  col4: ecc, eccentricity of orbit
+%                  col5: sqrt_a, square root of semi-major axis, m^0.5
+%                  col6: Loa, longitude of ascending node of orbit plane at weekly epoch, rad
+%                  col7: incl, inclination angle at reference time, rad
+%                  col8: perigee, argument of perigee, rad
+%                  col9: ra_rate, rate of change of right ascension, rad/s
+%                 col10: i_rate, rate of change of inclination angle, rad/s
+%                 col11: Cuc, amplitude of the cosine harmonic correction term to the argument of latitude
+%                 col12: Cus, amplitude of the sine harmonic correction term to the argument of latitude
+%                 col13: Crc, amplitude of the cosine harmonic correction term to the orbit radius
+%                 col14: Crs, amplitude of the sine harmonic correction term to the orbit radius
+%                 col15: Cic, amplitude of the cosine harmonic correction term to the angle of inclination
+%                 col16: Cis, amplitude of the cosine harmonic correction term to the angle of inclination
+%                 col17: Toe, reference time ephemeris (seconds into GPS week)
+%                 col18: IODE, issue of data (ephemeris) 
+%                 col19: GPS_week, GPS Week Number (to go with Toe)
+%                 col20: Toc, time of clock
+%                 col21: Af0, satellite clock bias (sec)
+%                 col22: Af1, satellite clock drift (sec/sec)
+%                 col23: Af2, satellite clock drift rate (sec/sec/sec)
+%                 col24: blank (zero)
+%                 col25: health, satellite health (0=good and usable)
+
+%% Get GPS Time from UTC time
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHConvert time of interest into GPS week and seconds of week
+% Using standard for GPS Epoch: http://tycho.usno.navy.mil/gps_week.html
+% Verified with online calendar: http://adn.agi.com/GNSSWeb/
+emph_date      = 'September 20 2012 02:11:00';
+[GPS_W, GPS_SOW] = date2GPSTime(emph_date);
+fprintf('\n*^*^*^*^*^*^*^*^*^*^*^*^*^*^* HW5 Step 3 *^*^*^*^*^*^*^*^*^*^*^*^*^*^*\n')
+fprintf('GPS Week and seconds of week: [ %d , %d ]\n',GPS_W, GPS_SOW)
+
+
+
+%% Calculate Satellite Position
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHDefine Orbit determination parameters
+params.mu = 3.986005e14;    % Gravitational param [m^3/s^2]
+params.we = 7.2921151467e-5;    % Earth's rotation rate [rad/s]
+params.Secs = GPS_SOW;      % Seconds used to calculate seconds since epoch
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHDefine Satellite PRN Ranges
+PRNs = [15, 17, 12];
+fprintf('\n\n*^*^*^*^*^*^*^*^*^*^*^*^*^*^* HW5 Step 6 *^*^*^*^*^*^*^*^*^*^*^*^*^*^*\n\n')
+for PRN = PRNs
+    %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHFetch corresponding ephemeris data
+    ephem = findNearestEphem(PRN,GPS_W,GPS_SOW, nav_ephem);
+    [x,y,z] = calculateSatellitePosition(ephem,params);
+    fprintf('PRN: %d ===> [x,y,z]: [%10.3f , %10.3f , %10.3f]m \n',PRN,x,y,z) 
+    [h,pos,v,r,s,a]=broadcast2xva(nav_ephem,[GPS_W,GPS_SOW],PRN);
+    fprintf('   Ben B Ref [x,y,z]: [%10.3f , %10.3f , %10.3f]m \n\n',pos)
+    
+end
+fprintf('\n\n')
+    
+
+%% SUPPORTING FUNCTION - date2GPSTime.m
+type('date2GPSTime.m')
+
+%% SUPPORTING FUNCTION - findNearestEphem.m
+type('findNearestEphem.m')
+
+%% SUPPORTING FUNCTION - calculateSatellitePosition.m
+type('calculateSatellitePosition.m')
+
+##### SOURCE END #####
+--></body></html>

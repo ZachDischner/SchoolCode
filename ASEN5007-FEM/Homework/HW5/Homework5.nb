@@ -1,0 +1,901 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 9.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[     30177,        892]
+NotebookOptionsPosition[     28266,        819]
+NotebookOutlinePosition[     28620,        835]
+CellTagsIndexPosition[     28577,        832]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["ASEN 5007-Homework 5", "Title",
+ CellChangeTimes->{{3.58782448507475*^9, 3.5878244971110783`*^9}, {
+  3.5907702187557297`*^9, 3.5907702188344383`*^9}}],
+
+Cell["Zach Dischner & SOMEONE ELSE", "Subtitle",
+ CellChangeTimes->{{3.587824499248228*^9, 3.587824500903141*^9}, {
+  3.590770195354347*^9, 3.590770200890245*^9}}],
+
+Cell["", "Subsubtitle",
+ CellChangeTimes->{3.590770221793289*^9}],
+
+Cell[CellGroupData[{
+
+Cell["Helpful Modules", "Section",
+ CellChangeTimes->{{3.587824506223967*^9, 3.587824507990913*^9}, {
+  3.590770242014482*^9, 3.5907702445783587`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"PrintWithStyle", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"color", "=", "LightGreen"}], "}"}], ",", 
+    RowBox[{"Framed", "[", 
+     RowBox[{
+      RowBox[{"Style", "[", 
+       RowBox[{"x", ",", "18", ",", "Bold", ",", 
+        RowBox[{"Background", "\[Rule]", "color"}]}], "]"}], ",", 
+      "\[IndentingNewLine]", 
+      RowBox[{"Background", "\[Rule]", "color"}]}], "]"}]}], 
+   "\[IndentingNewLine]", "]"}]}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.5878277622951813`*^9, 3.587827801470587*^9}, {
+  3.5878279140382023`*^9, 3.587828037992056*^9}, {3.587828092581545*^9, 
+  3.58782809340242*^9}, {3.587828151664729*^9, 3.587828183864581*^9}, {
+  3.5878282160385027`*^9, 3.5878284333882923`*^9}}],
+
+Cell[TextData[StyleBox["Cell 7: Simple function to print output for solutions \
+in a stylazed way",
+ FontSize->12]], "Text",
+ CellChangeTimes->{{3.5878250168615837`*^9, 3.587825022435727*^9}, {
+  3.587827743369121*^9, 3.5878277582173223`*^9}},
+ Background->GrayLevel[0.85]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"PrintWithStyleMat", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"color", "=", "LightGreen"}], "}"}], ",", 
+    RowBox[{"Style", "[", 
+     RowBox[{"x", ",", "\[IndentingNewLine]", 
+      RowBox[{"Background", "\[Rule]", "color"}]}], "]"}]}], 
+   "\[IndentingNewLine]", "]"}]}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.590776001488886*^9, 3.590776015640019*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Problem 1-Book 11.2", "Section",
+ CellChangeTimes->{{3.590770265826271*^9, 3.590770281049478*^9}}],
+
+Cell[TextData[StyleBox["Code provided from book, solve for Ke of an axially \
+loaded bar of nonuniform length, given by interpolation function in book",
+ FontSize->12]], "Text",
+ CellChangeTimes->{{3.5878250168615837`*^9, 3.587825022435727*^9}, {
+  3.587827743369121*^9, 3.5878277582173223`*^9}, {3.590770342911208*^9, 
+  3.5907703482706413`*^9}, {3.5907742360642653`*^9, 3.5907742575724154`*^9}},
+ Background->GrayLevel[0.85]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", 
+   RowBox[{"Le", ",", "x", ",", "Em", ",", "A", ",", "Ai", ",", "Aj"}], "]"}],
+   ";"}], "\n", 
+ RowBox[{
+  RowBox[{"Be", "=", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "1"}], ",", "1"}], "}"}], "}"}], "/", "Le"}]}], ";", 
+  RowBox[{"\[Zeta]", "=", 
+   RowBox[{"x", "/", "Le"}]}], ";", 
+  RowBox[{"A", "=", 
+   RowBox[{
+    RowBox[{"Ai", "*", 
+     RowBox[{"(", 
+      RowBox[{"1", "-", "\[Zeta]"}], ")"}]}], "+", 
+    RowBox[{"Aj", "*", "\[Zeta]"}]}]}], ";", 
+  RowBox[{"Ke", "=", 
+   RowBox[{"Integrate", "[", 
+    RowBox[{
+     RowBox[{"Em", "*", "A", "*", 
+      RowBox[{
+       RowBox[{"Transpose", "[", "Be", "]"}], ".", "Be"}]}], ",", 
+     RowBox[{"{", 
+      RowBox[{"x", ",", "0", ",", "Le"}], "}"}]}], "]"}]}], ";", 
+  RowBox[{"Ke", "=", 
+   RowBox[{"Simplify", "[", "Ke", "]"}]}], ";"}], "\n", 
+ RowBox[{"Print", "[", 
+  RowBox[{"\"\<Ke for varying cross section bar: \>\"", ",", 
+   RowBox[{"Ke", "//", "MatrixForm"}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.587828555441372*^9, 3.587828649434019*^9}, {
+   3.587828686606474*^9, 3.5878288449686527`*^9}, 3.59077030212494*^9, {
+   3.59077036860008*^9, 3.5907704275355053`*^9}},
+ Background->RGBColor[0.87, 0.94, 1]],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Ke for varying cross section bar: \"\>", "\[InvisibleSpace]", 
+   TagBox[
+    RowBox[{"(", "\[NoBreak]", GridBox[{
+       {
+        FractionBox[
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"Ai", "+", "Aj"}], ")"}], " ", "Em"}], 
+         RowBox[{"2", " ", "Le"}]], 
+        RowBox[{"-", 
+         FractionBox[
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{"Ai", "+", "Aj"}], ")"}], " ", "Em"}], 
+          RowBox[{"2", " ", "Le"}]]}]},
+       {
+        RowBox[{"-", 
+         FractionBox[
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{"Ai", "+", "Aj"}], ")"}], " ", "Em"}], 
+          RowBox[{"2", " ", "Le"}]]}], 
+        FractionBox[
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"Ai", "+", "Aj"}], ")"}], " ", "Em"}], 
+         RowBox[{"2", " ", "Le"}]]}
+      },
+      GridBoxAlignment->{
+       "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, 
+        "Rows" -> {{Baseline}}, "RowsIndexed" -> {}},
+      GridBoxSpacings->{"Columns" -> {
+          Offset[0.27999999999999997`], {
+           Offset[0.7]}, 
+          Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+          Offset[0.2], {
+           Offset[0.4]}, 
+          Offset[0.2]}, "RowsIndexed" -> {}}], "\[NoBreak]", ")"}],
+    Function[BoxForm`e$, 
+     MatrixForm[BoxForm`e$]]]}],
+  SequenceForm["Ke for varying cross section bar: ", 
+   MatrixForm[{{
+     Rational[1, 
+        2] ($CellContext`Ai + $CellContext`Aj) \
+$CellContext`Em/$CellContext`Le, 
+      Rational[-1, 
+        2] ($CellContext`Ai + $CellContext`Aj) \
+$CellContext`Em/$CellContext`Le}, {
+     Rational[-1, 
+        2] ($CellContext`Ai + $CellContext`Aj) \
+$CellContext`Em/$CellContext`Le, 
+      Rational[1, 
+        2] ($CellContext`Ai + $CellContext`Aj) \
+$CellContext`Em/$CellContext`Le}}]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.590770427886861*^9, 3.590771118710786*^9},
+ Background->RGBColor[0.88, 1, 0.88]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Problem 2-Book 11.5", "Section",
+ CellChangeTimes->{{3.590770265826271*^9, 3.590770281049478*^9}, {
+  3.590773460002906*^9, 3.590773461799223*^9}}],
+
+Cell["\<\
+Solve for the nodal forces along a centrifugal spinning bar element, with an \
+area interpolation as given in 11.2. \
+\>", "Text",
+ CellChangeTimes->{{3.590774177215951*^9, 3.590774203669793*^9}},
+ Background->GrayLevel[0.85]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", 
+   RowBox[{"Le", ",", "x", ",", "Em", ",", "A", ",", "Ai", ",", "Aj"}], "]"}],
+   ";"}], "\n", 
+ RowBox[{
+  RowBox[{"Be", "=", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "1"}], ",", "1"}], "}"}], "}"}], "/", "Le"}]}], ";", 
+  RowBox[{"\[Zeta]", "=", 
+   RowBox[{"x", "/", "Le"}]}], ";", 
+  RowBox[{"A", "=", 
+   RowBox[{
+    RowBox[{"Ai", "*", 
+     RowBox[{"(", 
+      RowBox[{"1", "-", "\[Zeta]"}], ")"}]}], "+", 
+    RowBox[{"Aj", "*", "\[Zeta]"}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Tmp", " ", "=", " ", 
+   RowBox[{"{", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"1", "-", "\[Zeta]"}], ",", "\[Zeta]"}], "}"}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"q", " ", "=", " ", 
+   RowBox[{"rho", " ", "*", " ", "A", " ", "*", " ", 
+    RowBox[{"wz", "^", "2"}], " ", "*", " ", "x"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"f", " ", "=", " ", 
+   RowBox[{"Integrate", "[", 
+    RowBox[{
+     RowBox[{"q", "*", "Tmp"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"x", ",", "0", ",", "Le"}], "}"}]}], "]"}]}], " ", ";", " ", 
+  RowBox[{"f", "=", 
+   RowBox[{"Simplify", "[", "f", "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Print", "[", 
+  RowBox[{"\"\<fe for this element is: \>\"", ",", 
+   RowBox[{
+    RowBox[{"Transpose", "[", "f", "]"}], "//", "MatrixForm"}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Ai", " ", "=", "Ax"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Aj", " ", "=", " ", "Ax"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Print", "[", 
+  RowBox[{"\"\<Evaluated at Xj for Ai = Aj = A, fj = \>\"", ",", 
+   RowBox[{
+    RowBox[{"f", "[", 
+     RowBox[{"[", 
+      RowBox[{"1", ",", "2"}], "]"}], "]"}], "//", "MatrixForm"}]}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{{3.5907726930729322`*^9, 3.590772901331686*^9}, {
+  3.590773046856838*^9, 3.5907730889263287`*^9}, {3.5907731519903708`*^9, 
+  3.5907731796540527`*^9}, {3.590773466548243*^9, 3.590773733924979*^9}, {
+  3.590773802570908*^9, 3.590774091987877*^9}, {3.59077455250284*^9, 
+  3.5907745655424223`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"fe for this element is: \"\>", "\[InvisibleSpace]", 
+   TagBox[
+    RowBox[{"(", "\[NoBreak]", GridBox[{
+       {
+        RowBox[{
+         FractionBox["1", "12"], " ", 
+         RowBox[{"(", 
+          RowBox[{"Ai", "+", "Aj"}], ")"}], " ", 
+         SuperscriptBox["Le", "2"], " ", "rho", " ", 
+         SuperscriptBox["wz", "2"]}]},
+       {
+        RowBox[{
+         FractionBox["1", "12"], " ", 
+         RowBox[{"(", 
+          RowBox[{"Ai", "+", 
+           RowBox[{"3", " ", "Aj"}]}], ")"}], " ", 
+         SuperscriptBox["Le", "2"], " ", "rho", " ", 
+         SuperscriptBox["wz", "2"]}]}
+      },
+      GridBoxAlignment->{
+       "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, 
+        "Rows" -> {{Baseline}}, "RowsIndexed" -> {}},
+      GridBoxSpacings->{"Columns" -> {
+          Offset[0.27999999999999997`], {
+           Offset[0.7]}, 
+          Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+          Offset[0.2], {
+           Offset[0.4]}, 
+          Offset[0.2]}, "RowsIndexed" -> {}}], "\[NoBreak]", ")"}],
+    Function[BoxForm`e$, 
+     MatrixForm[BoxForm`e$]]]}],
+  SequenceForm["fe for this element is: ", 
+   MatrixForm[{{
+     Rational[1, 
+        12] ($CellContext`Ai + $CellContext`Aj) $CellContext`Le^2 \
+$CellContext`rho $CellContext`wz^2}, {
+     Rational[1, 12] ($CellContext`Ai + 
+       3 $CellContext`Aj) $CellContext`Le^2 $CellContext`rho \
+$CellContext`wz^2}}]],
+  Editable->False]], "Print",
+ CellChangeTimes->{
+  3.590773762819742*^9, {3.590773812809692*^9, 3.590773896166004*^9}, {
+   3.5907739292569838`*^9, 3.590774016184236*^9}, {3.5907740673569527`*^9, 
+   3.590774092532201*^9}},
+ Background->RGBColor[0.88, 1, 0.88]],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Evaluated at Xj for Ai = Aj = A, fj = \"\>", 
+   "\[InvisibleSpace]", 
+   TagBox[
+    RowBox[{
+     FractionBox["1", "3"], " ", "Ax", " ", 
+     SuperscriptBox["Le", "2"], " ", "rho", " ", 
+     SuperscriptBox["wz", "2"]}],
+    Function[BoxForm`e$, 
+     MatrixForm[BoxForm`e$]]]}],
+  SequenceForm["Evaluated at Xj for Ai = Aj = A, fj = ", 
+   MatrixForm[
+   Rational[1, 
+      3] $CellContext`Ax $CellContext`Le^2 $CellContext`rho \
+$CellContext`wz^2]],
+  Editable->False]], "Print",
+ CellChangeTimes->{
+  3.590773762819742*^9, {3.590773812809692*^9, 3.590773896166004*^9}, {
+   3.5907739292569838`*^9, 3.590774016184236*^9}, {3.5907740673569527`*^9, 
+   3.5907740925340014`*^9}},
+ Background->RGBColor[0.88, 1, 0.88]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Problem 3-Book 12.1", "Section",
+ CellChangeTimes->{{3.590770265826271*^9, 3.590770281049478*^9}, {
+  3.590773460002906*^9, 3.590773461799223*^9}, {3.590774114362657*^9, 
+  3.5907741164165087`*^9}, {3.590775452181697*^9, 3.590775452341066*^9}}],
+
+Cell["\<\
+Use (12.17) to derive the element stiffness matrix Ke of a Hermitian beam \
+element of variable bending rigidity given by the inertia law given in notes\
+\>", "Text",
+ CellChangeTimes->{{3.590774300694491*^9, 3.590774305603285*^9}, {
+  3.590774348963458*^9, 3.590774355657774*^9}},
+ Background->GrayLevel[0.85]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"ClearAll", "[", "\"\<Global`*\>\"", "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"EI", "=", 
+   RowBox[{
+    RowBox[{"EI1", "*", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"1", "-", "\[Xi]"}], ")"}], "/", "2"}]}], "+", 
+    RowBox[{"EI2", "*", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"1", "+", "\[Xi]"}], ")"}], "/", "2"}]}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Be", "=", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"6", "*", "\[Xi]"}], ",", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"3", "*", "\[Xi]"}], "-", "1"}], ")"}], "*", "\[ScriptL]"}],
+        ",", 
+       RowBox[{
+        RowBox[{"-", "6"}], "*", "\[Xi]"}], ",", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"3", "*", "\[Xi]"}], "+", "1"}], ")"}], "*", 
+        "\[ScriptL]"}]}], "}"}], "}"}], "/", 
+    RowBox[{"\[ScriptL]", "^", "2"}]}]}], ";", 
+  RowBox[{"Ke", "=", 
+   RowBox[{"Integrate", "[", 
+    RowBox[{
+     RowBox[{"EI", "*", 
+      RowBox[{
+       RowBox[{"Transpose", "[", "Be", "]"}], ".", "Be"}], "*", " ", 
+      "\[ScriptL]", "*", 
+      RowBox[{"1", "/", "2"}]}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\[Xi]", ",", 
+       RowBox[{"-", "1"}], ",", "1"}], "}"}]}], "]"}]}], ";", 
+  RowBox[{"Ke", "=", 
+   RowBox[{"Simplify", "[", "Ke", "]"}]}], ";", 
+  RowBox[{"Print", "[", "\"\<Ke for Hermitian beam:\>\"", "]"}], ";", 
+  RowBox[{"Print", "[", 
+   RowBox[{"Ke", "//", "MatrixForm"}], "]"}]}]}], "Input",
+ CellChangeTimes->{{3.590774372660646*^9, 3.5907743733582087`*^9}, {
+  3.590774426765027*^9, 3.590774547351625*^9}, {3.5907748202335367`*^9, 
+  3.590774820498301*^9}, {3.5907748825822477`*^9, 3.59077489005507*^9}, {
+  3.590774962301299*^9, 3.5907749649801702`*^9}, {3.590775034043252*^9, 
+  3.5907750495946627`*^9}, {3.590775095176893*^9, 3.590775115281378*^9}, {
+  3.590775221809018*^9, 3.590775225359871*^9}, {3.590775276463427*^9, 
+  3.590775287668126*^9}, {3.590775321074353*^9, 3.590775332649737*^9}, {
+  3.590775415389514*^9, 3.590775435050514*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"Ke for Hermitian beam:\"\>"], "Print",
+ CellChangeTimes->{
+  3.5907749146344957`*^9, {3.5907750304480352`*^9, 3.590775060471483*^9}, {
+   3.59077509601507*^9, 3.590775115999734*^9}, 3.5907752275962143`*^9, 
+   3.590775289764841*^9, 3.5907753339841137`*^9, {3.590775418540811*^9, 
+   3.5907754364963207`*^9}}],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"(", "\[NoBreak]", GridBox[{
+     {
+      FractionBox[
+       RowBox[{"6", " ", 
+        RowBox[{"(", 
+         RowBox[{"EI1", "+", "EI2"}], ")"}]}], 
+       SuperscriptBox["\[ScriptL]", "3"]], 
+      FractionBox[
+       RowBox[{"2", " ", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"2", " ", "EI1"}], "+", "EI2"}], ")"}]}], 
+       SuperscriptBox["\[ScriptL]", "2"]], 
+      RowBox[{"-", 
+       FractionBox[
+        RowBox[{"6", " ", 
+         RowBox[{"(", 
+          RowBox[{"EI1", "+", "EI2"}], ")"}]}], 
+        SuperscriptBox["\[ScriptL]", "3"]]}], 
+      FractionBox[
+       RowBox[{"2", " ", 
+        RowBox[{"(", 
+         RowBox[{"EI1", "+", 
+          RowBox[{"2", " ", "EI2"}]}], ")"}]}], 
+       SuperscriptBox["\[ScriptL]", "2"]]},
+     {
+      FractionBox[
+       RowBox[{"2", " ", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"2", " ", "EI1"}], "+", "EI2"}], ")"}]}], 
+       SuperscriptBox["\[ScriptL]", "2"]], 
+      FractionBox[
+       RowBox[{
+        RowBox[{"3", " ", "EI1"}], "+", "EI2"}], "\[ScriptL]"], 
+      RowBox[{"-", 
+       FractionBox[
+        RowBox[{"2", " ", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"2", " ", "EI1"}], "+", "EI2"}], ")"}]}], 
+        SuperscriptBox["\[ScriptL]", "2"]]}], 
+      FractionBox[
+       RowBox[{"EI1", "+", "EI2"}], "\[ScriptL]"]},
+     {
+      RowBox[{"-", 
+       FractionBox[
+        RowBox[{"6", " ", 
+         RowBox[{"(", 
+          RowBox[{"EI1", "+", "EI2"}], ")"}]}], 
+        SuperscriptBox["\[ScriptL]", "3"]]}], 
+      RowBox[{"-", 
+       FractionBox[
+        RowBox[{"2", " ", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"2", " ", "EI1"}], "+", "EI2"}], ")"}]}], 
+        SuperscriptBox["\[ScriptL]", "2"]]}], 
+      FractionBox[
+       RowBox[{"6", " ", 
+        RowBox[{"(", 
+         RowBox[{"EI1", "+", "EI2"}], ")"}]}], 
+       SuperscriptBox["\[ScriptL]", "3"]], 
+      RowBox[{"-", 
+       FractionBox[
+        RowBox[{"2", " ", 
+         RowBox[{"(", 
+          RowBox[{"EI1", "+", 
+           RowBox[{"2", " ", "EI2"}]}], ")"}]}], 
+        SuperscriptBox["\[ScriptL]", "2"]]}]},
+     {
+      FractionBox[
+       RowBox[{"2", " ", 
+        RowBox[{"(", 
+         RowBox[{"EI1", "+", 
+          RowBox[{"2", " ", "EI2"}]}], ")"}]}], 
+       SuperscriptBox["\[ScriptL]", "2"]], 
+      FractionBox[
+       RowBox[{"EI1", "+", "EI2"}], "\[ScriptL]"], 
+      RowBox[{"-", 
+       FractionBox[
+        RowBox[{"2", " ", 
+         RowBox[{"(", 
+          RowBox[{"EI1", "+", 
+           RowBox[{"2", " ", "EI2"}]}], ")"}]}], 
+        SuperscriptBox["\[ScriptL]", "2"]]}], 
+      FractionBox[
+       RowBox[{"EI1", "+", 
+        RowBox[{"3", " ", "EI2"}]}], "\[ScriptL]"]}
+    },
+    GridBoxAlignment->{
+     "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+      "RowsIndexed" -> {}},
+    GridBoxSpacings->{"Columns" -> {
+        Offset[0.27999999999999997`], {
+         Offset[0.7]}, 
+        Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+        Offset[0.2], {
+         Offset[0.4]}, 
+        Offset[0.2]}, "RowsIndexed" -> {}}], "\[NoBreak]", ")"}],
+  Function[BoxForm`e$, 
+   MatrixForm[BoxForm`e$]]]], "Print",
+ CellChangeTimes->{
+  3.5907749146344957`*^9, {3.5907750304480352`*^9, 3.590775060471483*^9}, {
+   3.59077509601507*^9, 3.590775115999734*^9}, 3.5907752275962143`*^9, 
+   3.590775289764841*^9, 3.5907753339841137`*^9, {3.590775418540811*^9, 
+   3.59077543649797*^9}},
+ Background->RGBColor[0.88, 1, 0.88]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Problem 4-Book 12.7", "Section",
+ CellChangeTimes->{{3.590770265826271*^9, 3.590770281049478*^9}, {
+  3.590773460002906*^9, 3.590773461799223*^9}, {3.590774114362657*^9, 
+  3.5907741164165087`*^9}, {3.590775452181697*^9, 3.590775466996108*^9}}],
+
+Cell["\<\
+Repeat the exercise of 12.1, using a two point gauss rule of equation E12.7 \
+to evaluat eth integral in \[Xi]\
+\>", "Text",
+ CellChangeTimes->{{3.590774300694491*^9, 3.590774305603285*^9}, {
+  3.590774348963458*^9, 3.590774355657774*^9}, {3.5907755459722147`*^9, 
+  3.590775572761208*^9}},
+ Background->GrayLevel[0.85]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"ClearAll", "[", "\"\<Global`*\>\"", "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"EI", "[", "\[Xi]_", "]"}], ":=", 
+   RowBox[{
+    RowBox[{"EI1", "*", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"1", "-", "\[Xi]"}], ")"}], "/", "2"}]}], "+", 
+    RowBox[{"EI2", "*", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"1", "+", "\[Xi]"}], ")"}], "/", "2"}]}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Be", "[", "\[Xi]_", "]"}], ":=", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"6", "*", "\[Xi]"}], ",", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"3", "*", "\[Xi]"}], "-", "1"}], ")"}], "*", "\[ScriptL]"}],
+        ",", 
+       RowBox[{
+        RowBox[{"-", "6"}], "*", "\[Xi]"}], ",", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"3", "*", "\[Xi]"}], "+", "1"}], ")"}], "*", 
+        "\[ScriptL]"}]}], "}"}], "}"}], "/", 
+    RowBox[{"\[ScriptL]", "^", "2"}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"f", "[", "\[Xi]_", "]"}], " ", ":=", 
+   RowBox[{
+    RowBox[{"EI", "[", "\[Xi]", "]"}], "*", 
+    RowBox[{
+     RowBox[{"Transpose", "[", 
+      RowBox[{"Be", "[", "\[Xi]", "]"}], "]"}], ".", 
+     RowBox[{"Be", "[", "\[Xi]", "]"}]}], "*", " ", "\[ScriptL]", "*", 
+    RowBox[{"1", "/", "2"}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Print", "[", 
+  "\"\<Now approximating integral using a 2-pt Gauss Approximation\>\"", 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Ke", " ", "=", " ", 
+   RowBox[{
+    RowBox[{"f", "[", 
+     RowBox[{
+      RowBox[{"-", "1"}], "/", 
+      RowBox[{"Sqrt", "[", "3", "]"}]}], "]"}], " ", "+", " ", 
+    RowBox[{"f", "[", 
+     RowBox[{"1", "/", 
+      RowBox[{"Sqrt", "[", "3", "]"}]}], "]"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Ke", "=", 
+    RowBox[{"Simplify", "[", "Ke", "]"}]}], ";", 
+   RowBox[{
+   "Print", "[", 
+    "\"\<Ke for Hermitian beam using a 2-pt Gauss Approximation:\>\"", "]"}], 
+   ";", 
+   RowBox[{"Print", "[", 
+    RowBox[{"Ke", "//", "MatrixForm"}], "]"}]}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]"}], "Input",
+ CellChangeTimes->{{3.590774372660646*^9, 3.5907743733582087`*^9}, {
+  3.590774426765027*^9, 3.590774547351625*^9}, {3.5907748202335367`*^9, 
+  3.590774820498301*^9}, {3.5907748825822477`*^9, 3.59077489005507*^9}, {
+  3.590774962301299*^9, 3.5907749649801702`*^9}, {3.590775034043252*^9, 
+  3.5907750495946627`*^9}, {3.590775095176893*^9, 3.590775115281378*^9}, {
+  3.590775221809018*^9, 3.590775225359871*^9}, {3.590775276463427*^9, 
+  3.590775287668126*^9}, {3.590775321074353*^9, 3.590775332649737*^9}, {
+  3.590775415389514*^9, 3.590775435050514*^9}, {3.590775728763165*^9, 
+  3.590775865252768*^9}, {3.590775915457809*^9, 3.590775960347431*^9}, {
+  3.590776032756011*^9, 3.59077613683664*^9}, {3.5907761854094677`*^9, 
+  3.5907763286826897`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"Now approximating integral using a 2-pt Gauss Approximation\
+\"\>"], "Print",
+ CellChangeTimes->{
+  3.5907749146344957`*^9, {3.5907750304480352`*^9, 3.590775060471483*^9}, {
+   3.59077509601507*^9, 3.590775115999734*^9}, 3.5907752275962143`*^9, 
+   3.590775289764841*^9, 3.5907753339841137`*^9, {3.590775418540811*^9, 
+   3.5907754364963207`*^9}, 3.5907758667199993`*^9, {3.590775933924138*^9, 
+   3.590775962245825*^9}, {3.590776037042247*^9, 3.590776094280582*^9}, {
+   3.5907762149982967`*^9, 3.590776282118293*^9}, 3.590776434963688*^9}],
+
+Cell[BoxData["\<\"Ke for Hermitian beam using a 2-pt Gauss \
+Approximation:\"\>"], "Print",
+ CellChangeTimes->{
+  3.5907749146344957`*^9, {3.5907750304480352`*^9, 3.590775060471483*^9}, {
+   3.59077509601507*^9, 3.590775115999734*^9}, 3.5907752275962143`*^9, 
+   3.590775289764841*^9, 3.5907753339841137`*^9, {3.590775418540811*^9, 
+   3.5907754364963207`*^9}, 3.5907758667199993`*^9, {3.590775933924138*^9, 
+   3.590775962245825*^9}, {3.590776037042247*^9, 3.590776094280582*^9}, {
+   3.5907762149982967`*^9, 3.590776282118293*^9}, 3.590776434964985*^9}],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"(", "\[NoBreak]", GridBox[{
+     {
+      FractionBox[
+       RowBox[{"6", " ", 
+        RowBox[{"(", 
+         RowBox[{"EI1", "+", "EI2"}], ")"}]}], 
+       SuperscriptBox["\[ScriptL]", "3"]], 
+      FractionBox[
+       RowBox[{"2", " ", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"2", " ", "EI1"}], "+", "EI2"}], ")"}]}], 
+       SuperscriptBox["\[ScriptL]", "2"]], 
+      RowBox[{"-", 
+       FractionBox[
+        RowBox[{"6", " ", 
+         RowBox[{"(", 
+          RowBox[{"EI1", "+", "EI2"}], ")"}]}], 
+        SuperscriptBox["\[ScriptL]", "3"]]}], 
+      FractionBox[
+       RowBox[{"2", " ", 
+        RowBox[{"(", 
+         RowBox[{"EI1", "+", 
+          RowBox[{"2", " ", "EI2"}]}], ")"}]}], 
+       SuperscriptBox["\[ScriptL]", "2"]]},
+     {
+      FractionBox[
+       RowBox[{"2", " ", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"2", " ", "EI1"}], "+", "EI2"}], ")"}]}], 
+       SuperscriptBox["\[ScriptL]", "2"]], 
+      FractionBox[
+       RowBox[{
+        RowBox[{"3", " ", "EI1"}], "+", "EI2"}], "\[ScriptL]"], 
+      RowBox[{"-", 
+       FractionBox[
+        RowBox[{"2", " ", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"2", " ", "EI1"}], "+", "EI2"}], ")"}]}], 
+        SuperscriptBox["\[ScriptL]", "2"]]}], 
+      FractionBox[
+       RowBox[{"EI1", "+", "EI2"}], "\[ScriptL]"]},
+     {
+      RowBox[{"-", 
+       FractionBox[
+        RowBox[{"6", " ", 
+         RowBox[{"(", 
+          RowBox[{"EI1", "+", "EI2"}], ")"}]}], 
+        SuperscriptBox["\[ScriptL]", "3"]]}], 
+      RowBox[{"-", 
+       FractionBox[
+        RowBox[{"2", " ", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"2", " ", "EI1"}], "+", "EI2"}], ")"}]}], 
+        SuperscriptBox["\[ScriptL]", "2"]]}], 
+      FractionBox[
+       RowBox[{"6", " ", 
+        RowBox[{"(", 
+         RowBox[{"EI1", "+", "EI2"}], ")"}]}], 
+       SuperscriptBox["\[ScriptL]", "3"]], 
+      RowBox[{"-", 
+       FractionBox[
+        RowBox[{"2", " ", 
+         RowBox[{"(", 
+          RowBox[{"EI1", "+", 
+           RowBox[{"2", " ", "EI2"}]}], ")"}]}], 
+        SuperscriptBox["\[ScriptL]", "2"]]}]},
+     {
+      FractionBox[
+       RowBox[{"2", " ", 
+        RowBox[{"(", 
+         RowBox[{"EI1", "+", 
+          RowBox[{"2", " ", "EI2"}]}], ")"}]}], 
+       SuperscriptBox["\[ScriptL]", "2"]], 
+      FractionBox[
+       RowBox[{"EI1", "+", "EI2"}], "\[ScriptL]"], 
+      RowBox[{"-", 
+       FractionBox[
+        RowBox[{"2", " ", 
+         RowBox[{"(", 
+          RowBox[{"EI1", "+", 
+           RowBox[{"2", " ", "EI2"}]}], ")"}]}], 
+        SuperscriptBox["\[ScriptL]", "2"]]}], 
+      FractionBox[
+       RowBox[{"EI1", "+", 
+        RowBox[{"3", " ", "EI2"}]}], "\[ScriptL]"]}
+    },
+    GridBoxAlignment->{
+     "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+      "RowsIndexed" -> {}},
+    GridBoxSpacings->{"Columns" -> {
+        Offset[0.27999999999999997`], {
+         Offset[0.7]}, 
+        Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+        Offset[0.2], {
+         Offset[0.4]}, 
+        Offset[0.2]}, "RowsIndexed" -> {}}], "\[NoBreak]", ")"}],
+  Function[BoxForm`e$, 
+   MatrixForm[BoxForm`e$]]]], "Print",
+ CellChangeTimes->{
+  3.5907749146344957`*^9, {3.5907750304480352`*^9, 3.590775060471483*^9}, {
+   3.59077509601507*^9, 3.590775115999734*^9}, 3.5907752275962143`*^9, 
+   3.590775289764841*^9, 3.5907753339841137`*^9, {3.590775418540811*^9, 
+   3.5907754364963207`*^9}, 3.5907758667199993`*^9, {3.590775933924138*^9, 
+   3.590775962245825*^9}, {3.590776037042247*^9, 3.590776094280582*^9}, {
+   3.5907762149982967`*^9, 3.590776282118293*^9}, 3.5907764349673223`*^9},
+ Background->RGBColor[0.88, 1, 0.88]]
+}, Open  ]]
+}, Open  ]],
+
+Cell["\<\
+The Gaussian approximation agrees completely with Ke found in 12.1, above. \
+The agreement comes from the order of ' f', the function in terms of \[Xi]. \
+According to Wikipedia (the source of all knowledge), an ' n' point \
+quaderature rule yields an exact answer for for polynomials of order [2n-1]. \
+So since f[\[Xi]] is of order 3, this rule means that the two point gaussian \
+rule will perfectly approximate it. Hence, the amazing agreement. \
+\>", "Text",
+ CellChangeTimes->{{3.59077633370872*^9, 3.5907764058424892`*^9}},
+ Background->RGBColor[0.88, 1, 0.88]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Problem 5-14.1", "Section",
+ CellChangeTimes->{{3.590770265826271*^9, 3.590770281049478*^9}, {
+  3.590773460002906*^9, 3.590773461799223*^9}, {3.590774114362657*^9, 
+  3.5907741164165087`*^9}, {3.590775452181697*^9, 3.590775466996108*^9}, {
+  3.590776474129952*^9, 3.590776476832931*^9}}],
+
+Cell["\<\
+Repeat the exercise of 12.1, using a two point gauss rule of equation E12.7 \
+to evaluat eth integral in \[Xi]\
+\>", "Text",
+ CellChangeTimes->{{3.590774300694491*^9, 3.590774305603285*^9}, {
+  3.590774348963458*^9, 3.590774355657774*^9}, {3.5907755459722147`*^9, 
+  3.590775572761208*^9}},
+ Background->GrayLevel[0.85]]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{783, 803},
+WindowMargins->{{4, Automatic}, {Automatic, 4}},
+FrontEndVersion->"9.0 for Mac OS X x86 (32-bit, 64-bit Kernel) (January 25, \
+2013)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[579, 22, 157, 2, 92, "Title"],
+Cell[739, 26, 163, 2, 51, "Subtitle"],
+Cell[905, 30, 65, 1, 29, "Subsubtitle"],
+Cell[CellGroupData[{
+Cell[995, 35, 151, 2, 80, "Section"],
+Cell[1149, 39, 816, 19, 80, "Input",
+ InitializationCell->True],
+Cell[1968, 60, 273, 5, 44, "Text"],
+Cell[2244, 67, 475, 12, 63, "Input",
+ InitializationCell->True]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2756, 84, 104, 1, 80, "Section"],
+Cell[2863, 87, 427, 6, 61, "Text"],
+Cell[CellGroupData[{
+Cell[3315, 97, 1275, 36, 96, "Input"],
+Cell[4593, 135, 1998, 58, 74, "Print"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[6640, 199, 153, 2, 80, "Section"],
+Cell[6796, 203, 236, 5, 65, "Text"],
+Cell[CellGroupData[{
+Cell[7057, 212, 2166, 61, 165, "Input"],
+Cell[CellGroupData[{
+Cell[9248, 277, 1730, 46, 72, "Print"],
+Cell[10981, 325, 768, 21, 56, "Print"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[11810, 353, 250, 3, 80, "Section"],
+Cell[12063, 358, 321, 6, 65, "Text"],
+Cell[CellGroupData[{
+Cell[12409, 368, 2111, 57, 114, "Input"],
+Cell[CellGroupData[{
+Cell[14545, 429, 326, 5, 21, "Print"],
+Cell[14874, 436, 3547, 109, 126, "Print"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[18482, 552, 250, 3, 80, "Section"],
+Cell[18735, 557, 330, 7, 46, "Text"],
+Cell[CellGroupData[{
+Cell[19090, 568, 2988, 81, 199, "Input"],
+Cell[CellGroupData[{
+Cell[22103, 653, 559, 8, 22, "Print"],
+Cell[22665, 663, 555, 8, 22, "Print"],
+Cell[23223, 673, 3746, 111, 126, "Print"]
+}, Open  ]]
+}, Open  ]],
+Cell[26996, 788, 578, 9, 122, "Text"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[27611, 802, 294, 4, 80, "Section"],
+Cell[27908, 808, 330, 7, 46, "Text"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
