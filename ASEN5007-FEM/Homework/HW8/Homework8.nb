@@ -1,0 +1,973 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 9.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[     33546,        964]
+NotebookOptionsPosition[     31764,        901]
+NotebookOutlinePosition[     32172,        919]
+CellTagsIndexPosition[     32129,        916]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["ASEN 5007-Homework 8", "Title",
+ CellChangeTimes->{{3.58782448507475*^9, 3.5878244971110783`*^9}, {
+  3.5907702187557297`*^9, 3.5907702188344383`*^9}, {3.591496034371768*^9, 
+  3.591496035187675*^9}, {3.5919835460103817`*^9, 3.591983546490944*^9}, {
+  3.5925220776796837`*^9, 3.592522078218521*^9}}],
+
+Cell["Zach Dischner ", "Subtitle",
+ CellChangeTimes->{{3.587824499248228*^9, 3.587824500903141*^9}, {
+   3.590770195354347*^9, 3.590770200890245*^9}, {3.591544933873954*^9, 
+   3.591544935775342*^9}, {3.591983542623353*^9, 3.591983544515092*^9}, 
+   3.592591695749076*^9}],
+
+Cell["", "Subsubtitle",
+ CellChangeTimes->{3.590770221793289*^9}],
+
+Cell[CellGroupData[{
+
+Cell["Helpful Modules", "Section",
+ CellChangeTimes->{{3.587824506223967*^9, 3.587824507990913*^9}, {
+  3.590770242014482*^9, 3.5907702445783587`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"PrintWithStyle", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"color", "=", "LightGreen"}], "}"}], ",", 
+    RowBox[{"Framed", "[", 
+     RowBox[{
+      RowBox[{"Style", "[", 
+       RowBox[{"x", ",", "18", ",", "Bold", ",", 
+        RowBox[{"Background", "\[Rule]", "color"}]}], "]"}], ",", 
+      "\[IndentingNewLine]", 
+      RowBox[{"Background", "\[Rule]", "color"}]}], "]"}]}], 
+   "\[IndentingNewLine]", "]"}]}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.5878277622951813`*^9, 3.587827801470587*^9}, {
+  3.5878279140382023`*^9, 3.587828037992056*^9}, {3.587828092581545*^9, 
+  3.58782809340242*^9}, {3.587828151664729*^9, 3.587828183864581*^9}, {
+  3.5878282160385027`*^9, 3.5878284333882923`*^9}}],
+
+Cell[TextData[StyleBox["Cell 7: Simple function to print output for solutions \
+in a stylazed way",
+ FontSize->12]], "Text",
+ CellChangeTimes->{{3.5878250168615837`*^9, 3.587825022435727*^9}, {
+  3.587827743369121*^9, 3.5878277582173223`*^9}},
+ Background->GrayLevel[0.85]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"PrintWithStyleMat", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"color", "=", "LightGreen"}], "}"}], ",", 
+    RowBox[{"Style", "[", 
+     RowBox[{"x", ",", "\[IndentingNewLine]", 
+      RowBox[{"Background", "\[Rule]", "color"}]}], "]"}]}], 
+   "\[IndentingNewLine]", "]"}]}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.590776001488886*^9, 3.590776015640019*^9}}],
+
+Cell["\<\
+The following  modules compute the stiffness matrix, consistent node body \
+forces,
+and corner stresses of the 4-node bilinear iso-P quad in plane stress.  For \
+Exercises
+in Chapter 17 only the stiffness module is necessary.
+
+Compute element stiffness matrix of 4-node bilinear quadrilateral\
+\>", "Text",
+ CellChangeTimes->{{3.591984640301422*^9, 3.591984652402586*^9}, {
+  3.5919850366960583`*^9, 3.591985038537635*^9}},
+ Background->GrayLevel[0.85]],
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.592591811923807*^9, 3.5925918124626083`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.592591819537199*^9, 3.59259182173413*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Problem 1-Book 19.2", "Section",
+ CellChangeTimes->{{3.5919845738074493`*^9, 3.591984579476449*^9}, {
+  3.592522097659322*^9, 3.5925220982869263`*^9}}],
+
+Cell["\<\
+Show that the minimum \[Alpha]\[CloseCurlyQuote]s (minimal in absolute value \
+sense) for which J = dx\:0304/d\[Xi] vanishes at a point in the element are \
+\[PlusMinus]1/4 (the quarter-points)\
+\>", "Text",
+ CellChangeTimes->{{3.591985124101117*^9, 3.591985136532083*^9}, {
+  3.592522122338442*^9, 3.59252213138186*^9}, {3.5925228012994127`*^9, 
+  3.5925228021856937`*^9}},
+ Background->GrayLevel[0.85]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"ClearAll", "[", 
+  RowBox[{
+  "\[Xi]", ",", "N1", ",", "N2", ",", "N3", ",", "x1", ",", "x2", ",", "x3", 
+   ",", "xx", ",", "NN", ",", "xbar", ",", "J"}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"N1", "[", "\[Xi]_", "]"}], " ", ":=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"-", "1"}], "/", "2"}], "*", "\[Xi]", "*", 
+    RowBox[{"(", 
+     RowBox[{"1", "-", "\[Xi]"}], ")"}]}]}], ";", "    ", 
+  RowBox[{
+   RowBox[{"N2", "[", "\[Xi]_", "]"}], " ", ":=", " ", 
+   RowBox[{
+    RowBox[{"1", "/", "2"}], "*", "\[Xi]", "*", 
+    RowBox[{"(", 
+     RowBox[{"1", "+", "\[Xi]"}], ")"}]}]}], ";", "    ", 
+  RowBox[{
+   RowBox[{"N3", "[", "\[Xi]_", "]"}], " ", ":=", " ", 
+   RowBox[{"(", 
+    RowBox[{"1", "-", 
+     RowBox[{"\[Xi]", "^", "2"}]}], ")"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"x1", " ", "=", " ", "0"}], ";", "     ", 
+  RowBox[{"x2", " ", "=", " ", "L"}], ";", "    ", 
+  RowBox[{"x3", "=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"1", "/", "2"}], "*", "L"}], "+", 
+    RowBox[{"\[Alpha]", "*", "L"}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"NN", "[", "\[Xi]_", "]"}], " ", ":=", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"N1", "[", "\[Xi]", "]"}], ",", 
+     RowBox[{"N2", "[", "\[Xi]", "]"}], ",", 
+     RowBox[{"N3", "[", "\[Xi]", "]"}]}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"xx", "=", " ", 
+   RowBox[{"{", 
+    RowBox[{"x1", ",", "x2", ",", "x3"}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"xbar", "[", "\[Xi]_", "]"}], " ", ":=", " ", 
+  RowBox[{"xx", ".", 
+   RowBox[{"NN", "[", "\[Xi]", "]"}]}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"J", "[", "\[Xi]_", "]"}], " ", "=", " ", 
+   RowBox[{"D", "[", 
+    RowBox[{
+     RowBox[{"xbar", "[", "\[Xi]", "]"}], ",", "\[Xi]"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Print", "[", 
+  RowBox[{"\"\<J = \>\"", ",", 
+   RowBox[{"J", "[", "\[Xi]", "]"}]}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"soln1", "=", 
+   RowBox[{"Solve", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"J", "[", 
+       RowBox[{"-", "1"}], "]"}], "\[Equal]", "0"}], ",", "\[Alpha]"}], 
+    "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"soln2", "=", 
+   RowBox[{"Solve", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"J", "[", "1", "]"}], "\[Equal]", "0"}], ",", "\[Alpha]"}], 
+    "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+  "PrintWithStyle", "[", 
+   "\"\<The points for which J vanishes within the isoparametric straight \
+3-node bar element can be found at: \>\"", "]"}], 
+  RowBox[{"PrintWithStyle", "[", 
+   RowBox[{"soln1", "[", 
+    RowBox[{"[", 
+     RowBox[{"1", ",", "1"}], "]"}], "]"}], "]"}], 
+  RowBox[{"PrintWithStyle", "[", 
+   RowBox[{"soln2", "[", 
+    RowBox[{"[", 
+     RowBox[{"1", ",", "1"}], "]"}], "]"}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"PrintWithStyle", "[", 
+  "\"\<This is the quarter point for the 3 node bar element\>\"", 
+  "]"}], "\[IndentingNewLine]"}], "Input",
+ CellChangeTimes->{{3.5925221496447783`*^9, 3.5925221580071907`*^9}, {
+  3.592522274925417*^9, 3.592522502232703*^9}, {3.59252259225753*^9, 
+  3.592522773197583*^9}, {3.5925228193793497`*^9, 3.59252296557304*^9}, {
+  3.592523004321535*^9, 3.592523132687469*^9}, {3.59252319158601*^9, 
+  3.5925232775727243`*^9}, {3.59252331024923*^9, 3.592523438115213*^9}, {
+  3.592523468993436*^9, 3.59252375871251*^9}, {3.59252384158948*^9, 
+  3.592523851848804*^9}, {3.592523928754636*^9, 3.5925240907991734`*^9}, {
+  3.592524124299501*^9, 3.592524192890088*^9}, {3.592524253807749*^9, 
+  3.5925243222941933`*^9}, {3.592526407139812*^9, 3.592526415287569*^9}}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"J = \"\>", "\[InvisibleSpace]", 
+   RowBox[{
+    FractionBox[
+     RowBox[{"L", " ", "\[Xi]"}], "2"], "-", 
+    RowBox[{"2", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       FractionBox["L", "2"], "+", 
+       RowBox[{"L", " ", "\[Alpha]"}]}], ")"}], " ", "\[Xi]"}], "+", 
+    RowBox[{
+     FractionBox["1", "2"], " ", "L", " ", 
+     RowBox[{"(", 
+      RowBox[{"1", "+", "\[Xi]"}], ")"}]}]}]}],
+  SequenceForm[
+  "J = ", Rational[1, 2] $CellContext`L $CellContext`\[Xi] - 
+   2 (Rational[
+      1, 2] $CellContext`L + $CellContext`L $CellContext`\[Alpha]) \
+$CellContext`\[Xi] + Rational[1, 2] $CellContext`L (1 + $CellContext`\[Xi])],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.59252641573967*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  FrameBox[
+   StyleBox["\<\"The points for which J vanishes within the isoparametric \
+straight 3-node bar element can be found at: \"\>",
+    StripOnInput->False,
+    FontSize->18,
+    FontWeight->Bold,
+    Background->RGBColor[0.88, 1, 0.88]],
+   Background->RGBColor[0.88, 1, 0.88],
+   StripOnInput->False], " ", 
+  FrameBox[
+   StyleBox[
+    RowBox[{"\[Alpha]", "\[Rule]", 
+     RowBox[{"-", 
+      FractionBox["1", "4"]}]}],
+    StripOnInput->False,
+    FontSize->18,
+    FontWeight->Bold,
+    Background->RGBColor[0.88, 1, 0.88]],
+   Background->RGBColor[0.88, 1, 0.88],
+   StripOnInput->False], " ", 
+  FrameBox[
+   StyleBox[
+    RowBox[{"\[Alpha]", "\[Rule]", 
+     FractionBox["1", "4"]}],
+    StripOnInput->False,
+    FontSize->18,
+    FontWeight->Bold,
+    Background->RGBColor[0.88, 1, 0.88]],
+   Background->RGBColor[0.88, 1, 0.88],
+   StripOnInput->False]}]], "Output",
+ CellChangeTimes->{
+  3.592524091345768*^9, {3.592524150387487*^9, 3.592524174183221*^9}, {
+   3.5925242748570623`*^9, 3.592524322793049*^9}, 3.592526415743677*^9}],
+
+Cell[BoxData[
+ FrameBox[
+  StyleBox["\<\"This is the quarter point for the 3 node bar element\"\>",
+   StripOnInput->False,
+   FontSize->18,
+   FontWeight->Bold,
+   Background->RGBColor[0.88, 1, 0.88]],
+  Background->RGBColor[0.88, 1, 0.88],
+  StripOnInput->False]], "Output",
+ CellChangeTimes->{
+  3.592524091345768*^9, {3.592524150387487*^9, 3.592524174183221*^9}, {
+   3.5925242748570623`*^9, 3.592524322793049*^9}, 3.592526415745174*^9}]
+}, Open  ]],
+
+Cell[BoxData["\[IndentingNewLine]"], "Input",
+ CellChangeTimes->{3.59259177043926*^9}],
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.592591770722681*^9, 3.592591772031909*^9}, {
+  3.592591826942218*^9, 3.5925918274378147`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Problem 2-Book 19.3", "Section",
+ CellChangeTimes->{{3.5919845738074493`*^9, 3.591984579476449*^9}, {
+  3.592522097659322*^9, 3.5925220982869263`*^9}, {3.592526174621811*^9, 
+  3.592526177205357*^9}}],
+
+Cell[TextData[{
+ "Using 19.7, find the minimal rank-preserving Gauss integration rules with \
+",
+ StyleBox["p",
+  FontSlant->"Italic"],
+ " points in the Longitudnal direction if the number of node points is n=2,3, \
+or 4 for a 1 dimensional bar-like element"
+}], "Text",
+ CellChangeTimes->{{3.591985124101117*^9, 3.591985136532083*^9}, {
+   3.592522122338442*^9, 3.59252213138186*^9}, {3.5925228012994127`*^9, 
+   3.5925228021856937`*^9}, {3.5925261985725403`*^9, 3.592526234739346*^9}, 
+   3.592526336887129*^9, {3.592526368697467*^9, 3.592526381017503*^9}, {
+   3.592526508259428*^9, 3.5925265234451303`*^9}},
+ Background->GrayLevel[0.85]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", 
+   RowBox[{"n", ",", "nE", ",", "nF", ",", "nG", ",", "nR", ",", "gmin"}], 
+   "]"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+   "Number", " ", "of", " ", "Nodes", " ", "to", " ", "consider", " ", "for", 
+    " ", "the", " ", "bar", " ", "like", " ", "element"}], 
+   "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"n", "=", 
+    RowBox[{"{", 
+     RowBox[{"2", ",", "3", ",", "4"}], "}"}]}], ";"}], "\[IndentingNewLine]",
+   "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{"nR", ":", " ", 
+    RowBox[{
+    "Number", " ", "of", " ", "independant", " ", "rigid", " ", "body", " ", 
+     "nodes"}]}], "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"nR", " ", "=", " ", "1"}], ";"}], "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"For", " ", "bar"}], "-", 
+     RowBox[{"like", " ", "element"}]}], ",", " ", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"[", "E", "]"}], " ", "matrix", " ", "is", " ", "1", 
+      RowBox[{"x1", ".", " ", "So"}], " ", "nE"}], "=", 
+     RowBox[{"1", " ", 
+      RowBox[{"(", 
+       RowBox[{"rank", " ", "of", " ", "E"}], ")"}]}]}]}], " ", "*)"}], " ", 
+  RowBox[{"(*", 
+   RowBox[{"??", "?"}], "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"nE", "=", "1"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"gmin", "=", 
+   RowBox[{"{", "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"For", "[", 
+  RowBox[{
+   RowBox[{"ii", "=", "1"}], ",", 
+   RowBox[{"ii", "<=", 
+    RowBox[{"Length", "[", "n", "]"}]}], ",", 
+   RowBox[{"ii", "++"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"nF", ":", " ", 
+     RowBox[{"Element", " ", "degrees", " ", "of", " ", "freedom"}]}], "*)"}],
+    "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"nF", "=", 
+     RowBox[{"n", "[", 
+      RowBox[{"[", "ii", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+    RowBox[{"tmp", "=", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"nF", "-", "nR"}], ")"}], "/", "nE"}], "}"}]}], ";", 
+    "\[IndentingNewLine]", 
+    RowBox[{"(*", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"gmin", "[", 
+        RowBox[{"[", "ii", "]"}], "]"}], "=", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"nF", "-", "nR"}], ")"}], "/", "nE"}]}], ";"}], "*)"}], 
+    "\[IndentingNewLine]", 
+    RowBox[{"(*", 
+     RowBox[{
+      RowBox[{"gmin", "=", 
+       RowBox[{"Join", "[", 
+        RowBox[{"gmin", ",", "tmp"}], "]"}]}], ";"}], "*)"}], 
+    "\[IndentingNewLine]", 
+    RowBox[{"gmin", "=", 
+     RowBox[{"Join", "[", 
+      RowBox[{"gmin", ",", 
+       RowBox[{"{", 
+        RowBox[{"Reduce", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"nE", "*", "nG"}], ">=", 
+           RowBox[{"(", 
+            RowBox[{"nF", "-", "nR"}], ")"}]}], ",", "nG"}], "]"}], "}"}]}], 
+      "]"}]}], ";"}]}], "\[IndentingNewLine]", "]"}], "\[IndentingNewLine]", 
+ RowBox[{"PrintWithStyle", "[", 
+  "\"\<The minimum number of Gauss integration points for a bar element with \
+nodes: \>\"", "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PrintWithStyle", "[", "\"\<n=\>\"", "]"}], 
+   RowBox[{"PrintWithStyle", "[", 
+    RowBox[{"n", "//", "MatrixForm"}], "]"}], 
+   RowBox[{"PrintWithStyle", "[", 
+    RowBox[{"gmin", "//", "MatrixForm"}], "]"}]}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]"}], "Input",
+ CellChangeTimes->{{3.592526382879587*^9, 3.592526393032647*^9}, {
+  3.592526439414658*^9, 3.5925265027000217`*^9}, {3.592526543818377*^9, 
+  3.592526691365809*^9}, {3.592526798103401*^9, 3.592526821510501*^9}, {
+  3.592526853948741*^9, 3.592526857688233*^9}, {3.592526930557314*^9, 
+  3.592527009546389*^9}, {3.592527055067811*^9, 3.592527468351129*^9}, {
+  3.592527512364678*^9, 3.592527560550375*^9}, {3.592527604773877*^9, 
+  3.5925278795436993`*^9}, {3.5925279474296703`*^9, 3.592527997448182*^9}, {
+  3.5925280396942177`*^9, 3.59252820553513*^9}, {3.5925282398415327`*^9, 
+  3.592528254387373*^9}, {3.5925283418001757`*^9, 3.592528481746997*^9}, {
+  3.592528512847498*^9, 3.592528607957622*^9}, {3.592528812933951*^9, 
+  3.592528896754468*^9}}],
+
+Cell[BoxData[
+ FrameBox[
+  StyleBox["\<\"The minimum number of Gauss integration points for a bar \
+element with nodes: \"\>",
+   StripOnInput->False,
+   FontSize->18,
+   FontWeight->Bold,
+   Background->RGBColor[0.88, 1, 0.88]],
+  Background->RGBColor[0.88, 1, 0.88],
+  StripOnInput->False]], "Output",
+ CellChangeTimes->{
+  3.592528206243292*^9, {3.592528385262658*^9, 3.592528477213018*^9}, {
+   3.5925285153999643`*^9, 3.592528612413254*^9}, {3.592528839285325*^9, 
+   3.592528898925281*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  FrameBox[
+   StyleBox["\<\"n=\"\>",
+    StripOnInput->False,
+    FontSize->18,
+    FontWeight->Bold,
+    Background->RGBColor[0.88, 1, 0.88]],
+   Background->RGBColor[0.88, 1, 0.88],
+   StripOnInput->False], " ", 
+  FrameBox[
+   StyleBox[
+    TagBox[
+     RowBox[{"(", "\[NoBreak]", 
+      TagBox[GridBox[{
+         {"2"},
+         {"3"},
+         {"4"}
+        },
+        GridBoxAlignment->{
+         "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, 
+          "Rows" -> {{Baseline}}, "RowsIndexed" -> {}},
+        GridBoxSpacings->{"Columns" -> {
+            Offset[0.27999999999999997`], {
+             Offset[0.5599999999999999]}, 
+            Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, 
+          "Rows" -> {
+            Offset[0.2], {
+             Offset[0.4]}, 
+            Offset[0.2]}, "RowsIndexed" -> {}}],
+       Column], "\[NoBreak]", ")"}],
+     Function[BoxForm`e$, 
+      MatrixForm[BoxForm`e$]]],
+    StripOnInput->False,
+    FontSize->18,
+    FontWeight->Bold,
+    Background->RGBColor[0.88, 1, 0.88]],
+   Background->RGBColor[0.88, 1, 0.88],
+   StripOnInput->False], " ", 
+  FrameBox[
+   StyleBox[
+    TagBox[
+     RowBox[{"(", "\[NoBreak]", 
+      TagBox[GridBox[{
+         {
+          RowBox[{"nG", "\[GreaterEqual]", "1"}]},
+         {
+          RowBox[{"nG", "\[GreaterEqual]", "2"}]},
+         {
+          RowBox[{"nG", "\[GreaterEqual]", "3"}]}
+        },
+        GridBoxAlignment->{
+         "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, 
+          "Rows" -> {{Baseline}}, "RowsIndexed" -> {}},
+        GridBoxSpacings->{"Columns" -> {
+            Offset[0.27999999999999997`], {
+             Offset[0.5599999999999999]}, 
+            Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, 
+          "Rows" -> {
+            Offset[0.2], {
+             Offset[0.4]}, 
+            Offset[0.2]}, "RowsIndexed" -> {}}],
+       Column], "\[NoBreak]", ")"}],
+     Function[BoxForm`e$, 
+      MatrixForm[BoxForm`e$]]],
+    StripOnInput->False,
+    FontSize->18,
+    FontWeight->Bold,
+    Background->RGBColor[0.88, 1, 0.88]],
+   Background->RGBColor[0.88, 1, 0.88],
+   StripOnInput->False]}]], "Output",
+ CellChangeTimes->{
+  3.592528206243292*^9, {3.592528385262658*^9, 3.592528477213018*^9}, {
+   3.5925285153999643`*^9, 3.592528612413254*^9}, {3.592528839285325*^9, 
+   3.5925288989277277`*^9}}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.5925917657436333`*^9, 3.5925917677518377`*^9}, 
+   3.592591898509954*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Problem 3-Book 19.4", "Section",
+ CellChangeTimes->{{3.5919845738074493`*^9, 3.591984579476449*^9}, {
+  3.592522097659322*^9, 3.5925220982869263`*^9}, {3.592526174621811*^9, 
+  3.592526177205357*^9}, {3.5925286390753927`*^9, 3.592528641033736*^9}}],
+
+Cell["\<\
+Perform the same analysis as above, but now considering a 3 dimensional brick \
+element with n nodes and 3 degrees of freedom. Now gaussian points are \
+uniform in 3 dimensions, so [nG x nG x nG]. Peforrm for 4 nodes listed below. \
+\>", "Text",
+ CellChangeTimes->{{3.591985124101117*^9, 3.591985136532083*^9}, {
+   3.592522122338442*^9, 3.59252213138186*^9}, {3.5925228012994127`*^9, 
+   3.5925228021856937`*^9}, {3.5925261985725403`*^9, 3.592526234739346*^9}, 
+   3.592526336887129*^9, {3.592526368697467*^9, 3.592526381017503*^9}, {
+   3.592526508259428*^9, 3.5925265234451303`*^9}, {3.592528643628179*^9, 
+   3.5925286448124313`*^9}, {3.5925918342091503`*^9, 3.592591894867279*^9}},
+ Background->GrayLevel[0.85]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", 
+   RowBox[{"n", ",", "nE", ",", "nF", ",", "nG", ",", "nR", ",", "gmin"}], 
+   "]"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+   "Number", " ", "of", " ", "Nodes", " ", "to", " ", "consider", " ", "for", 
+    " ", "the", " ", "bar", " ", "like", " ", "element"}], 
+   "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"n", "=", 
+    RowBox[{"{", 
+     RowBox[{"8", ",", "20", ",", "27", ",", "64"}], "}"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"dof", " ", "=", " ", "3"}], ";"}], "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{"nR", ":", " ", 
+    RowBox[{
+    "Number", " ", "of", " ", "independant", " ", "rigid", " ", "body", " ", 
+     "nodes"}]}], "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"nR", " ", "=", " ", "6"}], ";"}], "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"For", " ", "bar"}], "-", 
+     RowBox[{"like", " ", "element"}]}], ",", " ", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"[", "E", "]"}], " ", "matrix", " ", "is", " ", "1", 
+      RowBox[{"x1", ".", " ", "So"}], " ", "nE"}], "=", 
+     RowBox[{"1", " ", 
+      RowBox[{"(", 
+       RowBox[{"rank", " ", "of", " ", "E"}], ")"}]}]}]}], " ", "*)"}], " ", 
+  RowBox[{"(*", 
+   RowBox[{"??", "?"}], "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"nE", "=", "6"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"gmin", "=", 
+   RowBox[{"{", "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"For", "[", 
+    RowBox[{
+     RowBox[{"ii", "=", "1"}], ",", 
+     RowBox[{"ii", "<=", 
+      RowBox[{"Length", "[", "n", "]"}]}], ",", 
+     RowBox[{"ii", "++"}], ",", "\[IndentingNewLine]", 
+     RowBox[{"(*", 
+      RowBox[{"nF", ":", " ", 
+       RowBox[{"Element", " ", "degrees", " ", "of", " ", "freedom"}]}], 
+      "*)"}], "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"nF", "=", 
+       RowBox[{
+        RowBox[{"n", "[", 
+         RowBox[{"[", "ii", "]"}], "]"}], "*", "dof"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"tmp", "=", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"nF", "-", "nR"}], ")"}], "/", "nE"}], "}"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"(*", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"gmin", "[", 
+          RowBox[{"[", "ii", "]"}], "]"}], "=", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"nF", "-", "nR"}], ")"}], "/", "nE"}]}], ";"}], "*)"}], 
+      "\[IndentingNewLine]", 
+      RowBox[{"(*", 
+       RowBox[{
+        RowBox[{"gmin", "=", 
+         RowBox[{"Join", "[", 
+          RowBox[{"gmin", ",", "tmp"}], "]"}]}], ";"}], "*)"}], 
+      "\[IndentingNewLine]", 
+      RowBox[{"gmin", "=", 
+       RowBox[{"Join", "[", 
+        RowBox[{"gmin", ",", 
+         RowBox[{"{", 
+          RowBox[{"Reduce", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"nE", "*", "nG"}], ">=", 
+             RowBox[{"(", 
+              RowBox[{"nF", "-", "nR"}], ")"}]}], ",", "nG"}], "]"}], "}"}]}],
+         "]"}]}]}]}], "]"}], ";"}], "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+   "Adjust", " ", "for", " ", "cubic", " ", "gauss", " ", "point", " ", 
+    "schemas"}], "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"nposs", "=", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+     "1", ",", "2", ",", "3", ",", "4", ",", "5", ",", "6", ",", "7", ",", 
+      "8", ",", "9"}], "}"}], "^", "3"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"gvals", " ", "=", " ", 
+   RowBox[{"gmin", "[", 
+    RowBox[{"[", 
+     RowBox[{"All", ",", "2"}], "]"}], "]"}]}], ";", " ", 
+  RowBox[{"(*", 
+   RowBox[{"Extract", " ", "values", " ", "from", " ", "inequalities"}], 
+   "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{"gvals", "[", 
+    RowBox[{"[", "2", "]"}], "]"}], "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"newGmin", "=", 
+   RowBox[{"{", "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"For", " ", "[", 
+   RowBox[{
+    RowBox[{"ii", "=", "1"}], ",", " ", 
+    RowBox[{"ii", "<=", 
+     RowBox[{"Length", "[", "gvals", "]"}]}], ",", " ", 
+    RowBox[{"ii", "++"}], ",", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"diff", "=", 
+      RowBox[{
+       RowBox[{"gvals", "[", 
+        RowBox[{"[", "ii", "]"}], "]"}], "-", "nposs"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"tmp", " ", "=", " ", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"Count", "[", 
+          RowBox[{"diff", ",", "0"}], "]"}], "\[Equal]", "1"}], ",", 
+        RowBox[{"gvals", "[", 
+         RowBox[{"[", "ii", "]"}], "]"}], ",", 
+        RowBox[{
+         RowBox[{"Count", "[", 
+          RowBox[{"diff", ",", 
+           RowBox[{"_", "?", "Positive"}]}], "]"}], "+", "1"}]}], "]"}]}], 
+     ";", "\[IndentingNewLine]", 
+     RowBox[{"newGmin", "=", 
+      RowBox[{"Join", "[", 
+       RowBox[{"newGmin", ",", 
+        RowBox[{"{", "tmp", " ", "}"}]}], "]"}]}], ";"}]}], 
+   "\[IndentingNewLine]", "]"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{"PrintWithStyle", "[", 
+  "\"\<For the 3d brick with n nodes and 3 dof, the gaussian rule minimum \
+points are chosen as shown below:\>\"", "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"PrintWithStyle", "[", "\"\<n=\>\"", "]"}], 
+  RowBox[{"PrintWithStyle", "[", 
+   RowBox[{"n", "//", "MatrixForm"}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Print", "[", 
+   RowBox[{"\"\<Gauss points =\>\"", ",", 
+    RowBox[{"newGmin", "//", "MatrixForm"}], ",", "\"\<x\>\"", ",", " ", 
+    RowBox[{"newGmin", "//", "MatrixForm"}], ",", "\"\<x\>\"", ",", " ", 
+    RowBox[{"newGmin", "//", "MatrixForm"}]}], "]"}], "\[IndentingNewLine]", 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]"}], "Input",
+ CellChangeTimes->CompressedData["
+1:eJwVxU0oQwEAB/BnZbEd5mO5mLHDSMvmY1ktF/nYhmKjLUxCm4OZjGJrh22U
+4iK9g6/W1BSRyHZYzaaeSNkFG2oRkqgJZWok73/49RP0j2gMDIIgeDRMCuMN
+VUevtRa2QIHv6xMtmDTGOrCwPNWJ/b4hE85qpayYqd214zx9yIHTmNVOPB1V
+z+J0ewWJXaKHJTxWMxfBo1vsC7y9mn2Dl6nFW/xr+CCk9PHwcCZ26XY4OEOW
+5OLTwr1SHEukyrDecCbBrJWAHBufZS3Yx89vw1fev24sfif78IRkYBB3mdVm
+/NiwNo4XlGIXrtrnTOFrdySopuedWyjs1TovsSP4HcWfavcdNs9YX/FPsCiJ
+m/w9DA19eEPFxC+NNj7ePJwswZVcVR1+S4kUuFj5pMOJALcXf+XkmrCN1byD
+5wnHHraG1v34+EBOYXOx5wR7GqUF7fT/GvPn9A==
+  "]],
+
+Cell[BoxData[
+ FrameBox[
+  StyleBox["\<\"For the 3d brick with n nodes and 3 dof, the gaussian rule \
+minimum points are chosen as shown below:\"\>",
+   StripOnInput->False,
+   FontSize->18,
+   FontWeight->Bold,
+   Background->RGBColor[0.88, 1, 0.88]],
+  Background->RGBColor[0.88, 1, 0.88],
+  StripOnInput->False]], "Output",
+ CellChangeTimes->{
+  3.5925913529324217`*^9, {3.5925913944188433`*^9, 3.592591429848634*^9}, {
+   3.592591471208267*^9, 3.592591529880571*^9}, {3.5925915751282187`*^9, 
+   3.592591594022255*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  FrameBox[
+   StyleBox["\<\"n=\"\>",
+    StripOnInput->False,
+    FontSize->18,
+    FontWeight->Bold,
+    Background->RGBColor[0.88, 1, 0.88]],
+   Background->RGBColor[0.88, 1, 0.88],
+   StripOnInput->False], " ", 
+  FrameBox[
+   StyleBox[
+    TagBox[
+     RowBox[{"(", "\[NoBreak]", 
+      TagBox[GridBox[{
+         {"8"},
+         {"20"},
+         {"27"},
+         {"64"}
+        },
+        GridBoxAlignment->{
+         "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, 
+          "Rows" -> {{Baseline}}, "RowsIndexed" -> {}},
+        GridBoxSpacings->{"Columns" -> {
+            Offset[0.27999999999999997`], {
+             Offset[0.5599999999999999]}, 
+            Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, 
+          "Rows" -> {
+            Offset[0.2], {
+             Offset[0.4]}, 
+            Offset[0.2]}, "RowsIndexed" -> {}}],
+       Column], "\[NoBreak]", ")"}],
+     Function[BoxForm`e$, 
+      MatrixForm[BoxForm`e$]]],
+    StripOnInput->False,
+    FontSize->18,
+    FontWeight->Bold,
+    Background->RGBColor[0.88, 1, 0.88]],
+   Background->RGBColor[0.88, 1, 0.88],
+   StripOnInput->False]}]], "Output",
+ CellChangeTimes->{
+  3.5925913529324217`*^9, {3.5925913944188433`*^9, 3.592591429848634*^9}, {
+   3.592591471208267*^9, 3.592591529880571*^9}, {3.5925915751282187`*^9, 
+   3.592591594025782*^9}}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Gauss points =\"\>", "\[InvisibleSpace]", 
+   TagBox[
+    RowBox[{"(", "\[NoBreak]", 
+     TagBox[GridBox[{
+        {"2"},
+        {"3"},
+        {"3"},
+        {"4"}
+       },
+       GridBoxAlignment->{
+        "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, 
+         "Rows" -> {{Baseline}}, "RowsIndexed" -> {}},
+       GridBoxSpacings->{"Columns" -> {
+           Offset[0.27999999999999997`], {
+            Offset[0.5599999999999999]}, 
+           Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+           Offset[0.2], {
+            Offset[0.4]}, 
+           Offset[0.2]}, "RowsIndexed" -> {}}],
+      Column], "\[NoBreak]", ")"}],
+    Function[BoxForm`e$, 
+     MatrixForm[BoxForm`e$]]], "\[InvisibleSpace]", "\<\"x\"\>", 
+   "\[InvisibleSpace]", 
+   TagBox[
+    RowBox[{"(", "\[NoBreak]", 
+     TagBox[GridBox[{
+        {"2"},
+        {"3"},
+        {"3"},
+        {"4"}
+       },
+       GridBoxAlignment->{
+        "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, 
+         "Rows" -> {{Baseline}}, "RowsIndexed" -> {}},
+       GridBoxSpacings->{"Columns" -> {
+           Offset[0.27999999999999997`], {
+            Offset[0.5599999999999999]}, 
+           Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+           Offset[0.2], {
+            Offset[0.4]}, 
+           Offset[0.2]}, "RowsIndexed" -> {}}],
+      Column], "\[NoBreak]", ")"}],
+    Function[BoxForm`e$, 
+     MatrixForm[BoxForm`e$]]], "\[InvisibleSpace]", "\<\"x\"\>", 
+   "\[InvisibleSpace]", 
+   TagBox[
+    RowBox[{"(", "\[NoBreak]", 
+     TagBox[GridBox[{
+        {"2"},
+        {"3"},
+        {"3"},
+        {"4"}
+       },
+       GridBoxAlignment->{
+        "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, 
+         "Rows" -> {{Baseline}}, "RowsIndexed" -> {}},
+       GridBoxSpacings->{"Columns" -> {
+           Offset[0.27999999999999997`], {
+            Offset[0.5599999999999999]}, 
+           Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+           Offset[0.2], {
+            Offset[0.4]}, 
+           Offset[0.2]}, "RowsIndexed" -> {}}],
+      Column], "\[NoBreak]", ")"}],
+    Function[BoxForm`e$, 
+     MatrixForm[BoxForm`e$]]]}],
+  SequenceForm["Gauss points =", 
+   MatrixForm[{2, 3, 3, 4}], "x", 
+   MatrixForm[{2, 3, 3, 4}], "x", 
+   MatrixForm[{2, 3, 3, 4}]],
+  Editable->False]], "Print",
+ CellChangeTimes->{
+  3.592591352936751*^9, {3.592591394424156*^9, 3.592591429854127*^9}, {
+   3.5925914712142076`*^9, 3.592591529887064*^9}, {3.592591575131414*^9, 
+   3.5925915940284357`*^9}}]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{887, 843},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+PrintingCopies->1,
+PrintingPageRange->{1, Automatic},
+FrontEndVersion->"9.0 for Mac OS X x86 (32-bit, 64-bit Kernel) (January 25, \
+2013)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[579, 22, 305, 4, 92, "Title"],
+Cell[887, 28, 272, 4, 51, "Subtitle"],
+Cell[1162, 34, 65, 1, 29, "Subsubtitle"],
+Cell[CellGroupData[{
+Cell[1252, 39, 151, 2, 80, "Section"],
+Cell[1406, 43, 816, 19, 63, "Input",
+ InitializationCell->True],
+Cell[2225, 64, 273, 5, 44, "Text"],
+Cell[2501, 71, 475, 12, 63, "Input",
+ InitializationCell->True],
+Cell[2979, 85, 463, 11, 122, "Text"],
+Cell[3445, 98, 220, 3, 114, "Input"],
+Cell[3668, 103, 410, 6, 250, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4115, 114, 157, 2, 80, "Section"],
+Cell[4275, 118, 414, 8, 65, "Text"],
+Cell[CellGroupData[{
+Cell[4714, 130, 3726, 100, 267, "Input"],
+Cell[8443, 232, 755, 21, 39, "Print"],
+Cell[9201, 255, 1073, 34, 133, "Output"],
+Cell[10277, 291, 441, 11, 46, "Output"]
+}, Open  ]],
+Cell[10733, 305, 86, 1, 46, "Input"],
+Cell[10822, 308, 439, 7, 233, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[11298, 320, 206, 3, 80, "Section"],
+Cell[11507, 325, 641, 13, 65, "Text"],
+Cell[CellGroupData[{
+Cell[12173, 342, 4193, 111, 386, "Input"],
+Cell[16369, 455, 496, 13, 69, "Output"],
+Cell[16868, 470, 2359, 74, 90, "Output"]
+}, Open  ]],
+Cell[19242, 547, 513, 8, 301, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[19792, 560, 254, 3, 80, "Section"],
+Cell[20049, 565, 726, 11, 65, "Text"],
+Cell[CellGroupData[{
+Cell[20800, 580, 6455, 178, 692, "Input"],
+Cell[27258, 760, 523, 13, 69, "Output"],
+Cell[27784, 775, 1352, 43, 113, "Output"],
+Cell[29139, 820, 2585, 76, 70, "Print"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)

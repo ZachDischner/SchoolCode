@@ -47,7 +47,7 @@ if isfield(params,'E_guess')
 else
     guess=0;
 end
-Ek = fsolve(@(Ek) (Ek)-ecc*sin(Ek)-Mk,0,params.options);
+Ek = fsolve(@(Ek) (Ek)-ecc*sin(Ek)-Mk,guess,params.options);
 params.E_guess = Ek;
 
 %------True Anomaly

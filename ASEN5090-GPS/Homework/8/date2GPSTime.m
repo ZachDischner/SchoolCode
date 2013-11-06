@@ -1,7 +1,7 @@
 %>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-%                        GPSTime2Date.m
+%                        date2GPSTime.m
 % Author      : Zach Dischner
-% Date        : 10/24/2013
+% Date        : 10/11/2013
 % Description : Convert a date type object into [GPS_Weeks, GPS_SOW] time
 % 
 %
@@ -13,24 +13,16 @@
 %                               |\ ".`"` '_____//\
 %                               `"'-.   """""  \\/
 %                                    `""""""""""`
-% Inputs        : [GPS_Weeks, GPS_SOW]-weeks and seconds of week
+% Inputs        : utcDate - Satellite PRN number
 % 
-% Outputs       : utcDate - Satellite PRN number
+% Outputs       : [GPS_Weeks, GPS_SOW]-weeks and seconds of week
 % 
 % TODOS         : Vectorize!
-%                 Build in mod options
 % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-function utcDate  = GPSTime2Date(GPS_Weeks, GPS_SOW, GPSNUM_BOOL)
-% gps_week_start = 'January 6 1980 00:00:00';
-gps_weeks_start = 723186;   % datenum(gps_week_start) Save time
-%------GPS date in numerical form, since Matlab's 'epoch'
-GPS_Num = (GPS_Weeks+GPS_SOW/7/24/3600)*7 + gps_weeks_start;
-if nargin == 3
-    if GPSNUM_BOOL == 1
-        utcDate = GPS_Num;
-    else
-        utcDate = datestr(datevec(GPS_Num));
-    end
-else
-    utcDate = datestr(datevec(GPS_Num));
-end
+function [GPS_Weeks, GPS_SOW] = date2GPSTime(utcDate)
+
+gps_week_start = 'January 6 1980 00:00:00';
+modnum = 0; % modnum = 0 for no modulo
+tmp = mod((datenum(utcDate) - datenum(gps_week_start))/7,modnum); % (Difference in days)/7 = difference in weeks
+GPS_Weeks = floor(tmp);
+GPS_SOW = round((tmp-GPS_Weeks)*7*24*3600);

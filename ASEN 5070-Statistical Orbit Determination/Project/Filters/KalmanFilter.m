@@ -206,6 +206,7 @@ num_iterations = 3;
         %---------------------------------------------
         
         % Measurement Update
+        % Different covariance calculations included for report stats
         %---------------------------------------------
         xhat(:,:,jj) = xbar(:,:,jj) + K1*(y1(:,jj) - Htilde*xbar(:,:,jj));
 %        P(:,:,jj) = (eye(size(K1*Htilde)) - K1*Htilde)*P(:,:,jj)*(eye(size(K1*Htilde))-K1*Htilde)' + K1*R*K1';
@@ -253,7 +254,7 @@ num_iterations = 3;
         tr_J = load('Kalman.mat');
         figure(2)
         subplot(1,2,1)
-        semilogy(tr2)
+        semilogy(tr_J.tr)
         xlabel('Observation Number');ylabel('Trace( $P_{xyz}$ )');title('Standard Formulation')
         subplot(1,2,2)
         semilogy(tr)
@@ -271,14 +272,15 @@ num_iterations = 3;
  RE     = 6378136.3;     % m    Radius of earth
  plot_X_star(Xstar',RE,station)
  
- figure
- hold on
- for ii=1:length(time)
-    if mod(ii,30) == 0 
-        error_ellipse(P_J(1:3,1:3,ii),[ii*20,0,0]);
-    end
- end
- xlabel('X (and time)');ylabel('Y');zlabel('Z'); title('Covariance Evolution')
+ 
+%  figure
+%  hold on
+%  for ii=1:length(time)
+%     if mod(ii,30) == 0 
+%         error_ellipse(P(1:3,1:3,ii),[ii*20,0,0]);
+%     end
+%  end
+%  xlabel('X (and time)');ylabel('Y');zlabel('Z'); title('Covariance Evolution')
 
 fprintf('\n\nRunning Time for Kalman Filter : %3.5f\n\n',toc)
 

@@ -134,12 +134,7 @@ for ii = 1:num_iterations
            Zsite3   = Xstar(:,18);
 
     %---------------------------------------------
-
-
     
-    
-    
-%     parfor jj = 1:length(rho_obs)
         theta(jj)          = theta_dot*time(jj);
         Htilde             = zeros(2,18);
         % Check Stations
@@ -247,7 +242,8 @@ cov     = diag(inv(Lam));
 change = Xstar0(1:18)-[RV_Init , Const_Init , Station_Init]';
  save('Batch.mat','state','cov','Pfinal','change');
 
-% figure_awesome('save','eps')
+ % IF you want to save images
+figure_awesome('save','eps')
 
 % t=[Xstar0(1:18),Xstar0(1:18)-[RV_Init , Const_Init , Station_Init]', diag(inv(Lam))]
 

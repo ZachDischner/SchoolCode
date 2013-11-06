@@ -1,0 +1,21 @@
+1. The main difference between single frequency prefits for joze and onsa is that
+while onsa's prefits look mainly randomly distributed, joze has a very obvious
+trend. Joze's residules have sharp and steady climbs in prefits in time, and 
+then the prefit drops back to its previous low, in a manner that looks very much
+like a triangle wave. Each satellite's residule is stacked at almost the same 
+place in time. This is likely due to the fact that the joze clock is much lower
+quality than the onsa one. The triangle wave error form is caused by the clock
+drifting, then being reset. It is clearly the dominant factor in joze's 
+residule values. 
+
+2. The single frequency prefit residules are different from the ionosphere
+free ones because the ionosphere affects each satellite differently, as they are
+in different positions in their orbits. The single frequency prefit contains
+structure for each PRN plotted, while the ion-free residules have a more normal
+distribution. 
+
+3. The 4-5 sigma outliers in onsa's ion-free residules are due to low elevation
+data points. See the plot of residules vs elevation. The residules grow much
+more dispersed for low elevation observations. A good mitigation strategy could
+be to raise the elevation mask, so that only higher, more trustworthy observations
+would be included. 
