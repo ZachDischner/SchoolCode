@@ -1,0 +1,4175 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 9.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[    164660,       4166]
+NotebookOptionsPosition[    160167,       4032]
+NotebookOutlinePosition[    161090,       4064]
+CellTagsIndexPosition[    161047,       4061]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[TextData[{
+ StyleBox["Instructions:\n1.  Execute Cells 1 through 7  in that  order \
+(twice each if you want to  get rid of  \n     annoying warning messages) to \
+initialize all necessary modules. \n     Shortcut for ",
+  FontFamily->"Palatino"],
+ StyleBox["Mathematica 4.0 or 5.0 ",
+  FontFamily->"Palatino",
+  FontSlant->"Italic"],
+ StyleBox[" users: select \n     Kernel ->Evaluation->Evaluate Initialization \
+ \n     To check individual cells, run test code (blue) for that cell only.\n\
+2.  Cell 8 contains the driver program script for the  bridge truss example.  \
+\n     Run by selecting the cell and executing.\n3.  Execute Cell 8A to \
+generate deformed shape plot frames.   Animate by double\n     clicking one \
+of the frames.  Animation speed may be controlled  by the playback\n     \
+button controls on the left side of the bottom window bar.\n4.  If the plots \
+produced by running a program appear too small,  click \n     on the top  one \
+ (only)  with the mouse,  grap a corner \"handle\" and enlarge it.  \n     \
+Then rerun  the program. \n5.  To prepare a problem driver for the homework, \
+open up a new cell, say 9,\n     and write the script using Cell 8 as \
+\"template\".   Don't try to do the whole\n     thing at once.  Write a few \
+statements and run the script up to that point\n     (before running don't \
+forget to have initialized Cells 1-7 as indicated above).\n     Examine \
+output and resolve error messages (if any) before proceeding.\n     ",
+  FontFamily->"Palatino"]
+}], "Text",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[0.896483, 0.770001, 1]],
+
+Cell[TextData[{
+ StyleBox["  ",
+  FontFamily->"Palatino"],
+ "Cell 0.  Mathematica version-dependent settings (to get plots displayed \
+correctly)"
+}], "Text",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[1, 1, 0]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+DisplayChannel=$DisplayFunction;
+If [$VersionNumber>=6.0, DisplayChannel=Print]; 
+  (* fix for Mathematica 6 & later *)
+  
+Off[General::\"spell1\"];\
+\>", "Input",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ InitializationCell->True,
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[0, 1, 0]],
+
+Cell["\<\
+Cell 1.  Assembly module for space truss structure.  The element stiffness \
+module that
+supports the assembler has been described in Chapter 20.\
+\>", "Text",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[1, 1, 0]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "\nSpaceTrussMasterStiffness[nodxyz_,elenod_,\n   \
+elemat_,elefab_,prcopt_]:=Module[\n  \
+{numele=Length[elenod],numnod=Length[nodxyz],neldof,\n  \
+e,eftab,ni,nj,i,j,ii,jj,ncoor,Em,A,options,Ke,K},\n  \
+K=Table[0,{3*numnod},{3*numnod}];\n  For [e=1, e<=numele, e++, \
+{ni,nj}=elenod[[e]]; \n      eftab={3*ni-2,3*ni-1,3*ni,3*nj-2,3*nj-1,3*nj};",
+ StyleBox[" ",
+  FontColor->RGBColor[1, 0, 0]],
+ "\n      ncoor={nodxyz[[ni]],nodxyz[[nj]]};  ",
+ StyleBox[" ",
+  FontColor->RGBColor[1, 0, 0]],
+ "      \n      Em=elemat[[e]]; A=elefab[[e]]; options=prcopt;  \n      \
+Ke=SpaceBar2Stiffness[ncoor,Em,A,options];\n      neldof=Length[Ke];\n      \
+For [i=1, i<=neldof, i++, ii=eftab[[i]];\n          For [j=i, j<=neldof, j++, \
+jj=eftab[[j]];\n              K[[jj,ii]]=K[[ii,jj]]+=Ke[[i,j]] ];\n          \
+];\n      ]; Return[K];\n  ];\n\
+SpaceBar2Stiffness[ncoor_,Em_,A_,options_]:=Module[\n  \
+{x1,x2,y1,y2,z1,z2,x21,y21,z21,EA,numer,L,LL,LLL,Ke},",
+ StyleBox[" ",
+  FontColor->RGBColor[1, 0, 0]],
+ "\n  {{x1,y1,z1},{x2,y2,z2}}=ncoor; {x21,y21,z21}={x2-x1,y2-y1,z2-z1};\n  \
+EA=Em*A; {numer}=options;  LL=x21^2+y21^2+z21^2; L=Sqrt[LL];\n  If \
+[numer,{x21,y21,z21,EA,LL,L}=N[{x21,y21,z21,EA,LL,L}]];\n  If [!numer, \
+L=PowerExpand[L]]; LLL=Simplify[LL*L];\n  Ke=(Em*A/LLL)*\n     {{ x21*x21, \
+x21*y21, x21*z21,-x21*x21,-x21*y21,-x21*z21},\n      { y21*x21, y21*y21, \
+y21*z21,-y21*x21,-y21*y21,-y21*z21},\n      { z21*x21, z21*y21, \
+z21*z21,-z21*x21,-z21*y21,-z21*z21},\n      {-x21*x21,-x21*y21,-x21*z21, \
+x21*x21, x21*y21, x21*z21},\n      {-y21*x21,-y21*y21,-y21*z21, y21*x21, \
+y21*y21, y21*z21},\n      {-z21*x21,-z21*y21,-z21*z21, z21*x21, z21*y21, \
+z21*z21}};\n  Return[Ke]];\n  \n",
+ StyleBox["ClearAll[nodxyz,elemat,elefab,eleopt];\n\
+nodxyz={{0,0,0},{10,0,0},{10,10,0}};\nelenod= {{1,2},{2,3},{1,3}};\nelemat= \
+Table[100,{3}]; elefab= {1,1/2,2*Sqrt[2]}; prcopt= {False};\n\
+K=SpaceTrussMasterStiffness[nodxyz,elenod,elemat,elefab,prcopt];\n\
+Print[\"Master Stiffness of Example Truss in 3D:\\n\",K//MatrixForm];\nPrint[\
+\"eigs of K:\",Chop[Eigenvalues[N[K]]]]; ",
+  FontColor->RGBColor[0, 0, 1]]
+}], "Input",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ InitializationCell->True,
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[0, 1, 0]],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Master Stiffness of Example Truss in 3D:\\n\"\>", 
+   "\[InvisibleSpace]", 
+   TagBox[
+    RowBox[{"(", "\[NoBreak]", GridBox[{
+       {"20", "10", "0", 
+        RowBox[{"-", "10"}], "0", "0", 
+        RowBox[{"-", "10"}], 
+        RowBox[{"-", "10"}], "0"},
+       {"10", "10", "0", "0", "0", "0", 
+        RowBox[{"-", "10"}], 
+        RowBox[{"-", "10"}], "0"},
+       {"0", "0", "0", "0", "0", "0", "0", "0", "0"},
+       {
+        RowBox[{"-", "10"}], "0", "0", "10", "0", "0", "0", "0", "0"},
+       {"0", "0", "0", "0", "5", "0", "0", 
+        RowBox[{"-", "5"}], "0"},
+       {"0", "0", "0", "0", "0", "0", "0", "0", "0"},
+       {
+        RowBox[{"-", "10"}], 
+        RowBox[{"-", "10"}], "0", "0", "0", "0", "10", "10", "0"},
+       {
+        RowBox[{"-", "10"}], 
+        RowBox[{"-", "10"}], "0", "0", 
+        RowBox[{"-", "5"}], "0", "10", "15", "0"},
+       {"0", "0", "0", "0", "0", "0", "0", "0", "0"}
+      },
+      GridBoxAlignment->{
+       "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, 
+        "Rows" -> {{Baseline}}, "RowsIndexed" -> {}},
+      GridBoxSpacings->{"Columns" -> {
+          Offset[0.27999999999999997`], {
+           Offset[0.7]}, 
+          Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+          Offset[0.2], {
+           Offset[0.4]}, 
+          Offset[0.2]}, "RowsIndexed" -> {}}], "\[NoBreak]", ")"}],
+    Function[BoxForm`e$, 
+     MatrixForm[BoxForm`e$]]]}],
+  SequenceForm["Master Stiffness of Example Truss in 3D:\n", 
+   MatrixForm[CompressedData["
+1:eJxTTMoPymNiYGDghGIRIOZigIBv////Z0Biw/hcSGqQAbIaYgCyWmzmYQOs
+SOzfJNqFzW3IfkFX8xvJv/zEWgQEAHnZMaM=
+    "]]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.593792436099965*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"eigs of K:\"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{
+    "45.35769536208347`", ",", "16.740308488776797`", ",", 
+     "7.901996149139733`", ",", "0", ",", "0", ",", "0", ",", "0", ",", "0", 
+     ",", "0"}], "}"}]}],
+  SequenceForm[
+  "eigs of K:", {
+   45.35769536208347, 16.740308488776797`, 7.901996149139733, 0, 0, 0, 0, 0, 
+    0}],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.5937924361460743`*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell["\<\
+Cell 2.  These modules apply the displacement boundary conditions by \
+modifying the force
+vector and the master stiffness matrix.  This implementation of \
+ModifyNodeForces
+handles nonzero prescribed displacements.\
+\>", "Text",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[1, 1, 0]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "ModifiedMasterStiffness[nodtag_,K_] := Module[\n  \
+{i,j,k,n=Length[K],pdof,np,Kmod=K},\n  pdof=PrescDisplacementDOFTags[nodtag]; \
+np=Length[pdof];\n  For [k=1,k<=np,k++, i=pdof[[k]]; \n      For \
+[j=1,j<=n,j++, Kmod[[i,j]]=Kmod[[j,i]]=0];\n      Kmod[[i,i]]=1]; \n  \
+Return[Kmod]];  \n  \nModifiedNodeForces[nodtag_,nodval_,K_,f_]:= Module[\n  \
+{i,j,k,n=Length[K],pdof,pval,np,d,c,fmod=f},\n  \
+pdof=PrescDisplacementDOFTags[nodtag]; np=Length[pdof];\n  \
+pval=PrescDisplacementDOFValues[nodtag,nodval]; c=Table[1,{n}]; \n  For \
+[k=1,k<=np,k++, i=pdof[[k]]; c[[i]]=0];\n  For [k=1,k<=np,k++, i=pdof[[k]]; \
+d=pval[[k]]; \n      fmod[[i]]=d; If [d==0, Continue[]];\n      For \
+[j=1,j<=n,j++, fmod[[j]]-=K[[i,j]]*c[[j]]*d]; \n      ];  \n  Return[fmod]];\n\
+  \nPrescDisplacementDOFTags[nodtag_]:= Module [\n \
+{j,n,numnod=Length[nodtag],pdof={},k=0,m},\n  For [n=1,n<=numnod,n++, \
+m=Length[nodtag[[n]]];\n      For [j=1,j<=m,j++, If [nodtag[[n,j]]>0, \n      \
+          AppendTo[pdof,k+j]];\n         ]; k+=m;\n     ]; Return[pdof]]; \n  \
+         \nPrescDisplacementDOFValues[nodtag_,nodval_]:= Module [\n \
+{j,n,numnod=Length[nodtag],pval={},k=0,m},\n  For [n=1,n<=numnod,n++, \
+m=Length[nodtag[[n]]];\n      For [j=1,j<=m,j++, If [nodtag[[n,j]]>0, \n      \
+          AppendTo[pval,nodval[[n,j]]]];\n         ]; k+=m;\n     ]; \
+Return[pval]];\n\n",
+ StyleBox["ClearAll[K,f,v1,v2,v4]; Km=Array[K,{6,6}];\nPrint[\"Master \
+Stiffness: \",Km//MatrixForm];\nnodtag={{1,1},{0,1},{0,0}}; \
+nodval={{v1,v2},{0,v4},{0,0}};\nKmod=ModifiedMasterStiffness[nodtag,Km];\n\
+Print[\"Modified Master Stiffness:\",Kmod//MatrixForm];\nfm=Array[f,{6}]; \
+Print[\"Master Force Vector:\",fm];\n\
+fmod=ModifiedNodeForces[nodtag,nodval,Km,fm];\nPrint[\"Modified Force Vector:\
+\",fmod//MatrixForm];\n\n(*nodtag= {{0,1,0},{0,0,0},{1,0,1},{0,1,1},{0,0,1}};\
+\nnodval=-{{1,2,3},{4,5,6},{7,8,9},{10,11,12},{13,14,15}};\n\
+Print[PrescDisplacementDOFTags[nodtag]];\n\
+Print[PrescDisplacementDOFValues[nodtag,nodval]];*)",
+  FontColor->RGBColor[0, 0, 1]]
+}], "Input",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ InitializationCell->True,
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[0, 1, 0]],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Master Stiffness: \"\>", "\[InvisibleSpace]", 
+   TagBox[
+    RowBox[{"(", "\[NoBreak]", GridBox[{
+       {
+        RowBox[{"K", "[", 
+         RowBox[{"1", ",", "1"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"1", ",", "2"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"1", ",", "3"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"1", ",", "4"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"1", ",", "5"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"1", ",", "6"}], "]"}]},
+       {
+        RowBox[{"K", "[", 
+         RowBox[{"2", ",", "1"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"2", ",", "2"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"2", ",", "3"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"2", ",", "4"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"2", ",", "5"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"2", ",", "6"}], "]"}]},
+       {
+        RowBox[{"K", "[", 
+         RowBox[{"3", ",", "1"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"3", ",", "2"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"3", ",", "3"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"3", ",", "4"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"3", ",", "5"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"3", ",", "6"}], "]"}]},
+       {
+        RowBox[{"K", "[", 
+         RowBox[{"4", ",", "1"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"4", ",", "2"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"4", ",", "3"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"4", ",", "4"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"4", ",", "5"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"4", ",", "6"}], "]"}]},
+       {
+        RowBox[{"K", "[", 
+         RowBox[{"5", ",", "1"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"5", ",", "2"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"5", ",", "3"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"5", ",", "4"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"5", ",", "5"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"5", ",", "6"}], "]"}]},
+       {
+        RowBox[{"K", "[", 
+         RowBox[{"6", ",", "1"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"6", ",", "2"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"6", ",", "3"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"6", ",", "4"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"6", ",", "5"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"6", ",", "6"}], "]"}]}
+      },
+      GridBoxAlignment->{
+       "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, 
+        "Rows" -> {{Baseline}}, "RowsIndexed" -> {}},
+      GridBoxSpacings->{"Columns" -> {
+          Offset[0.27999999999999997`], {
+           Offset[0.7]}, 
+          Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+          Offset[0.2], {
+           Offset[0.4]}, 
+          Offset[0.2]}, "RowsIndexed" -> {}}], "\[NoBreak]", ")"}],
+    Function[BoxForm`e$, 
+     MatrixForm[BoxForm`e$]]]}],
+  SequenceForm["Master Stiffness: ", 
+   MatrixForm[{{
+      K[1, 1], 
+      K[1, 2], 
+      K[1, 3], 
+      K[1, 4], 
+      K[1, 5], 
+      K[1, 6]}, {
+      K[2, 1], 
+      K[2, 2], 
+      K[2, 3], 
+      K[2, 4], 
+      K[2, 5], 
+      K[2, 6]}, {
+      K[3, 1], 
+      K[3, 2], 
+      K[3, 3], 
+      K[3, 4], 
+      K[3, 5], 
+      K[3, 6]}, {
+      K[4, 1], 
+      K[4, 2], 
+      K[4, 3], 
+      K[4, 4], 
+      K[4, 5], 
+      K[4, 6]}, {
+      K[5, 1], 
+      K[5, 2], 
+      K[5, 3], 
+      K[5, 4], 
+      K[5, 5], 
+      K[5, 6]}, {
+      K[6, 1], 
+      K[6, 2], 
+      K[6, 3], 
+      K[6, 4], 
+      K[6, 5], 
+      K[6, 6]}}]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.593792436176408*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Modified Master Stiffness:\"\>", "\[InvisibleSpace]", 
+   TagBox[
+    RowBox[{"(", "\[NoBreak]", GridBox[{
+       {"1", "0", "0", "0", "0", "0"},
+       {"0", "1", "0", "0", "0", "0"},
+       {"0", "0", 
+        RowBox[{"K", "[", 
+         RowBox[{"3", ",", "3"}], "]"}], "0", 
+        RowBox[{"K", "[", 
+         RowBox[{"3", ",", "5"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"3", ",", "6"}], "]"}]},
+       {"0", "0", "0", "1", "0", "0"},
+       {"0", "0", 
+        RowBox[{"K", "[", 
+         RowBox[{"5", ",", "3"}], "]"}], "0", 
+        RowBox[{"K", "[", 
+         RowBox[{"5", ",", "5"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"5", ",", "6"}], "]"}]},
+       {"0", "0", 
+        RowBox[{"K", "[", 
+         RowBox[{"6", ",", "3"}], "]"}], "0", 
+        RowBox[{"K", "[", 
+         RowBox[{"6", ",", "5"}], "]"}], 
+        RowBox[{"K", "[", 
+         RowBox[{"6", ",", "6"}], "]"}]}
+      },
+      GridBoxAlignment->{
+       "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, 
+        "Rows" -> {{Baseline}}, "RowsIndexed" -> {}},
+      GridBoxSpacings->{"Columns" -> {
+          Offset[0.27999999999999997`], {
+           Offset[0.7]}, 
+          Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+          Offset[0.2], {
+           Offset[0.4]}, 
+          Offset[0.2]}, "RowsIndexed" -> {}}], "\[NoBreak]", ")"}],
+    Function[BoxForm`e$, 
+     MatrixForm[BoxForm`e$]]]}],
+  SequenceForm["Modified Master Stiffness:", 
+   MatrixForm[{{1, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0}, {0, 0, 
+      K[3, 3], 0, 
+      K[3, 5], 
+      K[3, 6]}, {0, 0, 0, 1, 0, 0}, {0, 0, 
+      K[5, 3], 0, 
+      K[5, 5], 
+      K[5, 6]}, {0, 0, 
+      K[6, 3], 0, 
+      K[6, 5], 
+      K[6, 6]}}]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.593792436180233*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Master Force Vector:\"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"f", "[", "1", "]"}], ",", 
+     RowBox[{"f", "[", "2", "]"}], ",", 
+     RowBox[{"f", "[", "3", "]"}], ",", 
+     RowBox[{"f", "[", "4", "]"}], ",", 
+     RowBox[{"f", "[", "5", "]"}], ",", 
+     RowBox[{"f", "[", "6", "]"}]}], "}"}]}],
+  SequenceForm["Master Force Vector:", {
+    $CellContext`f[1], 
+    $CellContext`f[2], 
+    $CellContext`f[3], 
+    $CellContext`f[4], 
+    $CellContext`f[5], 
+    $CellContext`f[6]}],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.5937924361817713`*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Modified Force Vector:\"\>", "\[InvisibleSpace]", 
+   TagBox[
+    RowBox[{"(", "\[NoBreak]", 
+     TagBox[GridBox[{
+        {"v1"},
+        {"v2"},
+        {
+         RowBox[{
+          RowBox[{"f", "[", "3", "]"}], "-", 
+          RowBox[{"v1", " ", 
+           RowBox[{"K", "[", 
+            RowBox[{"1", ",", "3"}], "]"}]}], "-", 
+          RowBox[{"v2", " ", 
+           RowBox[{"K", "[", 
+            RowBox[{"2", ",", "3"}], "]"}]}], "-", 
+          RowBox[{"v4", " ", 
+           RowBox[{"K", "[", 
+            RowBox[{"4", ",", "3"}], "]"}]}]}]},
+        {"v4"},
+        {
+         RowBox[{
+          RowBox[{"f", "[", "5", "]"}], "-", 
+          RowBox[{"v1", " ", 
+           RowBox[{"K", "[", 
+            RowBox[{"1", ",", "5"}], "]"}]}], "-", 
+          RowBox[{"v2", " ", 
+           RowBox[{"K", "[", 
+            RowBox[{"2", ",", "5"}], "]"}]}], "-", 
+          RowBox[{"v4", " ", 
+           RowBox[{"K", "[", 
+            RowBox[{"4", ",", "5"}], "]"}]}]}]},
+        {
+         RowBox[{
+          RowBox[{"f", "[", "6", "]"}], "-", 
+          RowBox[{"v1", " ", 
+           RowBox[{"K", "[", 
+            RowBox[{"1", ",", "6"}], "]"}]}], "-", 
+          RowBox[{"v2", " ", 
+           RowBox[{"K", "[", 
+            RowBox[{"2", ",", "6"}], "]"}]}], "-", 
+          RowBox[{"v4", " ", 
+           RowBox[{"K", "[", 
+            RowBox[{"4", ",", "6"}], "]"}]}]}]}
+       },
+       GridBoxAlignment->{
+        "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, 
+         "Rows" -> {{Baseline}}, "RowsIndexed" -> {}},
+       GridBoxSpacings->{"Columns" -> {
+           Offset[0.27999999999999997`], {
+            Offset[0.5599999999999999]}, 
+           Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+           Offset[0.2], {
+            Offset[0.4]}, 
+           Offset[0.2]}, "RowsIndexed" -> {}}],
+      Column], "\[NoBreak]", ")"}],
+    Function[BoxForm`e$, 
+     MatrixForm[BoxForm`e$]]]}],
+  SequenceForm["Modified Force Vector:", 
+   MatrixForm[{$CellContext`v1, $CellContext`v2, $CellContext`f[
+      3] - $CellContext`v1 K[1, 3] - $CellContext`v2 
+     K[2, 3] - $CellContext`v4 
+     K[4, 3], $CellContext`v4, $CellContext`f[5] - $CellContext`v1 
+     K[1, 5] - $CellContext`v2 K[2, 5] - $CellContext`v4 
+     K[4, 5], $CellContext`f[6] - $CellContext`v1 K[1, 6] - $CellContext`v2 
+     K[2, 6] - $CellContext`v4 K[4, 6]}]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.593792436183742*^9}]
+}, Open  ]],
+
+Cell["\<\
+Cell 3.  Computation of internal forces (axial forces) for all elements of a \
+space truss,
+from the computed nodal displacements.\
+\>", "Text",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[1, 1, 0]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "SpaceTrussIntForces[nodxyz_,elenod_,elemat_,elefab_,\n  noddis_,prcopt_]:= \
+Module[{  numnod=Length[nodxyz],\n  \
+numele=Length[elenod],e,ni,nj,ncoor,Em,A,options,ue,p},\n  \
+p=Table[0,{numele}]; \n  For [e=1, e<=numele, e++, {ni,nj}=elenod[[e]]; \n    \
+  ncoor={nodxyz[[ni]],nodxyz[[nj]]}; \n      ue=Flatten[{ \
+noddis[[ni]],noddis[[nj]] }]; ",
+ StyleBox["   ",
+  FontColor->RGBColor[1, 0, 0]],
+ "      \n      Em=elemat[[e]]; A=elefab[[e]]; options=prcopt; \n      \
+p[[e]]=SpaceBar2IntForce[ncoor,Em,A,ue,options]\n      ]; \n  Return[p]];\n\n\
+SpaceBar2IntForce[ncoor_,Em_,A_,ue_,options_]:= Module[ \n \
+{x1,x2,y1,y2,z1,z2,x21,y21,z21,EA,numer,LL,pe},",
+ StyleBox[" ",
+  FontColor->RGBColor[1, 0, 0]],
+ "\n {{x1,y1,z1},{x2,y2,z2}}=ncoor; {x21,y21,z21}={x2-x1,y2-y1,z2-z1};\n  \
+EA=Em*A; {numer}=options;  LL=x21^2+y21^2+z21^2;\n  If \
+[numer,{x21,y21,z21,EA,LL}=N[{x21,y21,z21,EA,LL}]];\n  \
+pe=(EA/LL)*(x21*(ue[[4]]-ue[[1]])+y21*(ue[[5]]-ue[[2]])+\n             \
++z21*(ue[[6]]-ue[[3]]));\n  Return[pe]]; \n  \n\
+SpaceTrussStresses[elefab_,elefor_,prcopt_]:= Module[\n \
+{numele=Length[elefab],e,elesig}, elesig=Table[0,{numele}]; \n  For [e=1, \
+e<=numele, e++, elesig[[e]]=elefor[[e]]/elefab[[e]] ];\n  Return[elesig]]; \n",
+ StyleBox["\nClearAll[nodxyz,elenod,elemat,elefab,noddis];\n\
+nodxyz={{0,0,0},{10,0,0},{10,10,0}}; elenod={{1,2},{2,3},{1,3}};\nelemat= \
+Table[100,{3}]; elefab= {1,1/2,2*Sqrt[2]};\nnoddis={{0,0,0}, {0,0,0}, \
+{4/10,-2/10,0}}; prcopt={False};\n\
+elefor=SpaceTrussIntForces[nodxyz,elenod,elemat,elefab,noddis,prcopt];\n\
+Print[\"Int Forces of Example Truss:\",elefor];\n\
+Print[\"Stresses:\",SpaceTrussStresses[elefab,elefor,prcopt]];",
+  FontColor->RGBColor[0, 0, 1]]
+}], "Input",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ InitializationCell->True,
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[0, 1, 0]],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Int Forces of Example Truss:\"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", 
+     RowBox[{"-", "1"}], ",", 
+     RowBox[{"2", " ", 
+      SqrtBox["2"]}]}], "}"}]}],
+  SequenceForm["Int Forces of Example Truss:", {0, -1, 2 2^Rational[1, 2]}],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.593792436207822*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Stresses:\"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", 
+     RowBox[{"-", "2"}], ",", "1"}], "}"}]}],
+  SequenceForm["Stresses:", {0, -2, 1}],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.593792436212056*^9}]
+}, Open  ]],
+
+Cell["\<\
+Cell 4 has  groups plot modules that support preprocessing, that is, draw \
+pictures of the FEM model.
+Modules to plot loads and BCs removed to keep it short.   \
+PlotSpaceTrussElements draws only the 
+element (bars) without any labels. PlotSpaceTrussElementsAndNodes draws \
+elements and nodes, 
+and optionally labels them.\
+\>", "Text",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[1, 1, 0]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "WorldToScreenMatrix[view_]:=Module[{VW={{0,1,0},{0,0,1}},\n  \
+Vx,Vy,Vz,Wx,Wy,Wz,xden,yden,Q}, \n  If [Length[view]==2, VW=view];\n  If \
+[Length[view]==3, VW[[2]]=view];\n  {{Vx,Vy,Vz},{Wx,Wy,Wz}}=VW;\n  \
+xden=Sqrt[Wz^2*(Vx^2+Vy^2)-2*Wx*Wz*Vx*Vz-\n  \
+2*Wy*Vy*(Wx*Vx+Wz*Vz)+Wy^2*(Vx^2+Vz^2)+Wx^2*(Vy^2+Vz^2)];\n  \
+yden=Sqrt[(Wx^2+Wy^2+Wz^2)*(Wz^2*(Vx^2+Vy^2)-2*Wx*Wz*Vx*Vz-\n  \
+2*Wy*Vy*(Wx*Vx+Wz*Vz)+Wy^2*(Vx^2+Vz^2)+Wx^2*(Vy^2+Vz^2))];\n  Q=\
+\[InvisibleSpace]\[InvisibleSpace]{{Wz*Vy-Wy*Vz,-Wz*Vx+Wx*Vz,Wy*Vx-Wx*Vy}/\
+xden, \n     {Wy^2*Vx-Wx*Wy*Vy+Wz*(Wz*Vx-Wx*Vz),-Wx*Wy*Vx+Wx^2*Vy+ \n     \
+Wz*(Wz*Vy-Wy*Vz),-Wz*(Wx*Vx+Wy*Vy)+(Wx^2+Wy^2)*Vz}/yden};\n  Return[Q]];\n\n\
+PlotSpaceTrussElements[nodxyz_,elenod_,title_,{view_,aspect_,labels_}]:= \n  \
+Module[{numnod=Length[nodxyz],numele=Length[elenod],\n  \
+e,n,ni,nj,Q,x,y,xmin,xmax,ymin,ymax,dx,dy,xyc,ar,pbars={}},\n  \
+x=y=Table[0,{numnod}]; Q=WorldToScreenMatrix[view];\n  For \
+[n=1,n<=numnod,n++, {x[[n]],y[[n]]}=Q.nodxyz[[n]] ];\n  \
+{xmin,xmax,ymin,ymax}=N[{Min[x],Max[x],Min[y],Max[y]}];\n  \
+{dx,dy}={xmax-xmin,ymax-ymin};\n  For [e=1,e<=numele,e++, \
+{ni,nj}=elenod[[e]]; \n       xyc={{x[[ni]],y[[ni]]},{x[[nj]],y[[nj]]}};      \
+\n       AppendTo[pbars,Graphics[Line[xyc]]]\n      ];\n \
+arat=AspectRatio->Automatic; If [aspect>0, arat=AspectRatio->aspect];\n If \
+[aspect==0&&dx>0, arat=AspectRatio->dy/dx];\n \
+Show[Graphics[AbsoluteThickness[2]],\n      Graphics[RGBColor[0,0,0]],\n      \
+pbars, arat, PlotLabel->title,\n      DisplayFunction->DisplayChannel ];\n \
+ClearAll[pbars];\n ];\n\n\
+PlotSpaceTrussElementsAndNodes[nodxyz_,elenod_,title_,\n   \
+{view_,aspect_,labels_}]:= Module[{numnod=Length[nodxyz],\n  \
+numele=Length[elenod],k=Length[labels],e,n,ni,nj,Q,x,y,xyc,\n  \
+xy0,xyn,xmin,xmax,ymin,ymax,elabels,nlabels,fntinfo,\n  \
+labnod,frn,fex,fey,labele,fre,fntnam,fntsiz,fntwgt,fntslt,\n  \
+black,red,green,blue,yellow,fill,grey,nofill,arat,\n  \
+style,dx,dy,dmin,rn,re,ex,ey,elab,nlab,pbars={},\n  \
+pecirc={},pelab={},pedisk={},pncirc={},pndisk={},pnlab={} },\n  \
+x=y=Table[0,{numnod}]; Q=WorldToScreenMatrix[view];\n  \
+{labnod,frn,fex,fey,labele,fre,fntnam,fntsiz,fntwgt,fntslt}=\n    \
+{True,0.03,-1.5,0.8,True,0.03,\"Times\",12,\"Plain\",\"Plain\"};  \n  If \
+[k>=1, nlabels=labels[[1]] ]; \n  If [k>=2, elabels=labels[[2]] ];\n  If \
+[k>=3, fntinfo=labels[[3]] ];\n  If [Length[nlabels]>=1, labnod=nlabels[[1]] \
+];\n  If [Length[nlabels]>=2, frn=   nlabels[[2]] ];\n  If \
+[Length[nlabels]>=3, fex=   nlabels[[3]] ];\n  If [Length[nlabels]>=4, fey=   \
+nlabels[[4]] ];\n  If [Length[elabels]>=1, labele=elabels[[1]] ];\n  If \
+[Length[elabels]>=2, fre=   elabels[[2]] ];\n  If [Length[fntinfo]>=1, \
+fntnam=fntinfo[[1]] ];\n  If [Length[fntinfo]>=2, fntsiz=fntinfo[[2]] ];\n  \
+If [Length[fntinfo]>=3, fntwgt=fntinfo[[3]] ];\n  If [Length[fntinfo]>=4, \
+fntslt=fntinfo[[4]] ];\n  For [n=1,n<=numnod,n++, \
+{x[[n]],y[[n]]}=Q.nodxyz[[n]] ];\n  \
+{xmin,xmax,ymin,ymax}=N[{Min[x],Max[x],Min[y],Max[y]}];\n  \
+{dx,dy}={xmax-xmin,ymax-ymin}; dmin=Min[dx,dy];\n  rn=frn*dmin; re=fre*dmin;\n\
+  style=TextStyle->{FontFamily->fntnam,FontSize-> fntsiz,\n                   \
+ FontWeight->fntwgt,FontSlant->fntslt};\n  For [e=1,e<=numele,e++, \
+{ni,nj}=elenod[[e]]; \n      xyc={{x[[ni]],y[[ni]]},{x[[nj]],y[[nj]]}};\n     \
+ xy0=(xyc[[1]]+xyc[[2]])/2;\n      AppendTo[pbars,Graphics[Line[xyc]]];\n     \
+ If [labele, elab=ToString[e];\n          AppendTo[pedisk, \
+Graphics[Disk[xy0,re]]]; \n          AppendTo[pecirc, \
+Graphics[Circle[xy0,re]]];\n          AppendTo[pelab,  \
+Graphics[Text[elab,xy0-{0,0.2*re},style]]]\n         ];\n      ];\n  \
+style=TextStyle->{FontFamily->fntnam,FontSize-> fntsiz,\n                    \
+FontWeight->\"Bold\",FontSlant->\"Plain\"};\n  For [n=1,n<=numnod,n++,  \
+xyn={x[[n]],y[[n]]}; \n      AppendTo[pndisk,  Graphics[Disk[xyn,rn]]];\n     \
+ AppendTo[pncirc,  Graphics[Circle[xyn,rn]]];\n      If [labnod, \
+nlab=ToString[n]; xy0=xyn+{fex,fey}*rn; \n          AppendTo[pnlab, \
+Graphics[Text[nlab,xy0,style]]]];\n     ]; \n  \
+{black,red,green,blue,yellow}={RGBColor[0,0,0],RGBColor[1,0,0],\n     \
+RGBColor[0,1,0],RGBColor[0,0,1],RGBColor[1,1,0]};\n  \
+{nofill,grey,fill}={GrayLevel[0],GrayLevel[.8],GrayLevel[1]};\n  \
+arat=AspectRatio->Automatic; \n  If [aspect>0, arat=AspectRatio->aspect];\n  \
+If [aspect==0&&dx>0, arat=AspectRatio->dy/dx];\n  \
+Show[Graphics[nofill],Graphics[AbsoluteThickness[3]],\n       \
+Graphics[red],pbars, Graphics[AbsoluteThickness[1]],\n       \
+Graphics[fill],pndisk, Graphics[nofill],pncirc, \n       Graphics[yellow], \
+pedisk, Graphics[nofill], \n       Graphics[black], pecirc, pelab, pnlab,\n   \
+    arat, PlotLabel->title,\n       DisplayFunction->DisplayChannel ];\n   \
+ClearAll[pbars,pndisk,pncirc,pedisk,pecirc,pelab];\n ];\n \n",
+ StyleBox["nodxyz={{0,0,0},{10,5,0},{10,0,0},{20,8,0},{20,0,0},{30,9,0},\n    \
+   {30,0,0},{40,8,0},{40,0,0},{50,5,0},{50,0,0},{60,0,0}};\nnodxyz=N[nodxyz];\
+\nelenod={{1,3},{3,5},{5,7},{7,9},{9,11},{11,12},\n        \
+{1,2},{2,4},{4,6},{6,8},{8,10},{10,12},\n        \
+{2,3},{4,5},{6,7},{8,9},{10,11},\n        {2,5},{4,7},{7,8},{9,10}};\n\
+view={{0,1,0},{0,0,1}}; \nPlotSpaceTrussElements[nodxyz,elenod,\"plain \
+mesh\",{view,0,{}}];\nlabels={{True,0.05,-1.8,1.8},{True,0.10},{\"Times\",12,\
+\"Plain\",\"Italic\"}};\nPlotSpaceTrussElementsAndNodes[nodxyz,elenod,\"mesh \
+with labels\",{view,-1,labels}];",
+  FontColor->RGBColor[0, 0, 1]]
+}], "Input",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ InitializationCell->True,
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[0, 1, 0]],
+
+Cell[BoxData[
+ GraphicsBox[
+  {RGBColor[0, 0, 0], AbsoluteThickness[2], LineBox[{{0., 0.}, {10., 0.}}], 
+   LineBox[{{10., 0.}, {20., 0.}}], LineBox[{{20., 0.}, {30., 0.}}], 
+   LineBox[{{30., 0.}, {40., 0.}}], LineBox[{{40., 0.}, {50., 0.}}], 
+   LineBox[{{50., 0.}, {60., 0.}}], LineBox[{{0., 0.}, {10., 5.}}], 
+   LineBox[{{10., 5.}, {20., 8.}}], LineBox[{{20., 8.}, {30., 9.}}], 
+   LineBox[{{30., 9.}, {40., 8.}}], LineBox[{{40., 8.}, {50., 5.}}], 
+   LineBox[{{50., 5.}, {60., 0.}}], LineBox[{{10., 5.}, {10., 0.}}], 
+   LineBox[{{20., 8.}, {20., 0.}}], LineBox[{{30., 9.}, {30., 0.}}], 
+   LineBox[{{40., 8.}, {40., 0.}}], LineBox[{{50., 5.}, {50., 0.}}], 
+   LineBox[{{10., 5.}, {20., 0.}}], LineBox[{{20., 8.}, {30., 0.}}], 
+   LineBox[{{30., 0.}, {40., 8.}}], LineBox[{{40., 0.}, {50., 5.}}]},
+  AspectRatio->0.15,
+  DisplayFunction->Print,
+  PlotLabel->FormBox["\"plain mesh\"", TraditionalForm]]], "Print",
+ CellChangeTimes->{3.593792436257045*^9}],
+
+Cell[BoxData[
+ GraphicsBox[{
+   {RGBColor[1, 0, 0], AbsoluteThickness[3], LineBox[{{0., 0.}, {10., 0.}}], 
+    LineBox[{{10., 0.}, {20., 0.}}], LineBox[{{20., 0.}, {30., 0.}}], 
+    LineBox[{{30., 0.}, {40., 0.}}], LineBox[{{40., 0.}, {50., 0.}}], 
+    LineBox[{{50., 0.}, {60., 0.}}], LineBox[{{0., 0.}, {10., 5.}}], 
+    LineBox[{{10., 5.}, {20., 8.}}], LineBox[{{20., 8.}, {30., 9.}}], 
+    LineBox[{{30., 9.}, {40., 8.}}], LineBox[{{40., 8.}, {50., 5.}}], 
+    LineBox[{{50., 5.}, {60., 0.}}], LineBox[{{10., 5.}, {10., 0.}}], 
+    LineBox[{{20., 8.}, {20., 0.}}], LineBox[{{30., 9.}, {30., 0.}}], 
+    LineBox[{{40., 8.}, {40., 0.}}], LineBox[{{50., 5.}, {50., 0.}}], 
+    LineBox[{{10., 5.}, {20., 0.}}], LineBox[{{20., 8.}, {30., 0.}}], 
+    LineBox[{{30., 0.}, {40., 8.}}], LineBox[{{40., 0.}, {50., 5.}}]}, 
+   {GrayLevel[1], AbsoluteThickness[1], DiskBox[{0., 0.}, 0.45], 
+    DiskBox[{10., 5.}, 0.45], DiskBox[{10., 0.}, 0.45], 
+    DiskBox[{20., 8.}, 0.45], DiskBox[{20., 0.}, 0.45], 
+    DiskBox[{30., 9.}, 0.45], DiskBox[{30., 0.}, 0.45], 
+    DiskBox[{40., 8.}, 0.45], DiskBox[{40., 0.}, 0.45], 
+    DiskBox[{50., 5.}, 0.45], DiskBox[{50., 0.}, 0.45], 
+    DiskBox[{60., 0.}, 0.45], 
+    {GrayLevel[0], CircleBox[{0., 0.}, 0.45], CircleBox[{10., 5.}, 0.45], 
+     CircleBox[{10., 0.}, 0.45], CircleBox[{20., 8.}, 0.45], 
+     CircleBox[{20., 0.}, 0.45], CircleBox[{30., 9.}, 0.45], 
+     CircleBox[{30., 0.}, 0.45], CircleBox[{40., 8.}, 0.45], 
+     CircleBox[{40., 0.}, 0.45], CircleBox[{50., 5.}, 0.45], 
+     CircleBox[{50., 0.}, 0.45], CircleBox[{60., 0.}, 0.45]}, 
+    {RGBColor[1, 1, 0], DiskBox[{5., 0.}, 0.9], DiskBox[{15., 0.}, 0.9], 
+     DiskBox[{25., 0.}, 0.9], DiskBox[{35., 0.}, 0.9], 
+     DiskBox[{45., 0.}, 0.9], DiskBox[{55., 0.}, 0.9], 
+     DiskBox[{5., 2.5}, 0.9], DiskBox[{15., 6.5}, 0.9], 
+     DiskBox[{25., 8.5}, 0.9], DiskBox[{35., 8.5}, 0.9], 
+     DiskBox[{45., 6.5}, 0.9], DiskBox[{55., 2.5}, 0.9], 
+     DiskBox[{10., 2.5}, 0.9], DiskBox[{20., 4.}, 0.9], 
+     DiskBox[{30., 4.5}, 0.9], DiskBox[{40., 4.}, 0.9], 
+     DiskBox[{50., 2.5}, 0.9], DiskBox[{15., 2.5}, 0.9], 
+     DiskBox[{25., 4.}, 0.9], DiskBox[{35., 4.}, 0.9], 
+     DiskBox[{45., 2.5}, 0.9]}, 
+    {RGBColor[0, 0, 0], CircleBox[{5., 0.}, 0.9], CircleBox[{15., 0.}, 0.9], 
+     CircleBox[{25., 0.}, 0.9], CircleBox[{35., 0.}, 0.9], 
+     CircleBox[{45., 0.}, 0.9], CircleBox[{55., 0.}, 0.9], 
+     CircleBox[{5., 2.5}, 0.9], CircleBox[{15., 6.5}, 0.9], 
+     CircleBox[{25., 8.5}, 0.9], CircleBox[{35., 8.5}, 0.9], 
+     CircleBox[{45., 6.5}, 0.9], CircleBox[{55., 2.5}, 0.9], 
+     CircleBox[{10., 2.5}, 0.9], CircleBox[{20., 4.}, 0.9], 
+     CircleBox[{30., 4.5}, 0.9], CircleBox[{40., 4.}, 0.9], 
+     CircleBox[{50., 2.5}, 0.9], CircleBox[{15., 2.5}, 0.9], 
+     CircleBox[{25., 4.}, 0.9], CircleBox[{35., 4.}, 0.9], 
+     CircleBox[{45., 2.5}, 0.9], 
+     InsetBox["\<\"1\"\>", {5., -0.18000000000000002`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Plain", 
+        FontSlant -> "Italic"}], 
+     InsetBox["\<\"2\"\>", {15., -0.18000000000000002`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Plain", 
+        FontSlant -> "Italic"}], 
+     InsetBox["\<\"3\"\>", {25., -0.18000000000000002`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Plain", 
+        FontSlant -> "Italic"}], 
+     InsetBox["\<\"4\"\>", {35., -0.18000000000000002`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Plain", 
+        FontSlant -> "Italic"}], 
+     InsetBox["\<\"5\"\>", {45., -0.18000000000000002`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Plain", 
+        FontSlant -> "Italic"}], 
+     InsetBox["\<\"6\"\>", {55., -0.18000000000000002`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Plain", 
+        FontSlant -> "Italic"}], InsetBox["\<\"7\"\>", {5., 2.32},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Plain", 
+        FontSlant -> "Italic"}], InsetBox["\<\"8\"\>", {15., 6.32},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Plain", 
+        FontSlant -> "Italic"}], InsetBox["\<\"9\"\>", {25., 8.32},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Plain", 
+        FontSlant -> "Italic"}], InsetBox["\<\"10\"\>", {35., 8.32},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Plain", 
+        FontSlant -> "Italic"}], InsetBox["\<\"11\"\>", {45., 6.32},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Plain", 
+        FontSlant -> "Italic"}], InsetBox["\<\"12\"\>", {55., 2.32},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Plain", 
+        FontSlant -> "Italic"}], InsetBox["\<\"13\"\>", {10., 2.32},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Plain", 
+        FontSlant -> "Italic"}], InsetBox["\<\"14\"\>", {20., 3.82},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Plain", 
+        FontSlant -> "Italic"}], InsetBox["\<\"15\"\>", {30., 4.32},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Plain", 
+        FontSlant -> "Italic"}], InsetBox["\<\"16\"\>", {40., 3.82},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Plain", 
+        FontSlant -> "Italic"}], InsetBox["\<\"17\"\>", {50., 2.32},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Plain", 
+        FontSlant -> "Italic"}], InsetBox["\<\"18\"\>", {15., 2.32},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Plain", 
+        FontSlant -> "Italic"}], InsetBox["\<\"19\"\>", {25., 3.82},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Plain", 
+        FontSlant -> "Italic"}], InsetBox["\<\"20\"\>", {35., 3.82},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Plain", 
+        FontSlant -> "Italic"}], InsetBox["\<\"21\"\>", {45., 2.32},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Plain", 
+        FontSlant -> "Italic"}], InsetBox["\<\"1\"\>", {-0.81, 0.81},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Bold", FontSlant -> 
+        "Plain"}], InsetBox["\<\"2\"\>", {9.19, 5.8100000000000005`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Bold", FontSlant -> 
+        "Plain"}], InsetBox["\<\"3\"\>", {9.19, 0.81},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Bold", FontSlant -> 
+        "Plain"}], InsetBox["\<\"4\"\>", {19.19, 8.81},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Bold", FontSlant -> 
+        "Plain"}], InsetBox["\<\"5\"\>", {19.19, 0.81},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Bold", FontSlant -> 
+        "Plain"}], InsetBox["\<\"6\"\>", {29.19, 9.81},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Bold", FontSlant -> 
+        "Plain"}], InsetBox["\<\"7\"\>", {29.19, 0.81},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Bold", FontSlant -> 
+        "Plain"}], InsetBox["\<\"8\"\>", {39.19, 8.81},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Bold", FontSlant -> 
+        "Plain"}], InsetBox["\<\"9\"\>", {39.19, 0.81},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Bold", FontSlant -> 
+        "Plain"}], InsetBox["\<\"10\"\>", {49.19, 5.8100000000000005`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Bold", FontSlant -> 
+        "Plain"}], InsetBox["\<\"11\"\>", {49.19, 0.81},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Bold", FontSlant -> 
+        "Plain"}], InsetBox["\<\"12\"\>", {59.19, 0.81},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Bold", FontSlant -> 
+        "Plain"}]}}},
+  AspectRatio->Automatic,
+  DisplayFunction->Print,
+  PlotLabel->FormBox["\"mesh with labels\"", TraditionalForm]]], "Print",
+ CellChangeTimes->{3.59379243628507*^9}]
+}, Open  ]],
+
+Cell["\<\
+Cell 5.  Plot modules that support postprocessing.   These are subdivided \
+into Cells 5A and 5C to keep them short.\
+\>", "Text",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[0, 1, 1]],
+
+Cell["\<\
+Cell 5A. PlotSpaceTrussDeformedShape does exactly what it says.  Note: \
+argument amplif can be
+a scalar amplification, or a list of amplifications.  If the latter, a \
+sequence of colors is used.\
+\>", "Text",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[1, 1, 0]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "PlotSpaceTrussDeformedShape[nodxyz_,elenod_,noddis_,\n    \
+amplif_,box_,title_,{view_,aspect_,colors_}]:= \n  \
+Module[{numnod=Length[nodxyz],numele=Length[elenod],a={},c={},e,k,m,n,\n  \
+ni,nj,nf,Q,xbox,ybox,x,y,x0,y0,xmin,xmax,ymin,ymax,dx,dy,xyc,arat,\n  \
+black,red,green,blue,yellow,white,fill,grey,nofill,f,pbars={},p={}},\n  \
+Q=WorldToScreenMatrix[view]; x=y=Table[0,{numnod}]; nf=Length[box]; \n  If \
+[nf>0, xbox=ybox=Table[0,{nf}]; \n      For [n=1,n<=nf,n++, \
+{xbox[[n]],ybox[[n]]}=Q.box[[n]] ];\n      \
+{xmin,xmax,ymin,ymax}=N[{Min[xbox],Max[xbox],Min[ybox],Max[ybox]}] ];      \n \
+ If [nf==0,\n      For [n=1,n<=numnod,n++, {x[[n]],y[[n]]}=Q.nodxyz[[n]] ];\n \
+     {xmin,xmax,ymin,ymax}=N[{Min[x],Max[x],Min[y],Max[y]}] ];\n  \
+{dx,dy}={xmax-xmin,ymax-ymin};\n  \
+{black,red,green,blue,yellow,white}={RGBColor[0,0,0],RGBColor[1,0,0],\n     \
+RGBColor[0,1,0],RGBColor[0,0,1],RGBColor[1,1,0],RGBColor[1,1,1]};\n  \
+{nofill,grey,fill}={GrayLevel[0],GrayLevel[.8],GrayLevel[1]};\n  \
+arat=AspectRatio->Automatic; \n  If [aspect>0, arat=AspectRatio->aspect];\n  \
+If [aspect==0&&dx>0, arat=AspectRatio->dy/dx];\n  \
+AppendTo[p,Graphics[AbsoluteThickness[.5]]]; AppendTo[p,Graphics[nofill]];\n  \
+enclosingbox={{xmin,ymin},{xmax,ymin},{xmax,ymax},{xmin,ymax},{xmin,ymin}};\n \
+ AppendTo[p,Graphics[Line[enclosingbox]]]; \n  \
+AppendTo[p,Graphics[AbsoluteThickness[2.5]]];\n  If \
+[Length[amplif]==0,a={amplif},a=amplif];\n  If \
+[Length[colors]==0,c={colors},c=colors]; k=Length[c];\n  \
+AppendTo[p,Graphics[black]];\n  For [m=1,m<=Length[a],m++, f=a[[m]]; \
+color=c[[Min[m,k]]];\n       If [color==\"black\",  \
+AppendTo[p,Graphics[black]]];\n       If [color==\"red\",    \
+AppendTo[p,Graphics[red]]];\n       If [color==\"blue\",   \
+AppendTo[p,Graphics[blue]]];\n       If [color==\"green\",  \
+AppendTo[p,Graphics[green]]];\n       If [color==\"yellow\", \
+AppendTo[p,Graphics[yellow]]];\n       If [color==\"white\",  \
+AppendTo[p,Graphics[white]]];\n       For [n=1,n<=numnod,n++, \n           \
+{x[[n]],y[[n]]}=Q.(nodxyz[[n]]+f*noddis[[n]])];\n       For \
+[e=1,e<=numele,e++, {ni,nj}=elenod[[e]]; \n            \
+xyc={{x[[ni]],y[[ni]]},{x[[nj]],y[[nj]]}};      \n       \
+AppendTo[p,Graphics[Line[xyc] ]]];\n      ];\n Show[p, arat, \
+PlotLabel->title, DisplayFunction->DisplayChannel ]; \n \
+ClearAll[x,y,xbox,ybox,p]; \n ];\n",
+ StyleBox[" \n\nnodxyz={{0,0,0},{10,5,0},{10,0,0},{20,8,0},{20,0,0},{30,9,0},\
+\n       {30,0,0},{40,8,0},{40,0,0},{50,5,0},{50,0,0},{60,0,0}};\n\
+noddis={{0,0,0},{0,-10,0},{0,-10,0},{0,-15,0},{0,-15,0},{0,-20,0},\n       \
+{0,-20,0},{0,-15,0},{0,-15,0},{0,-10,0},{0,-10,0},{0,0,0}}/20;\n\
+nodxyz=N[nodxyz];\nelenod={{1,3},{3,5},{5,7},{7,9},{9,11},{11,12},\n        \
+{1,2},{2,4},{4,6},{6,8},{8,10},{10,12},\n        \
+{2,3},{4,5},{6,7},{8,9},{10,11},\n        {2,5},{4,7},{7,8},{9,10}};\n\
+view={{0,1,0},{0,0,1}}; box={{0,-8,0},{60,-8,0},{60,10,0},{0,10,0}};\n\
+PlotSpaceTrussDeformedShape[nodxyz,elenod,noddis,{0,1,2},\n         \
+box,\"orig & 2 deformed shapes\",{view,-1,{\"red\",\"blue\",\"green\"}}]; \n\
+PlotSpaceTrussDeformedShape[nodxyz,elenod,noddis,2.5,box,\n         \
+\"deformed shape @ mag 2.5\",{view,-1,\"black\"}]; \n\
+PlotSpaceTrussDeformedShape[nodxyz,elenod,noddis,4.0,box,\n         \
+\"deformed shape @ mag 4\",{view,-1,\"black\"}]; ",
+  FontColor->RGBColor[0, 0, 1]]
+}], "Input",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ InitializationCell->True,
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ AnimationDisplayTime->8.70245,
+ AnimationCycleOffset->1,
+ AnimationCycleRepetitions->Infinity,
+ FontSize->8,
+ Background->RGBColor[0, 1, 0]],
+
+Cell[BoxData[
+ GraphicsBox[{
+   {GrayLevel[0], AbsoluteThickness[0.5], 
+    LineBox[{{0., -8.}, {60., -8.}, {60., 10.}, {0., 10.}, {0., -8.}}]}, 
+   {RGBColor[1, 0, 0], AbsoluteThickness[2.5], LineBox[{{0., 0.}, {10., 0.}}],
+     LineBox[{{10., 0.}, {20., 0.}}], LineBox[{{20., 0.}, {30., 0.}}], 
+    LineBox[{{30., 0.}, {40., 0.}}], LineBox[{{40., 0.}, {50., 0.}}], 
+    LineBox[{{50., 0.}, {60., 0.}}], LineBox[{{0., 0.}, {10., 5.}}], 
+    LineBox[{{10., 5.}, {20., 8.}}], LineBox[{{20., 8.}, {30., 9.}}], 
+    LineBox[{{30., 9.}, {40., 8.}}], LineBox[{{40., 8.}, {50., 5.}}], 
+    LineBox[{{50., 5.}, {60., 0.}}], LineBox[{{10., 5.}, {10., 0.}}], 
+    LineBox[{{20., 8.}, {20., 0.}}], LineBox[{{30., 9.}, {30., 0.}}], 
+    LineBox[{{40., 8.}, {40., 0.}}], LineBox[{{50., 5.}, {50., 0.}}], 
+    LineBox[{{10., 5.}, {20., 0.}}], LineBox[{{20., 8.}, {30., 0.}}], 
+    LineBox[{{30., 0.}, {40., 8.}}], LineBox[{{40., 0.}, {50., 5.}}], 
+    {RGBColor[0, 0, 1], LineBox[{{0., 0.}, {10., -0.5}}], 
+     LineBox[{{10., -0.5}, {20., -0.75}}], 
+     LineBox[{{20., -0.75}, {30., -1.}}], LineBox[{{30., -1.}, {40., -0.75}}],
+      LineBox[{{40., -0.75}, {50., -0.5}}], LineBox[{{50., -0.5}, {60., 0.}}],
+      LineBox[{{0., 0.}, {10., 4.5}}], LineBox[{{10., 4.5}, {20., 7.25}}], 
+     LineBox[{{20., 7.25}, {30., 8.}}], LineBox[{{30., 8.}, {40., 7.25}}], 
+     LineBox[{{40., 7.25}, {50., 4.5}}], LineBox[{{50., 4.5}, {60., 0.}}], 
+     LineBox[{{10., 4.5}, {10., -0.5}}], LineBox[{{20., 7.25}, {20., -0.75}}],
+      LineBox[{{30., 8.}, {30., -1.}}], LineBox[{{40., 7.25}, {40., -0.75}}], 
+     LineBox[{{50., 4.5}, {50., -0.5}}], LineBox[{{10., 4.5}, {20., -0.75}}], 
+     LineBox[{{20., 7.25}, {30., -1.}}], LineBox[{{30., -1.}, {40., 7.25}}], 
+     LineBox[{{40., -0.75}, {50., 4.5}}]}, 
+    {RGBColor[0, 1, 0], LineBox[{{0., 0.}, {10., -1.}}], 
+     LineBox[{{10., -1.}, {20., -1.5}}], LineBox[{{20., -1.5}, {30., -2.}}], 
+     LineBox[{{30., -2.}, {40., -1.5}}], LineBox[{{40., -1.5}, {50., -1.}}], 
+     LineBox[{{50., -1.}, {60., 0.}}], LineBox[{{0., 0.}, {10., 4.}}], 
+     LineBox[{{10., 4.}, {20., 6.5}}], LineBox[{{20., 6.5}, {30., 7.}}], 
+     LineBox[{{30., 7.}, {40., 6.5}}], LineBox[{{40., 6.5}, {50., 4.}}], 
+     LineBox[{{50., 4.}, {60., 0.}}], LineBox[{{10., 4.}, {10., -1.}}], 
+     LineBox[{{20., 6.5}, {20., -1.5}}], LineBox[{{30., 7.}, {30., -2.}}], 
+     LineBox[{{40., 6.5}, {40., -1.5}}], LineBox[{{50., 4.}, {50., -1.}}], 
+     LineBox[{{10., 4.}, {20., -1.5}}], LineBox[{{20., 6.5}, {30., -2.}}], 
+     LineBox[{{30., -2.}, {40., 6.5}}], LineBox[{{40., -1.5}, {50., 4.}}]}}},
+  AspectRatio->Automatic,
+  DisplayFunction->Print,
+  PlotLabel->FormBox[
+   "\"orig & 2 deformed shapes\"", TraditionalForm]]], "Print",
+ CellChangeTimes->{3.593792436477852*^9}],
+
+Cell[BoxData[
+ GraphicsBox[{
+   {GrayLevel[0], AbsoluteThickness[0.5], 
+    LineBox[{{0., -8.}, {60., -8.}, {60., 10.}, {0., 10.}, {0., -8.}}]}, 
+   {RGBColor[0, 0, 0], AbsoluteThickness[2.5], 
+    LineBox[{{0., 0.}, {10., -1.25}}], LineBox[{{10., -1.25}, {20., -1.875}}],
+     LineBox[{{20., -1.875}, {30., -2.5}}], 
+    LineBox[{{30., -2.5}, {40., -1.875}}], 
+    LineBox[{{40., -1.875}, {50., -1.25}}], 
+    LineBox[{{50., -1.25}, {60., 0.}}], LineBox[{{0., 0.}, {10., 3.75}}], 
+    LineBox[{{10., 3.75}, {20., 6.125}}], LineBox[{{20., 6.125}, {30., 6.5}}],
+     LineBox[{{30., 6.5}, {40., 6.125}}], 
+    LineBox[{{40., 6.125}, {50., 3.75}}], LineBox[{{50., 3.75}, {60., 0.}}], 
+    LineBox[{{10., 3.75}, {10., -1.25}}], 
+    LineBox[{{20., 6.125}, {20., -1.875}}], 
+    LineBox[{{30., 6.5}, {30., -2.5}}], 
+    LineBox[{{40., 6.125}, {40., -1.875}}], 
+    LineBox[{{50., 3.75}, {50., -1.25}}], 
+    LineBox[{{10., 3.75}, {20., -1.875}}], 
+    LineBox[{{20., 6.125}, {30., -2.5}}], 
+    LineBox[{{30., -2.5}, {40., 6.125}}], 
+    LineBox[{{40., -1.875}, {50., 3.75}}]}},
+  AspectRatio->Automatic,
+  DisplayFunction->Print,
+  PlotLabel->FormBox[
+   "\"deformed shape @ mag 2.5\"", TraditionalForm]]], "Print",
+ CellChangeTimes->{3.5937924364837713`*^9}],
+
+Cell[BoxData[
+ GraphicsBox[{
+   {GrayLevel[0], AbsoluteThickness[0.5], 
+    LineBox[{{0., -8.}, {60., -8.}, {60., 10.}, {0., 10.}, {0., -8.}}]}, 
+   {RGBColor[0, 0, 0], AbsoluteThickness[2.5], 
+    LineBox[{{0., 0.}, {10., -2.}}], LineBox[{{10., -2.}, {20., -3.}}], 
+    LineBox[{{20., -3.}, {30., -4.}}], LineBox[{{30., -4.}, {40., -3.}}], 
+    LineBox[{{40., -3.}, {50., -2.}}], LineBox[{{50., -2.}, {60., 0.}}], 
+    LineBox[{{0., 0.}, {10., 3.}}], LineBox[{{10., 3.}, {20., 5.}}], 
+    LineBox[{{20., 5.}, {30., 5.}}], LineBox[{{30., 5.}, {40., 5.}}], 
+    LineBox[{{40., 5.}, {50., 3.}}], LineBox[{{50., 3.}, {60., 0.}}], 
+    LineBox[{{10., 3.}, {10., -2.}}], LineBox[{{20., 5.}, {20., -3.}}], 
+    LineBox[{{30., 5.}, {30., -4.}}], LineBox[{{40., 5.}, {40., -3.}}], 
+    LineBox[{{50., 3.}, {50., -2.}}], LineBox[{{10., 3.}, {20., -3.}}], 
+    LineBox[{{20., 5.}, {30., -4.}}], LineBox[{{30., -4.}, {40., 5.}}], 
+    LineBox[{{40., -3.}, {50., 3.}}]}},
+  AspectRatio->Automatic,
+  DisplayFunction->Print,
+  PlotLabel->FormBox["\"deformed shape @ mag 4\"", TraditionalForm]]], "Print",\
+
+ CellChangeTimes->{3.593792436487973*^9}]
+}, Open  ]],
+
+Cell["\<\
+Cell 5B. Plot Axial Stress level displays stress level and sign using color: \
+red for tension,
+blue for compression, white for zero stress.  A black background is used.\
+\>", "Text",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[1, 1, 0]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "PlotSpaceTrussStresses[nodxyz_,elenod_,elesig_,sigfac_,box_,\n      \
+title_,{view_,aspect_,labels_}]:=  Module[\n \
+{numele=Length[elenod],numnod=Length[nodxyz],\n  \
+e,n,ni,nj,nc,nf,xyc,x,y,xbox,ybox,xmin,xmax,ymin,ymax,dx,dy,\n  \
+smin,smax,fmax,sval,c1,c2,c3,arat,pbox={},pbars={}},\n  \
+x=y=Table[0,{numnod}]; Q=WorldToScreenMatrix[view]; nf=Length[box];\n  For \
+[n=1,n<=numnod,n++, {x[[n]],y[[n]]}=Q.nodxyz[[n]] ];\n  If [nf>0, \
+xbox=ybox=Table[0,{nf}]; \n      For [n=1,n<=nf,n++, \
+{xbox[[n]],ybox[[n]]}=Q.box[[n]] ];\n      \
+{xmin,xmax,ymin,ymax}=N[{Min[xbox],Max[xbox],Min[ybox],Max[ybox]}] ];      \n \
+ If [nf==0,\n      {xmin,xmax,ymin,ymax}=N[{Min[x],Max[x],Min[y],Max[y]}] ];\n\
+  {dx,dy}={xmax-xmin,ymax-ymin};\n  \
+AppendTo[pbox,Graphics[AbsoluteThickness[.5]]]; \n  \
+AppendTo[pbox,Graphics[GrayLevel[0]]];\n  \
+enclosingbox={{xmin,ymin},{xmax,ymin},{xmax,ymax},{xmin,ymax},{xmin,ymin}};\n \
+ AppendTo[pbox,Graphics[Line[enclosingbox]]];\n  \
+AppendTo[pbox,Graphics[AbsoluteThickness[4]]]; \n  smin=Min[elesig]; \
+smax=Max[elesig]; fmax=Max[Abs[smax],Abs[smin]];\n  For [e=1,e<=numele,e++, \n\
+     sval=N[elesig[[e]]*sigfac]; {c1,c2,c3}=LineColor[sval,fmax];",
+ StyleBox[" ",
+  FontColor->RGBColor[1, 0, 0]],
+ "\n     {ni,nj}=elenod[[e]]; xyc={{x[[ni]],y[[ni]]},{x[[nj]],y[[nj]]}};    \n\
+     AppendTo[pbars,Graphics[RGBColor[c1,c2,c3]]];\n     \
+AppendTo[pbars,Graphics[Line[xyc]]]\n     ];\n  arat=AspectRatio->Automatic; \
+\n  If [aspect>0, arat=AspectRatio->aspect];\n  If [aspect==0&&dx>0, \
+arat=AspectRatio->dy/dx];\n  Show[pbox,Graphics[RGBColor[0,0,0]],pbars, \n    \
+   Background->GrayLevel[0], arat, PlotLabel->title,\n       \
+DisplayFunction->DisplayChannel ];\n   ClearAll[pbars,x,y];\n ];\n\n\
+LineColor[f_,fmax_]:= Module[{r,RGBmax={1,0,0},  \n   RGBmin={0,0,1}, \
+RGBzero={1,1,1}, RGBout={0,0,0}},\n   If [f==0 || fmax==0,   \n       \
+Return[RGBzero]];  (* White if f=0 *)\n   If [f>fmax || f<-fmax, \n       \
+Return[RGBout ]];  (* Black if outside range *)\n   If [f>0, r= N[f/fmax]; \n \
+      Return[r*RGBmax+(1-r)*RGBzero]]; (* positive *)\n   If [f<0, \
+r=-N[f/fmax]; \n       Return[r*RGBmin+(1-r)*RGBzero]]; (* negative *)\n];\n\
+",
+ StyleBox["\n",
+  FontColor->RGBColor[1, 0, 0]],
+ StyleBox["nodxyz={{0,0,0},{10,5,0},{10,0,0},{20,8,0},{20,0,0},{30,9,0},\n    \
+   {30,0,0},{40,8,0},{40,0,0},{50,5,0},{50,0,0},{60,0,0}};\nelenod= \
+{{1,3},{3,5},{5,7},{7,9},{9,11},{11,12},\n         \
+{1,2},{2,4},{4,6},{6,8},{8,10},{10,12},\n         \
+{2,3},{4,5},{6,7},{8,9},{10,11},\n         {2,5},{4,7},{7,8},{9,10}};\n\
+elesig={20,20,20,20,20,20,-10,-10,-10,-10,-10,-10,\n        \
+15,12,10,12,15,10,18,18,10};\nview={{2,1,0},{-3,-1,1}};  \
+box={{0,-4,0},{60,-4,0},{60,10,0},{0,10,0}};\n\
+PlotSpaceTrussStresses[nodxyz,elenod,elesig,1,box,\n   \"axial stress in \
+truss members\",{view,0,labels}];  ",
+  FontColor->RGBColor[0, 0, 1]]
+}], "Input",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ InitializationCell->True,
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[0, 1, 0]],
+
+Cell[BoxData[
+ GraphicsBox[{
+   {GrayLevel[0], AbsoluteThickness[0.5], 
+    LineBox[{{-8.16496580927726, -1.9694638556693238`}, {
+     27.760883751542686`, -1.9694638556693238`}, {27.760883751542686`, 
+     12.309149097933274`}, {-8.16496580927726, 
+     12.309149097933274`}, {-8.16496580927726, -1.9694638556693238`}}]}, 
+   {RGBColor[1., 0., 0.], AbsoluteThickness[4], 
+    LineBox[NCache[{{0, 0}, {
+       5 Rational[2, 3]^Rational[1, 2], 5 Rational[2, 33]^Rational[1, 2]}}, {{
+       0, 0}, {4.08248290463863, 1.2309149097933274`}}]], 
+    {RGBColor[1., 0., 0.], 
+     LineBox[NCache[{{
+        5 Rational[2, 3]^Rational[1, 2], 5 Rational[2, 33]^Rational[1, 2]}, {
+        10 Rational[2, 3]^Rational[1, 2], 10 
+         Rational[2, 33]^Rational[1, 2]}}, {{4.08248290463863, 
+       1.2309149097933274`}, {8.16496580927726, 2.461829819586655}}]]}, 
+    {RGBColor[1., 0., 0.], 
+     LineBox[NCache[{{
+        10 Rational[2, 3]^Rational[1, 2], 10 
+         Rational[2, 33]^Rational[1, 2]}, {
+        5 6^Rational[1, 2], 5 Rational[6, 11]^Rational[1, 2]}}, {{
+       8.16496580927726, 2.461829819586655}, {12.24744871391589, 
+       3.692744729379982}}]]}, 
+    {RGBColor[1., 0., 0.], 
+     LineBox[NCache[{{5 6^Rational[1, 2], 5 Rational[6, 11]^Rational[1, 2]}, {
+        20 Rational[2, 3]^Rational[1, 2], 20 
+         Rational[2, 33]^Rational[1, 2]}}, {{12.24744871391589, 
+       3.692744729379982}, {16.32993161855452, 4.92365963917331}}]]}, 
+    {RGBColor[1., 0., 0.], 
+     LineBox[NCache[{{
+        20 Rational[2, 3]^Rational[1, 2], 20 
+         Rational[2, 33]^Rational[1, 2]}, {
+        25 Rational[2, 3]^Rational[1, 2], 25 
+         Rational[2, 33]^Rational[1, 2]}}, {{16.32993161855452, 
+       4.92365963917331}, {20.41241452319315, 6.154574548966637}}]]}, 
+    {RGBColor[1., 0., 0.], 
+     LineBox[NCache[{{
+        25 Rational[2, 3]^Rational[1, 2], 25 
+         Rational[2, 33]^Rational[1, 2]}, {
+        10 6^Rational[1, 2], 10 Rational[6, 11]^Rational[1, 2]}}, {{
+       20.41241452319315, 6.154574548966637}, {24.49489742783178, 
+       7.385489458759964}}]]}, 
+    {RGBColor[0.5, 0.5, 1.], 
+     LineBox[NCache[{{0, 0}, {0, 5 Rational[6, 11]^Rational[1, 2]}}, {{0, 
+        0}, {0, 3.692744729379982}}]]}, 
+    {RGBColor[0.5, 0.5, 1.], 
+     LineBox[NCache[{{0, 5 Rational[6, 11]^Rational[1, 2]}, {
+        2 Rational[2, 3]^Rational[1, 2], 26 
+         Rational[2, 33]^Rational[1, 2]}}, {{0, 3.692744729379982}, {
+        1.632993161855452, 6.400757530925302}}]]}, 
+    {RGBColor[0.5, 0.5, 1.], 
+     LineBox[NCache[{{
+        2 Rational[2, 3]^Rational[1, 2], 26 Rational[2, 33]^Rational[1, 2]}, {
+        2 6^Rational[1, 2], 66^Rational[1, 2]}}, {{1.632993161855452, 
+       6.400757530925302}, {4.898979485566356, 8.12403840463596}}]]}, 
+    {RGBColor[0.5, 0.5, 1.], 
+     LineBox[NCache[{{2 6^Rational[1, 2], 66^Rational[1, 2]}, {
+        4 6^Rational[1, 2], 12 Rational[6, 11]^Rational[1, 2]}}, {{
+       4.898979485566356, 8.12403840463596}, {9.797958971132712, 
+       8.862587350511957}}]]}, 
+    {RGBColor[0.5, 0.5, 1.], 
+     LineBox[NCache[{{
+        4 6^Rational[1, 2], 12 Rational[6, 11]^Rational[1, 2]}, {
+        20 Rational[2, 3]^Rational[1, 2], 35 
+         Rational[2, 33]^Rational[1, 2]}}, {{9.797958971132712, 
+       8.862587350511957}, {16.32993161855452, 8.616404368553292}}]]}, 
+    {RGBColor[0.5, 0.5, 1.], 
+     LineBox[NCache[{{
+        20 Rational[2, 3]^Rational[1, 2], 35 
+         Rational[2, 33]^Rational[1, 2]}, {
+        10 6^Rational[1, 2], 10 Rational[6, 11]^Rational[1, 2]}}, {{
+       16.32993161855452, 8.616404368553292}, {24.49489742783178, 
+       7.385489458759964}}]]}, 
+    {RGBColor[1., 0.25, 0.25], 
+     LineBox[NCache[{{0, 5 Rational[6, 11]^Rational[1, 2]}, {
+        5 Rational[2, 3]^Rational[1, 2], 5 
+         Rational[2, 33]^Rational[1, 2]}}, {{0, 3.692744729379982}, {
+        4.08248290463863, 1.2309149097933274`}}]]}, 
+    {RGBColor[1., 0.3999999999999999, 0.3999999999999999], 
+     LineBox[NCache[{{
+        2 Rational[2, 3]^Rational[1, 2], 26 Rational[2, 33]^Rational[1, 2]}, {
+        10 Rational[2, 3]^Rational[1, 2], 10 
+         Rational[2, 33]^Rational[1, 2]}}, {{1.632993161855452, 
+       6.400757530925302}, {8.16496580927726, 2.461829819586655}}]]}, 
+    {RGBColor[1., 0.5, 0.5], 
+     LineBox[NCache[{{2 6^Rational[1, 2], 66^Rational[1, 2]}, {
+        5 6^Rational[1, 2], 5 Rational[6, 11]^Rational[1, 2]}}, {{
+       4.898979485566356, 8.12403840463596}, {12.24744871391589, 
+       3.692744729379982}}]]}, 
+    {RGBColor[1., 0.3999999999999999, 0.3999999999999999], 
+     LineBox[NCache[{{
+        4 6^Rational[1, 2], 12 Rational[6, 11]^Rational[1, 2]}, {
+        20 Rational[2, 3]^Rational[1, 2], 20 
+         Rational[2, 33]^Rational[1, 2]}}, {{9.797958971132712, 
+       8.862587350511957}, {16.32993161855452, 4.92365963917331}}]]}, 
+    {RGBColor[1., 0.25, 0.25], 
+     LineBox[NCache[{{
+        20 Rational[2, 3]^Rational[1, 2], 35 
+         Rational[2, 33]^Rational[1, 2]}, {
+        25 Rational[2, 3]^Rational[1, 2], 25 
+         Rational[2, 33]^Rational[1, 2]}}, {{16.32993161855452, 
+       8.616404368553292}, {20.41241452319315, 6.154574548966637}}]]}, 
+    {RGBColor[1., 0.5, 0.5], 
+     LineBox[NCache[{{0, 5 Rational[6, 11]^Rational[1, 2]}, {
+        10 Rational[2, 3]^Rational[1, 2], 10 
+         Rational[2, 33]^Rational[1, 2]}}, {{0, 3.692744729379982}, {
+        8.16496580927726, 2.461829819586655}}]]}, 
+    {RGBColor[1., 0.09999999999999998, 0.09999999999999998], 
+     LineBox[NCache[{{
+        2 Rational[2, 3]^Rational[1, 2], 26 Rational[2, 33]^Rational[1, 2]}, {
+        5 6^Rational[1, 2], 5 Rational[6, 11]^Rational[1, 2]}}, {{
+       1.632993161855452, 6.400757530925302}, {12.24744871391589, 
+       3.692744729379982}}]]}, 
+    {RGBColor[1., 0.09999999999999998, 0.09999999999999998], 
+     LineBox[NCache[{{5 6^Rational[1, 2], 5 Rational[6, 11]^Rational[1, 2]}, {
+        4 6^Rational[1, 2], 12 Rational[6, 11]^Rational[1, 2]}}, {{
+       12.24744871391589, 3.692744729379982}, {9.797958971132712, 
+       8.862587350511957}}]]}, 
+    {RGBColor[1., 0.5, 0.5], 
+     LineBox[NCache[{{
+        20 Rational[2, 3]^Rational[1, 2], 20 
+         Rational[2, 33]^Rational[1, 2]}, {
+        20 Rational[2, 3]^Rational[1, 2], 35 
+         Rational[2, 33]^Rational[1, 2]}}, {{16.32993161855452, 
+       4.92365963917331}, {16.32993161855452, 8.616404368553292}}]]}}},
+  AspectRatio->0.39744677239796106`,
+  Background->GrayLevel[0],
+  DisplayFunction->Print,
+  PlotLabel->FormBox[
+   "\"axial stress in truss members\"", TraditionalForm]]], "Print",
+ CellChangeTimes->{3.5937924365285797`*^9}]
+}, Open  ]],
+
+Cell["\<\
+Cell 6.  Miscellaneous utilities supporting print output and some array \
+transformations\
+\>", "Text",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ InitializationCell->True,
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[1, 1, 0]],
+
+Cell["\<\
+PrintSpaceTrussNodeCoordinates[nodxyz_,title_,digits_]:= Module[
+  {numnod=Length[nodxyz],n,x,y,z,d=6,f=6,tab}, 
+  tab=Table[0,{numnod}]; If [Length[digits]==2,{d,f}=digits];
+   For [n=1,n<=numnod,n++,{x,y,z}=nodxyz[[n]]; 
+       tab[[n]]={ToString[n],PaddedForm[x,{d,f}],PaddedForm[y,{d,f}],
+                 PaddedForm[z,{d,f}]}];
+   If [StringLength[title]>0, Print[title]];
+   Print[TableForm[tab, TableAlignments->{Right},   
+      TableDirections->{Column,Row},TableSpacing->{0,2},
+      TableHeadings ->{None,{\"node\", \"x-coor\", \"y-coor\", \
+\"z-coor\"}}]];
+   ];
+   
+PrintSpaceTrussElementData[elenod_,elemat_,elefab_,title_,digits_]:= Module[
+  {e,numele=Length[elenod],Em,A,d=6,f=3,tab}, 
+  tab=Table[0,{numele}]; If [Length[digits]==2,{d,f}=digits];
+   For [e=1,e<=numele,e++, Em=elemat[[e]]; A=elefab[[e]];
+        tab[[e]]={ToString[e],ToString[elenod[[e]]],
+             PaddedForm[Em,{d,f}],PaddedForm[A,{d,f}]}];
+   If [StringLength[title]>0, Print[title]];
+   Print[TableForm[tab, TableAlignments->{Right},
+         TableDirections->{Column,Row},TableSpacing->{0,2},
+         TableHeadings ->{None,{\"elem\", \"nodes\", \"modulus\", \"area\"}}]];
+   ];
+   
+PrintSpaceTrussFreedomActivity[nodtag_,nodval_,title_,digits_]:= Module[
+  {numnod=Length[nodtag],n,tag,val,tab}, 
+   tab=Table[0,{numnod}]; If [Length[digits]==2,{d,f}=digits];
+   For [n=1,n<=numnod,n++, t=nodtag[[n]]; v=nodval[[n]];
+        tab[[n]]={ToString[n],
+          PaddedForm[t[[1]]],PaddedForm[t[[2]]],PaddedForm[t[[3]]],
+          PaddedForm[v[[1]]],PaddedForm[v[[2]]],PaddedForm[v[[3]]] }];
+   If [StringLength[title]>0, Print[title]];
+   Print[TableForm[tab,TableAlignments->{Right},
+         TableDirections->{Column,Row},TableSpacing->{0,1},
+         TableHeadings ->{None,{\"node\", \"x-tag\", \"y-tag\", \"z-tag\",
+                          \"x-value\", \"y-value\", \"z-value\"}} ]];
+   ];
+
+PrintSpaceTrussNodeDisplacements[noddis_,title_,digits_]:= Module[
+  {numnod=Length[noddis],n,ux,uy,uz,tab,d=6,f=6}, 
+  tab=Table[0,{numnod}]; If [Length[digits]==2,{d,f}=digits];
+   For [n=1,n<=numnod,n++, {ux,uy,uz}=noddis[[n]]; 
+       tab[[n]]={ToString[n],PaddedForm[ux,{d,f}],
+                 PaddedForm[uy,{d,f}],PaddedForm[uz,{d,f}]}];
+   If [StringLength[title]>0, Print[title]];
+   Print[TableForm[tab,TableAlignments->{Right},
+         TableDirections->{Column,Row},TableSpacing->{0,1},
+         TableHeadings ->{None,{\"node\", \"x-displ\", \"y-displ\", \"z-displ\
+\"}}]];
+   ];
+PrintSpaceTrussNodeForces[nodfor_,title_,digits_]:= Module[
+  {numnod=Length[nodfor],n,fx,fy,fz,tab,d=4,f=4}, 
+  tab=Table[0,{numnod}]; If [Length[digits]==2,{d,f}=digits];
+   For [n=1,n<=numnod,n++, {fx,fy,fz}=nodfor[[n]]; 
+       tab[[n]]={ToString[n],PaddedForm[fx,{d,f}],
+                 PaddedForm[fy,{d,f}],PaddedForm[fz,{d,f}]}];
+   If [StringLength[title]>0, Print[title]];
+   Print[TableForm[tab,TableAlignments->{Right},
+         TableDirections->{Column,Row},TableSpacing->{0,1},
+         TableHeadings ->{None,{\"node\", \"x-force\", \"y-force\", \"z-force\
+\"}}]];
+   ];
+   
+PrintSpaceTrussElemForcesAndStresses[elefor_,elesig_,title_,digits_]:= 
+  Module[{numele=Length[elefor],e,p,s,d=4,f=4,tab}, 
+   tab=Table[0,{numele}]; If [Length[digits]==2,{d,f}=digits];
+   For [e=1,e<=numele,e++, p=elefor[[e]]; s=elesig[[e]];
+       tab[[e]]={ToString[e],PaddedForm[p,{d,f}],PaddedForm[s,{d,f}]} ]; 
+   If [StringLength[title]>0, Print[title]];
+   Print[TableForm[tab,TableAlignments->{Right},
+         TableDirections->{Column,Row},TableSpacing->{0,1}, 
+         TableHeadings ->{None,{\"elem\", \"axial force\", \"axial \
+stress\"}}]];
+   ]; 
+ 
+FlatNodePartVector[nv_]:=Flatten[nv];
+           
+NodePartFlatVector[nfc_,v_]:= Module [
+  {i,k,m,n,nv={},numnod},
+  If [Length[nfc]==0, nv=Partition[v,nfc]];
+  If [Length[nfc]>0,  numnod=Length[nfc]; m=0;
+      nv=Table[0,{numnod}];   
+      For [n=1,n<=numnod,n++, k=nfc[[n]]; 
+          nv[[n]]=Table[v[[m+i]],{i,1,k}]; 
+          m+=k]];
+  Return[nv]];
+  \
+\>", "Input",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ InitializationCell->True,
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[0, 1, 0]],
+
+Cell["Cell 7. Solution driver module", "Text",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ InitializationCell->True,
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[1, 1, 0]],
+
+Cell[TextData[{
+ "SpaceTrussSolution[nodxyz_,elenod_,elemat_,elefab_,nodtag_,nodval_,\n   \
+prcopt_]:= Module[{K,Kmod,f,fmod,u,noddis,nodfor,elefor,elesig},\n   \
+K=SpaceTrussMasterStiffness[nodxyz,elenod,elemat,elefab,prcopt];\n",
+ StyleBox["   (* Print[\"eigs of K=\",Chop[Eigenvalues[N[K]]]]; *)",
+  FontColor->RGBColor[1, 0, 0]],
+ "\n   Kmod=ModifiedMasterStiffness[nodtag,K];\n   \
+f=FlatNodePartVector[nodval];\n   fmod=ModifiedNodeForces[nodtag,nodval,K,f];\
+\n",
+ StyleBox["   (* Print[\"eigs of Kmod=\",Chop[Eigenvalues[N[Kmod]]]]; *)",
+  FontColor->RGBColor[1, 0, 0]],
+ "\n   u=LinearSolve[Kmod,fmod]; u=Chop[u]; f=Chop[K.u, 10.0^(-8)];\n   \
+nodfor=NodePartFlatVector[3,f]; noddis=NodePartFlatVector[3,u];\n   \
+elefor=Chop[SpaceTrussIntForces[nodxyz,elenod,elemat,elefab,\n               \
+noddis,prcopt]];\n   elesig=SpaceTrussStresses[elefab,elefor,prcopt]; \n   \
+Return[{noddis,nodfor,elefor,elesig}];\n];"
+}], "Input",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ InitializationCell->True,
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[0, 1, 0]],
+
+Cell["Cell 8. Driver program for  bridge truss model ", "Text",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[1, 1, 0]],
+
+Cell["\<\
+Cell 8A.  Animation of deflections.  Uses the displacements u computed by \
+driver program to
+plot a sequence of deformed shapes with amplitude varying as sine of \
+pseudotime t.\
+\>", "Text",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[1, 1, 0]],
+
+Cell["\<\
+view={{0,1,0},{0,0,1}}; box={{0,-4,0},{65,-4,0},{65,10,0},{0,10,0}};
+For [t=0.,t<=N[Pi],t=t+N[Pi/6],  amp=Sin[t];
+    PlotSpaceTrussDeformedShape[NodeCoordinates,ElemNodes,
+    NodeDisplacements,amp,box,\"deformed bridge animation\",
+    {view,-1,\"red\"}]];\
+\>", "Input",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[0, 1, 0]],
+
+Cell["  Cell 9. 25-member transmission tower driver script", "Text",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[1, 1, 0]],
+
+Cell["   ", "Input",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[0, 1, 0]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Cell 10. Module to compute space truss weight as model check. Run only after \
+model is defined in Cell 10\
+\>", "Text",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[1, 1, 0]],
+
+Cell[TextData[{
+ "SpaceTrussWeight[nodxyz_,elenod_,elefab_,specw_]:=Module[\n\
+{e,ni,nj,w=0,x1,x2,y1,y2,z1,z2,x21,y21,z21,\n  numele=Length[elenod],LL},\n  \
+For [e=1,e<=numele,e++,  {ni,nj}=elenod[[e]]; \n       \
+ncoor={nodxyz[[ni]],nodxyz[[nj]]};  \n       {{x1,y1,z1},{x2,y2,z2}}=ncoor; \n\
+       {x21,y21,z21}={x2-x1,y2-y1,z2-z1};LL=x21^2+y21^2+z21^2;\n       \
+w=w+Sqrt[LL]*elefab[[e]]*specw];\n  Return[w]];    \n    ",
+ StyleBox["\n",
+  FontColor->RGBColor[0, 0, 1]],
+ StyleBox["w=SpaceTrussWeight[NodeCoordinates,ElemNodes,ElemFabrications,0.1];\
+ \nPrint[\"weight=\",w];",
+  FontColor->RGBColor[0, 0, 1]]
+}], "Input",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[0, 1, 0]]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.593792906445339*^9, 3.5937929065887537`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.5937979355852833`*^9, 3.593797936435431*^9}, {
+  3.593798000862104*^9, 3.593798001167276*^9}, {3.59379804629279*^9, 
+  3.593798046719632*^9}}],
+
+Cell["Homework Problem 1: Book 20.6", "Section",
+ CellChangeTimes->{{3.593796120640553*^9, 3.593796136318939*^9}}],
+
+Cell["See written attachment", "Text",
+ CellChangeTimes->{{3.5937967807568808`*^9, 3.593796784627603*^9}},
+ Background->RGBColor[0.88, 1, 0.88]],
+
+Cell["Homework Problem 2: Book 21.2", "Section",
+ CellChangeTimes->{{3.5937961379560738`*^9, 3.593796157969445*^9}}],
+
+Cell["\<\
+This logic of ModifiedMasterStiffness.nb and ModifiedNodeForces.nb is no \
+restricted to just space trusses because the two modules only requires a DOF \
+state vector and a forcing terms vector.The forcing terms are the conjugate \
+term representing a generalizing force.An example of this is Heat conduction \
+where the DOF state vector is the temperature at each node and the conjugate \
+forcing term vector is the heat flux.You could send in a K matrix along with \
+temperature and flux values and get out a FEM result for heat conduction.\
+\>", "Text",
+ CellChangeTimes->{{3.593796889141603*^9, 3.5937969003526506`*^9}},
+ Background->RGBColor[0.88, 1, 0.88]],
+
+Cell["\<\
+Homework Problem 3: Book 21.5 - Super Tower\
+\>", "Section",
+ CellChangeTimes->{{3.593792516176745*^9, 3.593792557445809*^9}, {
+  3.5937929079878063`*^9, 3.5937929123555202`*^9}, {3.593796113081867*^9, 
+  3.593796115081448*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "NodeCoordinates={{-37.5,0,200},     (*1*)\n\t\t\t\t{37.5,0,200},    \t(*2*)\
+\n\t\t\t\t{-37.5,37.5,100},\t(*3*)\n\t\t\t\t{37.5,37.5,100},\t(*4*)\n\t\t\t\t\
+{37.5,-37.5,100},\t(*5*)\n\t\t\t\t{-37.5,-37.5,100},\t(*6*)\n\t\t\t\t\
+{-100,100,0},\t\t(*7*)\n\t\t\t\t{100,100,0},\t\t(*8*)\n\t\t\t\t{100,-100,0},\t\
+\t(*9*)\n\t\t\t\t{-100,-100,0}\t\t(*10*)\n};\nElemNodes={{1,2},\t\t(*1*)\n\t\t\
+   {1,4},\t\t(*2*)\n\t\t   {2,3},\t\t(*3*)\n\t\t   {1,5},\t\t(*4*)\n\t\t   \
+{2,6},\t\t(*5*)\n\t\t   {2,4},\t\t(*6*)\n           {2,5},\t\t(*7*)\n         \
+  {1,3},\t\t(*8*)\n           {1,6},\t\t(*9*)\n           {3,6},\t\t(*10*)\n  \
+         {4,5},\t\t(*11*)\n           {3,4},\t\t(*12*)\n           {5,6},\t\t\
+(*13*)\n           {3,10},\t\t(*14*)\n           {6,7},\t\t(*15*)\n           \
+{4,9},\t\t(*16*)\n           {5,8},\t\t(*17*)\n           {4,7},\t\t(*18*)\n  \
+         {3,8},\t\t(*19*)\n           {5,10},\t\t(*20*)\n           {6,9},\t\t\
+(*21*)\n           {6,10},\t\t(*22*)\n           {3,7},\t\t(*23*)\n           \
+{5,9},\t\t(*24*)\n           {4,8}\t\t(*25*)\n           };\n\
+PrintSpaceTrussNodeCoordinates[NodeCoordinates,\"Node coordinates:\",{}];     \
+       \nnumnod=Length[NodeCoordinates];  numele=Length[ElemNodes];\nEm=10^7; \
+\nElemMaterials= Table[Em,{numele}]; \nElemFabrications={ \t0.033,\n\t\t\t\t  \
+ \t2.015,\n\t\t\t\t   \t2.015,\n\t\t\t\t   \t2.015,\n\t\t\t\t   \t2.015,\n\t\t\
+\t\t   \t2.823,\n\t\t\t\t   \t2.823,\n\t\t\t\t   \t2.823,\n\t\t\t\t   \t\
+2.823,\n\t\t\t\t   \t0.010,\n\t\t\t\t   \t0.010,\n\t\t\t\t   \t0.014,\n\t\t\t\
+\t   \t0.014,\n\t\t\t\t   \t0.980,\n\t\t\t\t   \t0.980,\n\t\t\t\t   \t0.980,\n\
+\t\t\t\t   \t0.980,\n\t\t\t\t   \t1.760,\n\t\t\t\t   \t1.760,\n\t\t\t\t   \t\
+1.760,\n\t\t\t\t   \t1.760,\n\t\t\t\t   \t2.440,\n\t\t\t\t   \t2.440,\n\t\t\t\
+\t   \t2.440,\n\t\t\t\t   \t2.440};\n\
+PrintSpaceTrussElementData[ElemNodes,ElemMaterials,ElemFabrications,\n        \
+   \"Element data:\",{}]; \nProcessOptions= {True};\n\n\
+view={{0,0,1},{1,-3,1}};\nlabels={{True,0.014,-1.5,1.5},{True,0.020},{\"Times\
+\",12,\"Roman\"}};\nPlotSpaceTrussElementsAndNodes[NodeCoordinates,ElemNodes,\
+\n\[NonBreakingSpace]\[NonBreakingSpace]\[NonBreakingSpace]\"tower mesh in \
+perspective\",{view,-1,labels}];",
+ StyleBox["\n",
+  FontColor->RGBColor[1, 0, 0]],
+ "  \nNodeDOFTags=  Table[{0,0,0},{numnod}];\n\
+NodeDOFValues=Table[{0,0,0},{numnod}]; \n\
+NodeDOFValues[[1]]={1000,10000,-5000}; \nNodeDOFValues[[2]]= {0,10000,-5000}; \
+\nNodeDOFValues[[3]]={500,0,0};  \nNodeDOFValues[[6]]={500,0,0}; \n\
+NodeDOFTags[[7]]= {1,1,1};     (* fixed node 7,8,9,10 *)\nNodeDOFTags[[8]]= \
+{1,1,1};\nNodeDOFTags[[9]]= {1,1,1};\nNodeDOFTags[[10]]= {1,1,1};\n\n\
+PrintSpaceTrussFreedomActivity[NodeDOFTags,NodeDOFValues,\n       \"DOF \
+Activity:\",{}];\n\n{NodeDisplacements,NodeForces,ElemForces,ElemStresses}=\n \
+  SpaceTrussSolution[ NodeCoordinates,ElemNodes,ElemMaterials,\n   \
+ElemFabrications,NodeDOFTags,NodeDOFValues,ProcessOptions ];\n   \n\
+PrintSpaceTrussNodeDisplacements[NodeDisplacements,\n      \"Computed node \
+displacements:\",{}];\nPrintSpaceTrussNodeForces[NodeForces,\n      \"Node \
+forces including reactions:\",{}];\n\
+PrintSpaceTrussElemForcesAndStresses[ElemForces,ElemStresses,\n      \"Int \
+Forces and Stresses:\",{}];\n      \nview={{0,0,1},{2,-3,1}};\n\
+box={{-100,100,0},{100,100,0},{100,-100,0},{-100,-100,0},\n\
+\[NonBreakingSpace]\[NonBreakingSpace]\[NonBreakingSpace]\[NonBreakingSpace]{-\
+100,100,200},{100,100,200},{100,-100,200},{-100,-100,200}};\n\
+PlotSpaceTrussDeformedShape[NodeCoordinates,ElemNodes,NodeDisplacements,\n\
+\[NonBreakingSpace]{0,50},box,\"deformed shape (mag x250)\",{view,-1,{\"black\
+\",\"red\"}}];\n\
+PlotSpaceTrussStresses[NodeCoordinates,ElemNodes,ElemStresses,1,box,\n\
+\[NonBreakingSpace]\"axial stresses in truss members\",{view,0,labels}];",
+ StyleBox[" ",
+  FontColor->RGBColor[1, 0, 0]]
+}], "Input",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ CellChangeTimes->{{3.593792619691341*^9, 3.59379275472863*^9}, {
+   3.593793287622005*^9, 3.593793308264876*^9}, {3.593793394401093*^9, 
+   3.593793470754122*^9}, {3.593793543709031*^9, 3.593793563466057*^9}, {
+   3.59379363104641*^9, 3.593793644521633*^9}, {3.593793676492001*^9, 
+   3.593793702111079*^9}, {3.593793740383956*^9, 3.593793894714534*^9}, {
+   3.59379392889216*^9, 3.593793961230158*^9}, {3.5937941312623034`*^9, 
+   3.5937941329817877`*^9}, {3.5937941861082373`*^9, 3.593794188227263*^9}, {
+   3.5937942782184057`*^9, 3.593794296822846*^9}, {3.593794364674549*^9, 
+   3.59379436701763*^9}, {3.593794397788068*^9, 3.593794789506488*^9}, {
+   3.593794831636044*^9, 3.593794849295289*^9}, {3.593794923050758*^9, 
+   3.593794942405694*^9}, {3.593795318424252*^9, 3.593795420436492*^9}, 
+   3.5937954831158113`*^9, 3.59379551397152*^9, 3.593795554878282*^9, {
+   3.593795667703506*^9, 3.5937956680054197`*^9}, 3.593795807915266*^9, {
+   3.593795998802433*^9, 3.5937960172838993`*^9}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8],
+
+Cell[BoxData["\<\"Node coordinates:\"\>"], "Print",
+ CellChangeTimes->{
+  3.5937926801099052`*^9, {3.593792755591979*^9, 3.593792759544179*^9}, 
+   3.593795429249629*^9, 3.5937955147779627`*^9, 3.5937955559707537`*^9, 
+   3.5937956710114727`*^9, 3.5937958086347933`*^9, 3.59379603729986*^9}],
+
+Cell[BoxData[
+ TagBox[
+  TagBox[GridBox[{
+     {
+      TagBox["\<\"node\"\>",
+       HoldForm], 
+      TagBox["\<\"x-coor\"\>",
+       HoldForm], 
+      TagBox["\<\"y-coor\"\>",
+       HoldForm], 
+      TagBox["\<\"z-coor\"\>",
+       HoldForm]},
+     {"\<\"1\"\>", 
+      TagBox[
+       InterpretationBox["\<\"-37.500000\"\>",
+        -37.5,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.000000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 200.000000\"\>",
+        200,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ]},
+     {"\<\"2\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 37.500000\"\>",
+        37.5,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.000000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 200.000000\"\>",
+        200,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ]},
+     {"\<\"3\"\>", 
+      TagBox[
+       InterpretationBox["\<\"-37.500000\"\>",
+        -37.5,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 37.500000\"\>",
+        37.5,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 100.000000\"\>",
+        100,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ]},
+     {"\<\"4\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 37.500000\"\>",
+        37.5,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 37.500000\"\>",
+        37.5,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 100.000000\"\>",
+        100,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ]},
+     {"\<\"5\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 37.500000\"\>",
+        37.5,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-37.500000\"\>",
+        -37.5,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 100.000000\"\>",
+        100,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ]},
+     {"\<\"6\"\>", 
+      TagBox[
+       InterpretationBox["\<\"-37.500000\"\>",
+        -37.5,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-37.500000\"\>",
+        -37.5,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 100.000000\"\>",
+        100,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ]},
+     {"\<\"7\"\>", 
+      TagBox[
+       InterpretationBox["\<\"-100.000000\"\>",
+        -100,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 100.000000\"\>",
+        100,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.000000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ]},
+     {"\<\"8\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 100.000000\"\>",
+        100,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 100.000000\"\>",
+        100,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.000000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ]},
+     {"\<\"9\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 100.000000\"\>",
+        100,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-100.000000\"\>",
+        -100,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.000000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ]},
+     {"\<\"10\"\>", 
+      TagBox[
+       InterpretationBox["\<\"-100.000000\"\>",
+        -100,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-100.000000\"\>",
+        -100,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.000000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ]}
+    },
+    GridBoxAlignment->{
+     "Columns" -> {{Right}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+      "RowsIndexed" -> {}},
+    GridBoxDividers->{
+     "Columns" -> {{False}}, "ColumnsIndexed" -> {}, 
+      "Rows" -> {False, True, {False}, False}, "RowsIndexed" -> {}},
+    GridBoxSpacings->{"Columns" -> {
+        Offset[0.27999999999999997`], {
+         Offset[1.4]}, 
+        Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+        Offset[0.2], {
+         Offset[0.]}, 
+        Offset[0.2]}, "RowsIndexed" -> {}}],
+   {None, OutputFormsDump`HeadedColumns}],
+  Function[BoxForm`e$, 
+   TableForm[
+   BoxForm`e$, TableAlignments -> {Right}, TableDirections -> {Column, Row}, 
+    TableSpacing -> {0, 2}, 
+    TableHeadings -> {
+     None, {"node", "x-coor", "y-coor", "z-coor"}}]]]], "Print",
+ CellChangeTimes->{
+  3.5937926801099052`*^9, {3.593792755591979*^9, 3.593792759544179*^9}, 
+   3.593795429249629*^9, 3.5937955147779627`*^9, 3.5937955559707537`*^9, 
+   3.5937956710114727`*^9, 3.5937958086347933`*^9, 3.593796037305241*^9}],
+
+Cell[BoxData["\<\"Element data:\"\>"], "Print",
+ CellChangeTimes->{
+  3.5937926801099052`*^9, {3.593792755591979*^9, 3.593792759544179*^9}, 
+   3.593795429249629*^9, 3.5937955147779627`*^9, 3.5937955559707537`*^9, 
+   3.5937956710114727`*^9, 3.5937958086347933`*^9, 3.593796037306505*^9}],
+
+Cell[BoxData[
+ TagBox[
+  TagBox[GridBox[{
+     {
+      TagBox["\<\"elem\"\>",
+       HoldForm], 
+      TagBox["\<\"nodes\"\>",
+       HoldForm], 
+      TagBox["\<\"modulus\"\>",
+       HoldForm], 
+      TagBox["\<\"area\"\>",
+       HoldForm]},
+     {"\<\"1\"\>", "\<\"{1, 2}\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10000000.000\"\>",
+        10000000,
+        Editable->False],
+       PaddedForm[#, {6, 3}]& ], 
+      TagBox[
+       InterpretationBox["\<\"   0.033\"\>",
+        0.033,
+        AutoDelete->True],
+       PaddedForm[#, {6, 3}]& ]},
+     {"\<\"2\"\>", "\<\"{1, 4}\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10000000.000\"\>",
+        10000000,
+        Editable->False],
+       PaddedForm[#, {6, 3}]& ], 
+      TagBox[
+       InterpretationBox["\<\"   2.015\"\>",
+        2.015,
+        AutoDelete->True],
+       PaddedForm[#, {6, 3}]& ]},
+     {"\<\"3\"\>", "\<\"{2, 3}\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10000000.000\"\>",
+        10000000,
+        Editable->False],
+       PaddedForm[#, {6, 3}]& ], 
+      TagBox[
+       InterpretationBox["\<\"   2.015\"\>",
+        2.015,
+        AutoDelete->True],
+       PaddedForm[#, {6, 3}]& ]},
+     {"\<\"4\"\>", "\<\"{1, 5}\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10000000.000\"\>",
+        10000000,
+        Editable->False],
+       PaddedForm[#, {6, 3}]& ], 
+      TagBox[
+       InterpretationBox["\<\"   2.015\"\>",
+        2.015,
+        AutoDelete->True],
+       PaddedForm[#, {6, 3}]& ]},
+     {"\<\"5\"\>", "\<\"{2, 6}\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10000000.000\"\>",
+        10000000,
+        Editable->False],
+       PaddedForm[#, {6, 3}]& ], 
+      TagBox[
+       InterpretationBox["\<\"   2.015\"\>",
+        2.015,
+        AutoDelete->True],
+       PaddedForm[#, {6, 3}]& ]},
+     {"\<\"6\"\>", "\<\"{2, 4}\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10000000.000\"\>",
+        10000000,
+        Editable->False],
+       PaddedForm[#, {6, 3}]& ], 
+      TagBox[
+       InterpretationBox["\<\"   2.823\"\>",
+        2.823,
+        AutoDelete->True],
+       PaddedForm[#, {6, 3}]& ]},
+     {"\<\"7\"\>", "\<\"{2, 5}\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10000000.000\"\>",
+        10000000,
+        Editable->False],
+       PaddedForm[#, {6, 3}]& ], 
+      TagBox[
+       InterpretationBox["\<\"   2.823\"\>",
+        2.823,
+        AutoDelete->True],
+       PaddedForm[#, {6, 3}]& ]},
+     {"\<\"8\"\>", "\<\"{1, 3}\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10000000.000\"\>",
+        10000000,
+        Editable->False],
+       PaddedForm[#, {6, 3}]& ], 
+      TagBox[
+       InterpretationBox["\<\"   2.823\"\>",
+        2.823,
+        AutoDelete->True],
+       PaddedForm[#, {6, 3}]& ]},
+     {"\<\"9\"\>", "\<\"{1, 6}\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10000000.000\"\>",
+        10000000,
+        Editable->False],
+       PaddedForm[#, {6, 3}]& ], 
+      TagBox[
+       InterpretationBox["\<\"   2.823\"\>",
+        2.823,
+        AutoDelete->True],
+       PaddedForm[#, {6, 3}]& ]},
+     {"\<\"10\"\>", "\<\"{3, 6}\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10000000.000\"\>",
+        10000000,
+        Editable->False],
+       PaddedForm[#, {6, 3}]& ], 
+      TagBox[
+       InterpretationBox["\<\"   0.010\"\>",
+        0.01,
+        AutoDelete->True],
+       PaddedForm[#, {6, 3}]& ]},
+     {"\<\"11\"\>", "\<\"{4, 5}\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10000000.000\"\>",
+        10000000,
+        Editable->False],
+       PaddedForm[#, {6, 3}]& ], 
+      TagBox[
+       InterpretationBox["\<\"   0.010\"\>",
+        0.01,
+        AutoDelete->True],
+       PaddedForm[#, {6, 3}]& ]},
+     {"\<\"12\"\>", "\<\"{3, 4}\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10000000.000\"\>",
+        10000000,
+        Editable->False],
+       PaddedForm[#, {6, 3}]& ], 
+      TagBox[
+       InterpretationBox["\<\"   0.014\"\>",
+        0.014,
+        AutoDelete->True],
+       PaddedForm[#, {6, 3}]& ]},
+     {"\<\"13\"\>", "\<\"{5, 6}\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10000000.000\"\>",
+        10000000,
+        Editable->False],
+       PaddedForm[#, {6, 3}]& ], 
+      TagBox[
+       InterpretationBox["\<\"   0.014\"\>",
+        0.014,
+        AutoDelete->True],
+       PaddedForm[#, {6, 3}]& ]},
+     {"\<\"14\"\>", "\<\"{3, 10}\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10000000.000\"\>",
+        10000000,
+        Editable->False],
+       PaddedForm[#, {6, 3}]& ], 
+      TagBox[
+       InterpretationBox["\<\"   0.980\"\>",
+        0.98,
+        AutoDelete->True],
+       PaddedForm[#, {6, 3}]& ]},
+     {"\<\"15\"\>", "\<\"{6, 7}\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10000000.000\"\>",
+        10000000,
+        Editable->False],
+       PaddedForm[#, {6, 3}]& ], 
+      TagBox[
+       InterpretationBox["\<\"   0.980\"\>",
+        0.98,
+        AutoDelete->True],
+       PaddedForm[#, {6, 3}]& ]},
+     {"\<\"16\"\>", "\<\"{4, 9}\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10000000.000\"\>",
+        10000000,
+        Editable->False],
+       PaddedForm[#, {6, 3}]& ], 
+      TagBox[
+       InterpretationBox["\<\"   0.980\"\>",
+        0.98,
+        AutoDelete->True],
+       PaddedForm[#, {6, 3}]& ]},
+     {"\<\"17\"\>", "\<\"{5, 8}\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10000000.000\"\>",
+        10000000,
+        Editable->False],
+       PaddedForm[#, {6, 3}]& ], 
+      TagBox[
+       InterpretationBox["\<\"   0.980\"\>",
+        0.98,
+        AutoDelete->True],
+       PaddedForm[#, {6, 3}]& ]},
+     {"\<\"18\"\>", "\<\"{4, 7}\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10000000.000\"\>",
+        10000000,
+        Editable->False],
+       PaddedForm[#, {6, 3}]& ], 
+      TagBox[
+       InterpretationBox["\<\"   1.760\"\>",
+        1.76,
+        AutoDelete->True],
+       PaddedForm[#, {6, 3}]& ]},
+     {"\<\"19\"\>", "\<\"{3, 8}\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10000000.000\"\>",
+        10000000,
+        Editable->False],
+       PaddedForm[#, {6, 3}]& ], 
+      TagBox[
+       InterpretationBox["\<\"   1.760\"\>",
+        1.76,
+        AutoDelete->True],
+       PaddedForm[#, {6, 3}]& ]},
+     {"\<\"20\"\>", "\<\"{5, 10}\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10000000.000\"\>",
+        10000000,
+        Editable->False],
+       PaddedForm[#, {6, 3}]& ], 
+      TagBox[
+       InterpretationBox["\<\"   1.760\"\>",
+        1.76,
+        AutoDelete->True],
+       PaddedForm[#, {6, 3}]& ]},
+     {"\<\"21\"\>", "\<\"{6, 9}\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10000000.000\"\>",
+        10000000,
+        Editable->False],
+       PaddedForm[#, {6, 3}]& ], 
+      TagBox[
+       InterpretationBox["\<\"   1.760\"\>",
+        1.76,
+        AutoDelete->True],
+       PaddedForm[#, {6, 3}]& ]},
+     {"\<\"22\"\>", "\<\"{6, 10}\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10000000.000\"\>",
+        10000000,
+        Editable->False],
+       PaddedForm[#, {6, 3}]& ], 
+      TagBox[
+       InterpretationBox["\<\"   2.440\"\>",
+        2.44,
+        AutoDelete->True],
+       PaddedForm[#, {6, 3}]& ]},
+     {"\<\"23\"\>", "\<\"{3, 7}\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10000000.000\"\>",
+        10000000,
+        Editable->False],
+       PaddedForm[#, {6, 3}]& ], 
+      TagBox[
+       InterpretationBox["\<\"   2.440\"\>",
+        2.44,
+        AutoDelete->True],
+       PaddedForm[#, {6, 3}]& ]},
+     {"\<\"24\"\>", "\<\"{5, 9}\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10000000.000\"\>",
+        10000000,
+        Editable->False],
+       PaddedForm[#, {6, 3}]& ], 
+      TagBox[
+       InterpretationBox["\<\"   2.440\"\>",
+        2.44,
+        AutoDelete->True],
+       PaddedForm[#, {6, 3}]& ]},
+     {"\<\"25\"\>", "\<\"{4, 8}\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10000000.000\"\>",
+        10000000,
+        Editable->False],
+       PaddedForm[#, {6, 3}]& ], 
+      TagBox[
+       InterpretationBox["\<\"   2.440\"\>",
+        2.44,
+        AutoDelete->True],
+       PaddedForm[#, {6, 3}]& ]}
+    },
+    GridBoxAlignment->{
+     "Columns" -> {{Right}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+      "RowsIndexed" -> {}},
+    GridBoxDividers->{
+     "Columns" -> {{False}}, "ColumnsIndexed" -> {}, 
+      "Rows" -> {False, True, {False}, False}, "RowsIndexed" -> {}},
+    GridBoxSpacings->{"Columns" -> {
+        Offset[0.27999999999999997`], {
+         Offset[1.4]}, 
+        Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+        Offset[0.2], {
+         Offset[0.]}, 
+        Offset[0.2]}, "RowsIndexed" -> {}}],
+   {None, OutputFormsDump`HeadedColumns}],
+  Function[BoxForm`e$, 
+   TableForm[
+   BoxForm`e$, TableAlignments -> {Right}, TableDirections -> {Column, Row}, 
+    TableSpacing -> {0, 2}, 
+    TableHeadings -> {None, {"elem", "nodes", "modulus", "area"}}]]]], "Print",\
+
+ CellChangeTimes->{
+  3.5937926801099052`*^9, {3.593792755591979*^9, 3.593792759544179*^9}, 
+   3.593795429249629*^9, 3.5937955147779627`*^9, 3.5937955559707537`*^9, 
+   3.5937956710114727`*^9, 3.5937958086347933`*^9, 3.593796037310981*^9}],
+
+Cell[BoxData[
+ GraphicsBox[{
+   {RGBColor[1, 0, 0], AbsoluteThickness[3], 
+    LineBox[{{-35.57562367689427, 194.26800255878945`}, {35.57562367689427, 
+     187.1170331394475}}], 
+    LineBox[{{-35.57562367689427, 194.26800255878945`}, {47.434164902525694`, 
+     102.49722834390118`}}], 
+    LineBox[{{35.57562367689427, 187.1170331394475}, {-23.717082451262844`, 
+     109.64819776324312`}}], 
+    LineBox[{{-35.57562367689427, 194.26800255878945`}, {23.717082451262844`, 
+     81.04432008587536}}], 
+    LineBox[{{35.57562367689427, 187.1170331394475}, {-47.434164902525694`, 
+     88.19528950521729}}], 
+    LineBox[{{35.57562367689427, 187.1170331394475}, {47.434164902525694`, 
+     102.49722834390118`}}], 
+    LineBox[{{35.57562367689427, 187.1170331394475}, {23.717082451262844`, 
+     81.04432008587536}}], 
+    LineBox[{{-35.57562367689427, 194.26800255878945`}, {-23.717082451262844`,
+      109.64819776324312`}}], 
+    LineBox[{{-35.57562367689427, 194.26800255878945`}, {-47.434164902525694`,
+      88.19528950521729}}], 
+    LineBox[{{-23.717082451262844`, 
+     109.64819776324312`}, {-47.434164902525694`, 88.19528950521729}}], 
+    LineBox[{{47.434164902525694`, 102.49722834390118`}, {23.717082451262844`,
+      81.04432008587536}}], 
+    LineBox[{{-23.717082451262844`, 109.64819776324312`}, {
+     47.434164902525694`, 102.49722834390118`}}], 
+    LineBox[{{23.717082451262844`, 81.04432008587536}, {-47.434164902525694`, 
+     88.19528950521729}}], 
+    LineBox[NCache[{{-23.717082451262844`, 
+       109.64819776324312`}, {(-40) 10^Rational[1, 2], (-20) 
+        Rational[10, 11]^Rational[1, 2]}}, {{-23.717082451262844`, 
+      109.64819776324312`}, {-126.49110640673518`, -19.06925178491185}}]], 
+    LineBox[NCache[{{-47.434164902525694`, 
+       88.19528950521729}, {(-20) 10^Rational[1, 2], 40 
+        Rational[10, 11]^Rational[1, 2]}}, {{-47.434164902525694`, 
+      88.19528950521729}, {-63.24555320336759, 38.1385035698237}}]], 
+    LineBox[NCache[{{47.434164902525694`, 102.49722834390118`}, {
+       20 10^Rational[1, 2], (-40) Rational[10, 11]^Rational[1, 2]}}, {{
+      47.434164902525694`, 102.49722834390118`}, {
+      63.24555320336759, -38.1385035698237}}]], 
+    LineBox[NCache[{{23.717082451262844`, 81.04432008587536}, {
+       40 10^Rational[1, 2], 20 Rational[10, 11]^Rational[1, 2]}}, {{
+      23.717082451262844`, 81.04432008587536}, {126.49110640673518`, 
+      19.06925178491185}}]], 
+    LineBox[NCache[{{47.434164902525694`, 
+       102.49722834390118`}, {(-20) 10^Rational[1, 2], 40 
+        Rational[10, 11]^Rational[1, 2]}}, {{47.434164902525694`, 
+      102.49722834390118`}, {-63.24555320336759, 38.1385035698237}}]], 
+    LineBox[NCache[{{-23.717082451262844`, 109.64819776324312`}, {
+       40 10^Rational[1, 2], 20 
+        Rational[10, 11]^Rational[1, 2]}}, {{-23.717082451262844`, 
+      109.64819776324312`}, {126.49110640673518`, 19.06925178491185}}]], 
+    LineBox[NCache[{{23.717082451262844`, 
+       81.04432008587536}, {(-40) 10^Rational[1, 2], (-20) 
+        Rational[10, 11]^Rational[1, 2]}}, {{23.717082451262844`, 
+      81.04432008587536}, {-126.49110640673518`, -19.06925178491185}}]], 
+    LineBox[NCache[{{-47.434164902525694`, 88.19528950521729}, {
+       20 10^Rational[1, 2], (-40) 
+        Rational[10, 11]^Rational[1, 2]}}, {{-47.434164902525694`, 
+      88.19528950521729}, {63.24555320336759, -38.1385035698237}}]], 
+    LineBox[NCache[{{-47.434164902525694`, 
+       88.19528950521729}, {(-40) 10^Rational[1, 2], (-20) 
+        Rational[10, 11]^Rational[1, 2]}}, {{-47.434164902525694`, 
+      88.19528950521729}, {-126.49110640673518`, -19.06925178491185}}]], 
+    LineBox[NCache[{{-23.717082451262844`, 
+       109.64819776324312`}, {(-20) 10^Rational[1, 2], 40 
+        Rational[10, 11]^Rational[1, 2]}}, {{-23.717082451262844`, 
+      109.64819776324312`}, {-63.24555320336759, 38.1385035698237}}]], 
+    LineBox[NCache[{{23.717082451262844`, 81.04432008587536}, {
+       20 10^Rational[1, 2], (-40) Rational[10, 11]^Rational[1, 2]}}, {{
+      23.717082451262844`, 81.04432008587536}, {
+      63.24555320336759, -38.1385035698237}}]], 
+    LineBox[NCache[{{47.434164902525694`, 102.49722834390118`}, {
+       40 10^Rational[1, 2], 20 Rational[10, 11]^Rational[1, 2]}}, {{
+      47.434164902525694`, 102.49722834390118`}, {126.49110640673518`, 
+      19.06925178491185}}]]}, 
+   {GrayLevel[1], AbsoluteThickness[1], 
+    DiskBox[{-35.57562367689427, 194.26800255878945`}, 3.2536910858005843`], 
+    DiskBox[{35.57562367689427, 187.1170331394475}, 3.2536910858005843`], 
+    DiskBox[{-23.717082451262844`, 109.64819776324312`}, 3.2536910858005843`],
+     DiskBox[{47.434164902525694`, 102.49722834390118`}, 3.2536910858005843`],
+     DiskBox[{23.717082451262844`, 81.04432008587536}, 3.2536910858005843`], 
+    DiskBox[{-47.434164902525694`, 88.19528950521729}, 3.2536910858005843`], 
+    DiskBox[NCache[{(-20) 10^Rational[1, 2], 40 
+       Rational[10, 11]^Rational[1, 2]}, {-63.24555320336759, 
+      38.1385035698237}], 3.2536910858005843`], 
+    DiskBox[NCache[{
+      40 10^Rational[1, 2], 20 Rational[10, 11]^Rational[1, 2]}, {
+      126.49110640673518`, 19.06925178491185}], 3.2536910858005843`], 
+    DiskBox[NCache[{
+      20 10^Rational[1, 2], (-40) Rational[10, 11]^Rational[1, 2]}, {
+      63.24555320336759, -38.1385035698237}], 3.2536910858005843`], 
+    DiskBox[NCache[{(-40) 10^Rational[1, 2], (-20) 
+       Rational[10, 11]^
+        Rational[1, 2]}, {-126.49110640673518`, -19.06925178491185}], 
+     3.2536910858005843`], 
+    {GrayLevel[0], 
+     CircleBox[{-35.57562367689427, 194.26800255878945`}, 
+      3.2536910858005843`], 
+     CircleBox[{35.57562367689427, 187.1170331394475}, 3.2536910858005843`], 
+     CircleBox[{-23.717082451262844`, 109.64819776324312`}, 
+      3.2536910858005843`], 
+     CircleBox[{47.434164902525694`, 102.49722834390118`}, 
+      3.2536910858005843`], 
+     CircleBox[{23.717082451262844`, 81.04432008587536}, 3.2536910858005843`],
+      CircleBox[{-47.434164902525694`, 88.19528950521729}, 
+      3.2536910858005843`], 
+     CircleBox[
+      NCache[{(-20) 10^Rational[1, 2], 40 
+        Rational[10, 11]^Rational[1, 2]}, {-63.24555320336759, 
+       38.1385035698237}], 3.2536910858005843`], 
+     CircleBox[
+      NCache[{40 10^Rational[1, 2], 20 Rational[10, 11]^Rational[1, 2]}, {
+       126.49110640673518`, 19.06925178491185}], 3.2536910858005843`], 
+     CircleBox[
+      NCache[{20 10^Rational[1, 2], (-40) Rational[10, 11]^Rational[1, 2]}, {
+       63.24555320336759, -38.1385035698237}], 3.2536910858005843`], 
+     CircleBox[
+      NCache[{(-40) 10^Rational[1, 2], (-20) 
+        Rational[10, 11]^
+         Rational[1, 2]}, {-126.49110640673518`, -19.06925178491185}], 
+      3.2536910858005843`]}, 
+    {RGBColor[1, 1, 0], 
+     DiskBox[{0., 190.69251784911847`}, 4.6481301225722635`], 
+     DiskBox[{5.9292706128157135`, 148.38261545134532`}, 4.6481301225722635`],
+      DiskBox[{5.929270612815712, 148.38261545134532`}, 4.6481301225722635`], 
+     DiskBox[{-5.929270612815712, 137.6561613223324}, 4.6481301225722635`], 
+     DiskBox[{-5.9292706128157135`, 137.6561613223324}, 4.6481301225722635`], 
+     DiskBox[{41.50489428970998, 144.80713074167434`}, 4.6481301225722635`], 
+     DiskBox[{29.646353064078554`, 134.08067661266142`}, 4.6481301225722635`],
+      DiskBox[{-29.646353064078554`, 151.9581001610163}, 4.6481301225722635`],
+      DiskBox[{-41.50489428970998, 141.23164603200337`}, 4.6481301225722635`],
+      DiskBox[{-35.57562367689427, 98.92174363423021}, 4.6481301225722635`], 
+     DiskBox[{35.57562367689427, 91.77077421488826}, 4.6481301225722635`], 
+     DiskBox[{11.858541225631425`, 106.07271305357216`}, 4.6481301225722635`],
+      DiskBox[{-11.858541225631425`, 84.61980479554632}, 4.6481301225722635`],
+      DiskBox[{-75.10409442899902, 45.28947298916563}, 4.6481301225722635`], 
+     DiskBox[{-55.33985905294664, 63.16689653752049}, 4.6481301225722635`], 
+     DiskBox[{55.33985905294664, 32.17936238703874}, 4.6481301225722635`], 
+     DiskBox[{75.10409442899902, 50.056785935393606`}, 4.6481301225722635`], 
+     DiskBox[{-7.905694150420949, 70.31786595686245}, 4.6481301225722635`], 
+     DiskBox[{51.38701197773617, 64.35872477407749}, 4.6481301225722635`], 
+     DiskBox[{-51.38701197773617, 30.987534150481753`}, 4.6481301225722635`], 
+     DiskBox[{7.905694150420949, 25.028392967696796`}, 4.6481301225722635`], 
+     DiskBox[{-86.96263565463045, 34.563018860152724`}, 4.6481301225722635`], 
+     DiskBox[{-43.481317827315216`, 73.89335066653341}, 4.6481301225722635`], 
+     DiskBox[{43.481317827315216`, 21.45290825802583}, 4.6481301225722635`], 
+     DiskBox[{86.96263565463045, 60.78324006440651}, 4.6481301225722635`]}, 
+    {RGBColor[0, 0, 0], 
+     CircleBox[{0., 190.69251784911847`}, 4.6481301225722635`], 
+     CircleBox[{5.9292706128157135`, 148.38261545134532`}, 
+      4.6481301225722635`], 
+     CircleBox[{5.929270612815712, 148.38261545134532`}, 4.6481301225722635`],
+      CircleBox[{-5.929270612815712, 137.6561613223324}, 4.6481301225722635`],
+      CircleBox[{-5.9292706128157135`, 137.6561613223324}, 
+      4.6481301225722635`], 
+     CircleBox[{41.50489428970998, 144.80713074167434`}, 4.6481301225722635`],
+      CircleBox[{29.646353064078554`, 134.08067661266142`}, 
+      4.6481301225722635`], 
+     CircleBox[{-29.646353064078554`, 151.9581001610163}, 
+      4.6481301225722635`], 
+     CircleBox[{-41.50489428970998, 141.23164603200337`}, 
+      4.6481301225722635`], 
+     CircleBox[{-35.57562367689427, 98.92174363423021}, 4.6481301225722635`], 
+     CircleBox[{35.57562367689427, 91.77077421488826}, 4.6481301225722635`], 
+     CircleBox[{11.858541225631425`, 106.07271305357216`}, 
+      4.6481301225722635`], 
+     CircleBox[{-11.858541225631425`, 84.61980479554632}, 
+      4.6481301225722635`], 
+     CircleBox[{-75.10409442899902, 45.28947298916563}, 4.6481301225722635`], 
+     CircleBox[{-55.33985905294664, 63.16689653752049}, 4.6481301225722635`], 
+     CircleBox[{55.33985905294664, 32.17936238703874}, 4.6481301225722635`], 
+     CircleBox[{75.10409442899902, 50.056785935393606`}, 4.6481301225722635`],
+      CircleBox[{-7.905694150420949, 70.31786595686245}, 4.6481301225722635`],
+      CircleBox[{51.38701197773617, 64.35872477407749}, 4.6481301225722635`], 
+     CircleBox[{-51.38701197773617, 30.987534150481753`}, 
+      4.6481301225722635`], 
+     CircleBox[{7.905694150420949, 25.028392967696796`}, 4.6481301225722635`],
+      CircleBox[{-86.96263565463045, 34.563018860152724`}, 
+      4.6481301225722635`], 
+     CircleBox[{-43.481317827315216`, 73.89335066653341}, 
+      4.6481301225722635`], 
+     CircleBox[{43.481317827315216`, 21.45290825802583}, 4.6481301225722635`],
+      CircleBox[{86.96263565463045, 60.78324006440651}, 4.6481301225722635`], 
+     InsetBox["\<\"1\"\>", {0., 189.76289182460403`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Roman", 
+        FontSlant -> "Plain"}], 
+     InsetBox["\<\"2\"\>", {5.9292706128157135`, 147.45298942683087`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Roman", 
+        FontSlant -> "Plain"}], 
+     InsetBox["\<\"3\"\>", {5.929270612815712, 147.45298942683087`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Roman", 
+        FontSlant -> "Plain"}], 
+     InsetBox["\<\"4\"\>", {-5.929270612815712, 136.72653529781795`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Roman", 
+        FontSlant -> "Plain"}], 
+     InsetBox["\<\"5\"\>", {-5.9292706128157135`, 136.72653529781795`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Roman", 
+        FontSlant -> "Plain"}], 
+     InsetBox["\<\"6\"\>", {41.50489428970998, 143.8775047171599},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Roman", 
+        FontSlant -> "Plain"}], 
+     InsetBox["\<\"7\"\>", {29.646353064078554`, 133.15105058814697`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Roman", 
+        FontSlant -> "Plain"}], 
+     InsetBox["\<\"8\"\>", {-29.646353064078554`, 151.02847413650184`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Roman", 
+        FontSlant -> "Plain"}], 
+     InsetBox["\<\"9\"\>", {-41.50489428970998, 140.30202000748892`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Roman", 
+        FontSlant -> "Plain"}], 
+     InsetBox["\<\"10\"\>", {-35.57562367689427, 97.99211760971576},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Roman", 
+        FontSlant -> "Plain"}], 
+     InsetBox["\<\"11\"\>", {35.57562367689427, 90.84114819037381},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Roman", 
+        FontSlant -> "Plain"}], 
+     InsetBox["\<\"12\"\>", {11.858541225631425`, 105.14308702905771`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Roman", 
+        FontSlant -> "Plain"}], 
+     InsetBox["\<\"13\"\>", {-11.858541225631425`, 83.69017877103187},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Roman", 
+        FontSlant -> "Plain"}], 
+     InsetBox["\<\"14\"\>", {-75.10409442899902, 44.359846964651176`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Roman", 
+        FontSlant -> "Plain"}], 
+     InsetBox["\<\"15\"\>", {-55.33985905294664, 62.23727051300604},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Roman", 
+        FontSlant -> "Plain"}], 
+     InsetBox["\<\"16\"\>", {55.33985905294664, 31.249736362524292`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Roman", 
+        FontSlant -> "Plain"}], 
+     InsetBox["\<\"17\"\>", {75.10409442899902, 49.12715991087915},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Roman", 
+        FontSlant -> "Plain"}], 
+     InsetBox["\<\"18\"\>", {-7.905694150420949, 69.388239932348},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Roman", 
+        FontSlant -> "Plain"}], 
+     InsetBox["\<\"19\"\>", {51.38701197773617, 63.42909874956303},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Roman", 
+        FontSlant -> "Plain"}], 
+     InsetBox["\<\"20\"\>", {-51.38701197773617, 30.0579081259673},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Roman", 
+        FontSlant -> "Plain"}], 
+     InsetBox["\<\"21\"\>", {7.905694150420949, 24.098766943182344`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Roman", 
+        FontSlant -> "Plain"}], 
+     InsetBox["\<\"22\"\>", {-86.96263565463045, 33.63339283563827},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Roman", 
+        FontSlant -> "Plain"}], 
+     InsetBox["\<\"23\"\>", {-43.481317827315216`, 72.96372464201896},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Roman", 
+        FontSlant -> "Plain"}], 
+     InsetBox["\<\"24\"\>", {43.481317827315216`, 20.523282233511377`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Roman", 
+        FontSlant -> "Plain"}], 
+     InsetBox["\<\"25\"\>", {86.96263565463045, 59.85361403989206},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Roman", 
+        FontSlant -> "Plain"}], 
+     InsetBox["\<\"1\"\>", {-40.45616030559514, 199.14853918749031`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Bold", FontSlant -> 
+        "Plain"}], 
+     InsetBox["\<\"2\"\>", {30.69508704819339, 191.99756976814837`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Bold", FontSlant -> 
+        "Plain"}], 
+     InsetBox["\<\"3\"\>", {-28.59761907996372, 114.528734391944},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Bold", FontSlant -> 
+        "Plain"}], 
+     InsetBox["\<\"4\"\>", {42.55362827382482, 107.37776497260207`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Bold", FontSlant -> 
+        "Plain"}], 
+     InsetBox["\<\"5\"\>", {18.836545822561966`, 85.92485671457624},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Bold", FontSlant -> 
+        "Plain"}], 
+     InsetBox["\<\"6\"\>", {-52.31470153122657, 93.07582613391817},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Bold", FontSlant -> 
+        "Plain"}], 
+     InsetBox["\<\"7\"\>", {-68.12608983206847, 43.01904019852457},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Bold", FontSlant -> 
+        "Plain"}], 
+     InsetBox["\<\"8\"\>", {121.6105697780343, 23.949788413612726`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Bold", FontSlant -> 
+        "Plain"}], 
+     InsetBox["\<\"9\"\>", {58.36501657466672, -33.257966941122824`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Bold", FontSlant -> 
+        "Plain"}], 
+     InsetBox["\<\"10\"\>", {-131.37164303543605`, -14.188715156210971`},
+      BaseStyle->{
+       FontFamily -> "Times", FontSize -> 12, FontWeight -> "Bold", FontSlant -> 
+        "Plain"}]}}},
+  AspectRatio->Automatic,
+  DisplayFunction->Print,
+  PlotLabel->FormBox[
+   "\"tower mesh in perspective\"", TraditionalForm]]], "Print",
+ CellChangeTimes->{
+  3.5937926801099052`*^9, {3.593792755591979*^9, 3.593792759544179*^9}, 
+   3.593795429249629*^9, 3.5937955147779627`*^9, 3.5937955559707537`*^9, 
+   3.5937956710114727`*^9, 3.5937958086347933`*^9, 3.593796037402446*^9}],
+
+Cell[BoxData["\<\"DOF Activity:\"\>"], "Print",
+ CellChangeTimes->{
+  3.5937926801099052`*^9, {3.593792755591979*^9, 3.593792759544179*^9}, 
+   3.593795429249629*^9, 3.5937955147779627`*^9, 3.5937955559707537`*^9, 
+   3.5937956710114727`*^9, 3.5937958086347933`*^9, 3.593796037403822*^9}],
+
+Cell[BoxData[
+ TagBox[
+  TagBox[GridBox[{
+     {
+      TagBox["\<\"node\"\>",
+       HoldForm], 
+      TagBox["\<\"x-tag\"\>",
+       HoldForm], 
+      TagBox["\<\"y-tag\"\>",
+       HoldForm], 
+      TagBox["\<\"z-tag\"\>",
+       HoldForm], 
+      TagBox["\<\"x-value\"\>",
+       HoldForm], 
+      TagBox["\<\"y-value\"\>",
+       HoldForm], 
+      TagBox["\<\"z-value\"\>",
+       HoldForm]},
+     {"\<\"1\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 1000\"\>",
+        1000,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 10000\"\>",
+        10000,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\"-5000\"\>",
+        -5000,
+        Editable->False],
+       PaddedForm]},
+     {"\<\"2\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 10000\"\>",
+        10000,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\"-5000\"\>",
+        -5000,
+        Editable->False],
+       PaddedForm]},
+     {"\<\"3\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 500\"\>",
+        500,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm]},
+     {"\<\"4\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm]},
+     {"\<\"5\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm]},
+     {"\<\"6\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 500\"\>",
+        500,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm]},
+     {"\<\"7\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 1\"\>",
+        1,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 1\"\>",
+        1,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 1\"\>",
+        1,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm]},
+     {"\<\"8\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 1\"\>",
+        1,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 1\"\>",
+        1,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 1\"\>",
+        1,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm]},
+     {"\<\"9\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 1\"\>",
+        1,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 1\"\>",
+        1,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 1\"\>",
+        1,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm]},
+     {"\<\"10\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 1\"\>",
+        1,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 1\"\>",
+        1,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 1\"\>",
+        1,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm], 
+      TagBox[
+       InterpretationBox["\<\" 0\"\>",
+        0,
+        Editable->False],
+       PaddedForm]}
+    },
+    GridBoxAlignment->{
+     "Columns" -> {{Right}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+      "RowsIndexed" -> {}},
+    GridBoxDividers->{
+     "Columns" -> {{False}}, "ColumnsIndexed" -> {}, 
+      "Rows" -> {False, True, {False}, False}, "RowsIndexed" -> {}},
+    GridBoxSpacings->{"Columns" -> {
+        Offset[0.27999999999999997`], {
+         Offset[0.7]}, 
+        Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+        Offset[0.2], {
+         Offset[0.]}, 
+        Offset[0.2]}, "RowsIndexed" -> {}}],
+   {None, OutputFormsDump`HeadedColumns}],
+  Function[BoxForm`e$, 
+   TableForm[
+   BoxForm`e$, TableAlignments -> {Right}, TableDirections -> {Column, Row}, 
+    TableSpacing -> {0, 1}, 
+    TableHeadings -> {
+     None, {"node", "x-tag", "y-tag", "z-tag", "x-value", "y-value", 
+       "z-value"}}]]]], "Print",
+ CellChangeTimes->{
+  3.5937926801099052`*^9, {3.593792755591979*^9, 3.593792759544179*^9}, 
+   3.593795429249629*^9, 3.5937955147779627`*^9, 3.5937955559707537`*^9, 
+   3.5937956710114727`*^9, 3.5937958086347933`*^9, 3.593796037406118*^9}],
+
+Cell[BoxData["\<\"Computed node displacements:\"\>"], "Print",
+ CellChangeTimes->{
+  3.5937926801099052`*^9, {3.593792755591979*^9, 3.593792759544179*^9}, 
+   3.593795429249629*^9, 3.5937955147779627`*^9, 3.5937955559707537`*^9, 
+   3.5937956710114727`*^9, 3.5937958086347933`*^9, 3.593796037408226*^9}],
+
+Cell[BoxData[
+ TagBox[
+  TagBox[GridBox[{
+     {
+      TagBox["\<\"node\"\>",
+       HoldForm], 
+      TagBox["\<\"x-displ\"\>",
+       HoldForm], 
+      TagBox["\<\"y-displ\"\>",
+       HoldForm], 
+      TagBox["\<\"z-displ\"\>",
+       HoldForm]},
+     {"\<\"1\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 0.008515\"\>",
+        0.008515106795969122,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.349956\"\>",
+        0.3499560391837731,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-0.022128\"\>",
+        -0.02212771388564587,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ]},
+     {"\<\"2\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 0.031916\"\>",
+        0.03191563116420784,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.349956\"\>",
+        0.3499560391837731,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-0.032242\"\>",
+        -0.032242012593607684`,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ]},
+     {"\<\"3\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 0.011530\"\>",
+        0.011529637834376097`,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-0.009770\"\>",
+        -0.009769911951467558,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-0.108526\"\>",
+        -0.10852600099361111`,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ]},
+     {"\<\"4\"\>", 
+      TagBox[
+       InterpretationBox["\<\"-0.004039\"\>",
+        -0.004039485912506678,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-0.008781\"\>",
+        -0.008781066404807657,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-0.115393\"\>",
+        -0.11539266591594236`,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ]},
+     {"\<\"5\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 0.000448\"\>",
+        0.0004477041865873919,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-0.005089\"\>",
+        -0.005089169816978569,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.070508\"\>",
+        0.07050789742961609,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ]},
+     {"\<\"6\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 0.007042\"\>",
+        0.007042447735282103,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-0.004100\"\>",
+        -0.004100324270318524,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.077375\"\>",
+        0.07737456235194724,
+        AutoDelete->True],
+       PaddedForm[#, {6, 6}]& ]},
+     {"\<\"7\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 0.000000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.000000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.000000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ]},
+     {"\<\"8\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 0.000000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.000000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.000000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ]},
+     {"\<\"9\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 0.000000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.000000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.000000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ]},
+     {"\<\"10\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 0.000000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.000000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.000000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {6, 6}]& ]}
+    },
+    GridBoxAlignment->{
+     "Columns" -> {{Right}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+      "RowsIndexed" -> {}},
+    GridBoxDividers->{
+     "Columns" -> {{False}}, "ColumnsIndexed" -> {}, 
+      "Rows" -> {False, True, {False}, False}, "RowsIndexed" -> {}},
+    GridBoxSpacings->{"Columns" -> {
+        Offset[0.27999999999999997`], {
+         Offset[0.7]}, 
+        Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+        Offset[0.2], {
+         Offset[0.]}, 
+        Offset[0.2]}, "RowsIndexed" -> {}}],
+   {None, OutputFormsDump`HeadedColumns}],
+  Function[BoxForm`e$, 
+   TableForm[
+   BoxForm`e$, TableAlignments -> {Right}, TableDirections -> {Column, Row}, 
+    TableSpacing -> {0, 1}, 
+    TableHeadings -> {
+     None, {"node", "x-displ", "y-displ", "z-displ"}}]]]], "Print",
+ CellChangeTimes->{
+  3.5937926801099052`*^9, {3.593792755591979*^9, 3.593792759544179*^9}, 
+   3.593795429249629*^9, 3.5937955147779627`*^9, 3.5937955559707537`*^9, 
+   3.5937956710114727`*^9, 3.5937958086347933`*^9, 3.59379603741201*^9}],
+
+Cell[BoxData["\<\"Node forces including reactions:\"\>"], "Print",
+ CellChangeTimes->{
+  3.5937926801099052`*^9, {3.593792755591979*^9, 3.593792759544179*^9}, 
+   3.593795429249629*^9, 3.5937955147779627`*^9, 3.5937955559707537`*^9, 
+   3.5937956710114727`*^9, 3.5937958086347933`*^9, 3.5937960374136343`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"PaddedForm", "::", "sigz"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"In addition to the number of digits requested, one or more \
+zeros will appear as placeholders. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/PaddedForm\\\", ButtonNote -> \
+\\\"PaddedForm::sigz\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.593795429463273*^9, 3.593795514912939*^9, 
+  3.593795556051408*^9, 3.593795671097439*^9, 3.59379580871504*^9, 
+  3.593796037441654*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"PaddedForm", "::", "sigz"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"In addition to the number of digits requested, one or more \
+zeros will appear as placeholders. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/PaddedForm\\\", ButtonNote -> \
+\\\"PaddedForm::sigz\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.593795429463273*^9, 3.593795514912939*^9, 
+  3.593795556051408*^9, 3.593795671097439*^9, 3.59379580871504*^9, 
+  3.593796037487895*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"PaddedForm", "::", "sigz"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"In addition to the number of digits requested, one or more \
+zeros will appear as placeholders. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/PaddedForm\\\", ButtonNote -> \
+\\\"PaddedForm::sigz\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.593795429463273*^9, 3.593795514912939*^9, 
+  3.593795556051408*^9, 3.593795671097439*^9, 3.59379580871504*^9, 
+  3.593796037550205*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"General", "::", "stop"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"Further output of \
+\[NoBreak]\\!\\(\\*StyleBox[\\(PaddedForm :: sigz\\), \\\"MessageName\\\"]\\)\
+\[NoBreak] will be suppressed during this calculation. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/General/stop\\\", \
+ButtonNote -> \\\"General::stop\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.593795429463273*^9, 3.593795514912939*^9, 
+  3.593795556051408*^9, 3.593795671097439*^9, 3.59379580871504*^9, 
+  3.5937960375738373`*^9}],
+
+Cell[BoxData[
+ TagBox[
+  TagBox[GridBox[{
+     {
+      TagBox["\<\"node\"\>",
+       HoldForm], 
+      TagBox["\<\"x-force\"\>",
+       HoldForm], 
+      TagBox["\<\"y-force\"\>",
+       HoldForm], 
+      TagBox["\<\"z-force\"\>",
+       HoldForm]},
+     {"\<\"1\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 1000.0000\"\>",
+        999.9999999999973,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 10000.0000\"\>",
+        10000.,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-5000.0000\"\>",
+        -5000.000000000002,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"2\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 0.0000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 10000.0000\"\>",
+        9999.999999999996,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-5000.0000\"\>",
+        -4999.999999999999,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"3\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 500.0000\"\>",
+        499.9999999999983,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.0000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.0000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"4\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 0.0000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.0000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.0000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"5\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 0.0000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.0000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.0000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"6\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 500.0000\"\>",
+        500.00000000000364`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.0000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 0.0000\"\>",
+        0,
+        Editable->False],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"7\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 9908.0000\"\>",
+        9907.891345137183,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-6263.0000\"\>",
+        -6262.790206159431,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 11750.0000\"\>",
+        11750.00000000001,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"8\"\>", 
+      TagBox[
+       InterpretationBox["\<\"-10910.0000\"\>",
+        -10907.891345137175`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-7326.0000\"\>",
+        -7326.279051706085,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 13250.0000\"\>",
+        13250.000000000002`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"9\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 5665.0000\"\>",
+        5665.141917451667,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-2674.0000\"\>",
+        -2673.720948293908,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-6750.0000\"\>",
+        -6749.9999999999945`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"10\"\>", 
+      TagBox[
+       InterpretationBox["\<\"-6665.0000\"\>",
+        -6665.14191745167,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-3737.0000\"\>",
+        -3737.2097938405714`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-8250.0000\"\>",
+        -8249.999999999998,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]}
+    },
+    GridBoxAlignment->{
+     "Columns" -> {{Right}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+      "RowsIndexed" -> {}},
+    GridBoxDividers->{
+     "Columns" -> {{False}}, "ColumnsIndexed" -> {}, 
+      "Rows" -> {False, True, {False}, False}, "RowsIndexed" -> {}},
+    GridBoxSpacings->{"Columns" -> {
+        Offset[0.27999999999999997`], {
+         Offset[0.7]}, 
+        Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+        Offset[0.2], {
+         Offset[0.]}, 
+        Offset[0.2]}, "RowsIndexed" -> {}}],
+   {None, OutputFormsDump`HeadedColumns}],
+  Function[BoxForm`e$, 
+   TableForm[
+   BoxForm`e$, TableAlignments -> {Right}, TableDirections -> {Column, Row}, 
+    TableSpacing -> {0, 1}, 
+    TableHeadings -> {
+     None, {"node", "x-force", "y-force", "z-force"}}]]]], "Print",
+ CellChangeTimes->{
+  3.5937926801099052`*^9, {3.593792755591979*^9, 3.593792759544179*^9}, 
+   3.593795429249629*^9, 3.5937955147779627`*^9, 3.5937955559707537`*^9, 
+   3.5937956710114727`*^9, 3.5937958086347933`*^9, 3.5937960375762157`*^9}],
+
+Cell[BoxData["\<\"Int Forces and Stresses:\"\>"], "Print",
+ CellChangeTimes->{
+  3.5937926801099052`*^9, {3.593792755591979*^9, 3.593792759544179*^9}, 
+   3.593795429249629*^9, 3.5937955147779627`*^9, 3.5937955559707537`*^9, 
+   3.5937956710114727`*^9, 3.5937958086347933`*^9, 3.5937960375777473`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"PaddedForm", "::", "sigz"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"In addition to the number of digits requested, one or more \
+zeros will appear as placeholders. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/PaddedForm\\\", ButtonNote -> \
+\\\"PaddedForm::sigz\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.593795429463273*^9, 3.593795514912939*^9, 
+  3.593795556051408*^9, 3.593795671097439*^9, 3.59379580871504*^9, 
+  3.593796037632224*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"PaddedForm", "::", "sigz"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"In addition to the number of digits requested, one or more \
+zeros will appear as placeholders. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/PaddedForm\\\", ButtonNote -> \
+\\\"PaddedForm::sigz\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.593795429463273*^9, 3.593795514912939*^9, 
+  3.593795556051408*^9, 3.593795671097439*^9, 3.59379580871504*^9, 
+  3.593796037690559*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"PaddedForm", "::", "sigz"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"In addition to the number of digits requested, one or more \
+zeros will appear as placeholders. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/PaddedForm\\\", ButtonNote -> \
+\\\"PaddedForm::sigz\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.593795429463273*^9, 3.593795514912939*^9, 
+  3.593795556051408*^9, 3.593795671097439*^9, 3.59379580871504*^9, 
+  3.59379603774921*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"General", "::", "stop"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"Further output of \
+\[NoBreak]\\!\\(\\*StyleBox[\\(PaddedForm :: sigz\\), \\\"MessageName\\\"]\\)\
+\[NoBreak] will be suppressed during this calculation. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, ButtonData:>\\\"paclet:ref/message/General/stop\\\", \
+ButtonNote -> \\\"General::stop\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.593795429463273*^9, 3.593795514912939*^9, 
+  3.593795556051408*^9, 3.593795671097439*^9, 3.59379580871504*^9, 
+  3.5937960377754993`*^9}],
+
+Cell[BoxData[
+ TagBox[
+  TagBox[GridBox[{
+     {
+      TagBox["\<\"elem\"\>",
+       HoldForm], 
+      TagBox["\<\"axial force\"\>",
+       HoldForm], 
+      TagBox["\<\"axial stress\"\>",
+       HoldForm]},
+     {"\<\"1\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 103.0000\"\>",
+        102.96230722025037`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 3120.0000\"\>",
+        3120.0699157651625`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"2\"\>", 
+      TagBox[
+       InterpretationBox["\<\"-5996.0000\"\>",
+        -5995.741668991295,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-2976.0000\"\>",
+        -2975.5541781594516`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"3\"\>", 
+      TagBox[
+       InterpretationBox["\<\"-5126.0000\"\>",
+        -5125.716126582083,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-2544.0000\"\>",
+        -2543.7797154253512`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"4\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 4077.0000\"\>",
+        4076.5309097988693`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 2023.0000\"\>",
+        2023.0922629274785`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"5\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 4947.0000\"\>",
+        4946.556452208077,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 2455.0000\"\>",
+        2454.8667256615763`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"6\"\>", 
+      TagBox[
+       InterpretationBox["\<\"-12720.0000\"\>",
+        -12715.28978189681,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-4504.0000\"\>",
+        -4504.1763308171485`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"7\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 7522.0000\"\>",
+        7521.905830826078,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 2665.0000\"\>",
+        2664.5079103174203`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"8\"\>", 
+      TagBox[
+       InterpretationBox["\<\"-12000.0000\"\>",
+        -12003.289469787027`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-4252.0000\"\>",
+        -4251.9622634739735`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"9\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 8234.0000\"\>",
+        8233.906142935884,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 2917.0000\"\>",
+        2916.7219776606034`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"10\"\>", 
+      TagBox[
+       InterpretationBox["\<\"-7.5590\"\>",
+        -7.559450241532045,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-755.9000\"\>",
+        -755.9450241532045,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"11\"\>", 
+      TagBox[
+       InterpretationBox["\<\"-4.9230\"\>",
+        -4.922528783772116,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-492.3000\"\>",
+        -492.25287837721163`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"12\"\>", 
+      TagBox[
+       InterpretationBox["\<\"-29.0600\"\>",
+        -29.062364327514512`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-2076.0000\"\>",
+        -2075.8831662510365`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"13\"\>", 
+      TagBox[
+       InterpretationBox["\<\"-12.3100\"\>",
+        -12.31018795756346,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-879.3000\"\>",
+        -879.2991398259614,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"14\"\>", 
+      TagBox[
+       InterpretationBox["\<\"-3427.0000\"\>",
+        -3427.307707574432,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-3497.0000\"\>",
+        -3497.252762831053,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"15\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 2611.0000\"\>",
+        2610.7659366711705`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 2664.0000\"\>",
+        2664.046874154256,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"16\"\>", 
+      TagBox[
+       InterpretationBox["\<\"-3732.0000\"\>",
+        -3731.5996786801215`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-3808.0000\"\>",
+        -3807.7547741633894`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"17\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 2306.0000\"\>",
+        2306.473965565489,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 2354.0000\"\>",
+        2353.5448628219274`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"18\"\>", 
+      TagBox[
+       InterpretationBox["\<\"-6193.0000\"\>",
+        -6192.989710477297,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-3519.0000\"\>",
+        -3518.744153680283,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"19\"\>", 
+      TagBox[
+       InterpretationBox["\<\"-6344.0000\"\>",
+        -6343.941551583433,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-3605.0000\"\>",
+        -3604.51224521786,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"20\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 3644.0000\"\>",
+        3644.3202075120576`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 2071.0000\"\>",
+        2070.636481540942,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"21\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 3493.0000\"\>",
+        3493.368366405915,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 1985.0000\"\>",
+        1984.868390003361,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"22\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 10850.0000\"\>",
+        10850.84465531625,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 4447.0000\"\>",
+        4447.067481686988,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"23\"\>", 
+      TagBox[
+       InterpretationBox["\<\"-13040.0000\"\>",
+        -13042.617768477166`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-5345.0000\"\>",
+        -5345.335151015232,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"24\"\>", 
+      TagBox[
+       InterpretationBox["\<\" 9184.0000\"\>",
+        9184.31084198317,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\" 3764.0000\"\>",
+        3764.0618204849056`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]},
+     {"\<\"25\"\>", 
+      TagBox[
+       InterpretationBox["\<\"-14710.0000\"\>",
+        -14709.151581810247`,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ], 
+      TagBox[
+       InterpretationBox["\<\"-6028.0000\"\>",
+        -6028.340812217314,
+        AutoDelete->True],
+       PaddedForm[#, {4, 4}]& ]}
+    },
+    GridBoxAlignment->{
+     "Columns" -> {{Right}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+      "RowsIndexed" -> {}},
+    GridBoxDividers->{
+     "Columns" -> {{False}}, "ColumnsIndexed" -> {}, 
+      "Rows" -> {False, True, {False}, False}, "RowsIndexed" -> {}},
+    GridBoxSpacings->{"Columns" -> {
+        Offset[0.27999999999999997`], {
+         Offset[0.7]}, 
+        Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+        Offset[0.2], {
+         Offset[0.]}, 
+        Offset[0.2]}, "RowsIndexed" -> {}}],
+   {None, OutputFormsDump`HeadedColumns}],
+  Function[BoxForm`e$, 
+   TableForm[
+   BoxForm`e$, TableAlignments -> {Right}, TableDirections -> {Column, Row}, 
+    TableSpacing -> {0, 1}, 
+    TableHeadings -> {
+     None, {"elem", "axial force", "axial stress"}}]]]], "Print",
+ CellChangeTimes->{
+  3.5937926801099052`*^9, {3.593792755591979*^9, 3.593792759544179*^9}, 
+   3.593795429249629*^9, 3.5937955147779627`*^9, 3.5937955559707537`*^9, 
+   3.5937956710114727`*^9, 3.5937958086347933`*^9, 3.593796037778246*^9}],
+
+Cell[BoxData[
+ GraphicsBox[{
+   {GrayLevel[0], AbsoluteThickness[0.5], 
+    LineBox[{{-138.67504905630727`, -37.06246583305506}, {
+     138.67504905630727`, -37.06246583305506}, {138.67504905630727`, 
+     229.78728816494137`}, {-138.67504905630727`, 
+     229.78728816494137`}, {-138.67504905630727`, -37.06246583305506}}]}, 
+   {RGBColor[0, 0, 0], AbsoluteThickness[2.5], 
+    LineBox[{{-31.20188603766914, 198.28419220684458`}, {31.20188603766914, 
+     187.16545245692805`}}], 
+    LineBox[{{-31.20188603766914, 198.28419220684458`}, {52.003143396115235`, 
+     99.14209610342229}}], 
+    LineBox[{{31.20188603766914, 187.16545245692805`}, {-10.400628679223047`, 
+     110.2608358533388}}], 
+    LineBox[{{-31.20188603766914, 198.28419220684458`}, {10.400628679223047`, 
+     82.46398647854751}}], 
+    LineBox[{{31.20188603766914, 187.16545245692805`}, {-52.003143396115235`, 
+     93.58272622846403}}], 
+    LineBox[{{31.20188603766914, 187.16545245692805`}, {52.003143396115235`, 
+     99.14209610342229}}], 
+    LineBox[{{31.20188603766914, 187.16545245692805`}, {10.400628679223047`, 
+     82.46398647854751}}], 
+    LineBox[{{-31.20188603766914, 198.28419220684458`}, {-10.400628679223047`,
+      110.2608358533388}}], 
+    LineBox[{{-31.20188603766914, 198.28419220684458`}, {-52.003143396115235`,
+      93.58272622846403}}], 
+    LineBox[{{-10.400628679223047`, 110.2608358533388}, {-52.003143396115235`,
+      93.58272622846403}}], 
+    LineBox[{{52.003143396115235`, 99.14209610342229}, {10.400628679223047`, 
+     82.46398647854751}}], 
+    LineBox[{{-10.400628679223047`, 110.2608358533388}, {52.003143396115235`, 
+     99.14209610342229}}], 
+    LineBox[{{10.400628679223047`, 82.46398647854751}, {-52.003143396115235`, 
+     93.58272622846403}}], 
+    LineBox[NCache[{{-10.400628679223047`, 
+       110.2608358533388}, {(-500) 13^Rational[-1, 2], (-50) 
+        Rational[2, 91]^Rational[1, 2]}}, {{-10.400628679223047`, 
+      110.2608358533388}, {-138.67504905630727`, -7.412493166611012}}]], 
+    LineBox[NCache[{{-52.003143396115235`, 
+       93.58272622846403}, {(-100) 13^Rational[-1, 2], 250 
+        Rational[2, 91]^Rational[1, 2]}}, {{-52.003143396115235`, 
+      93.58272622846403}, {-27.735009811261456`, 37.06246583305506}}]], 
+    LineBox[NCache[{{52.003143396115235`, 99.14209610342229}, {
+       100 13^Rational[-1, 2], (-250) Rational[2, 91]^Rational[1, 2]}}, {{
+      52.003143396115235`, 99.14209610342229}, {
+      27.735009811261456`, -37.06246583305506}}]], 
+    LineBox[NCache[{{10.400628679223047`, 82.46398647854751}, {
+       500 13^Rational[-1, 2], 50 Rational[2, 91]^Rational[1, 2]}}, {{
+      10.400628679223047`, 82.46398647854751}, {138.67504905630727`, 
+      7.412493166611012}}]], 
+    LineBox[NCache[{{52.003143396115235`, 
+       99.14209610342229}, {(-100) 13^Rational[-1, 2], 250 
+        Rational[2, 91]^Rational[1, 2]}}, {{52.003143396115235`, 
+      99.14209610342229}, {-27.735009811261456`, 37.06246583305506}}]], 
+    LineBox[NCache[{{-10.400628679223047`, 110.2608358533388}, {
+       500 13^Rational[-1, 2], 50 
+        Rational[2, 91]^Rational[1, 2]}}, {{-10.400628679223047`, 
+      110.2608358533388}, {138.67504905630727`, 7.412493166611012}}]], 
+    LineBox[NCache[{{10.400628679223047`, 
+       82.46398647854751}, {(-500) 13^Rational[-1, 2], (-50) 
+        Rational[2, 91]^Rational[1, 2]}}, {{10.400628679223047`, 
+      82.46398647854751}, {-138.67504905630727`, -7.412493166611012}}]], 
+    LineBox[NCache[{{-52.003143396115235`, 93.58272622846403}, {
+       100 13^Rational[-1, 2], (-250) 
+        Rational[2, 91]^Rational[1, 2]}}, {{-52.003143396115235`, 
+      93.58272622846403}, {27.735009811261456`, -37.06246583305506}}]], 
+    LineBox[NCache[{{-52.003143396115235`, 
+       93.58272622846403}, {(-500) 13^Rational[-1, 2], (-50) 
+        Rational[2, 91]^Rational[1, 2]}}, {{-52.003143396115235`, 
+      93.58272622846403}, {-138.67504905630727`, -7.412493166611012}}]], 
+    LineBox[NCache[{{-10.400628679223047`, 
+       110.2608358533388}, {(-100) 13^Rational[-1, 2], 250 
+        Rational[2, 91]^Rational[1, 2]}}, {{-10.400628679223047`, 
+      110.2608358533388}, {-27.735009811261456`, 37.06246583305506}}]], 
+    LineBox[
+     NCache[{{10.400628679223047`, 82.46398647854751}, {
+       100 13^Rational[-1, 2], (-250) Rational[2, 91]^Rational[1, 2]}}, {{
+      10.400628679223047`, 82.46398647854751}, {
+      27.735009811261456`, -37.06246583305506}}]], 
+    LineBox[NCache[{{52.003143396115235`, 99.14209610342229}, {
+       500 13^Rational[-1, 2], 50 Rational[2, 91]^Rational[1, 2]}}, {{
+      52.003143396115235`, 99.14209610342229}, {138.67504905630727`, 
+      7.412493166611012}}]], 
+    {RGBColor[1, 0, 0], 
+     LineBox[{{-21.141602001601775`, 201.04600422769698`}, {42.23569073314915,
+       189.2664891454299}}], 
+     LineBox[{{-21.141602001601775`, 201.04600422769698`}, {51.59154766110082,
+       93.5146466138004}}], 
+     LineBox[{{42.23569073314915, 189.2664891454299}, {-10.19193535536709, 
+      104.83782981833907`}}], 
+     LineBox[{{-21.141602001601775`, 201.04600422769698`}, {10.27810612442929,
+       85.80123822086506}}], 
+     LineBox[{{42.23569073314915, 189.2664891454299}, {-51.82388239443185, 
+      97.2129333898697}}], 
+     LineBox[{{42.23569073314915, 189.2664891454299}, {51.59154766110082, 
+      93.5146466138004}}], 
+     LineBox[{{42.23569073314915, 189.2664891454299}, {10.27810612442929, 
+      85.80123822086506}}], 
+     LineBox[{{-21.141602001601775`, 
+      201.04600422769698`}, {-10.19193535536709, 104.83782981833907`}}], 
+     LineBox[{{-21.141602001601775`, 
+      201.04600422769698`}, {-51.82388239443185, 97.2129333898697}}], 
+     LineBox[{{-10.19193535536709, 104.83782981833907`}, {-51.82388239443185, 
+      97.2129333898697}}], 
+     LineBox[{{51.59154766110082, 93.5146466138004}, {10.27810612442929, 
+      85.80123822086506}}], 
+     LineBox[{{-10.19193535536709, 104.83782981833907`}, {51.59154766110082, 
+      93.5146466138004}}], 
+     LineBox[{{10.27810612442929, 85.80123822086506}, {-51.82388239443185, 
+      97.2129333898697}}], 
+     LineBox[NCache[{{-10.19193535536709, 
+        104.83782981833907`}, {(-500) 13^Rational[-1, 2], (-50) 
+         Rational[2, 91]^Rational[1, 2]}}, {{-10.19193535536709, 
+       104.83782981833907`}, {-138.67504905630727`, -7.412493166611012}}]], 
+     LineBox[
+      NCache[{{-51.82388239443185, 
+        97.2129333898697}, {(-100) 13^Rational[-1, 2], 250 
+         Rational[2, 91]^Rational[1, 2]}}, {{-51.82388239443185, 
+       97.2129333898697}, {-27.735009811261456`, 37.06246583305506}}]], 
+     LineBox[NCache[{{51.59154766110082, 93.5146466138004}, {
+        100 13^Rational[-1, 2], (-250) Rational[2, 91]^Rational[1, 2]}}, {{
+       51.59154766110082, 93.5146466138004}, {
+       27.735009811261456`, -37.06246583305506}}]], 
+     LineBox[NCache[{{10.27810612442929, 85.80123822086506}, {
+        500 13^Rational[-1, 2], 50 Rational[2, 91]^Rational[1, 2]}}, {{
+       10.27810612442929, 85.80123822086506}, {138.67504905630727`, 
+       7.412493166611012}}]], 
+     LineBox[NCache[{{51.59154766110082, 
+        93.5146466138004}, {(-100) 13^Rational[-1, 2], 250 
+         Rational[2, 91]^Rational[1, 2]}}, {{51.59154766110082, 
+       93.5146466138004}, {-27.735009811261456`, 37.06246583305506}}]], 
+     LineBox[NCache[{{-10.19193535536709, 104.83782981833907`}, {
+        500 13^Rational[-1, 2], 50 
+         Rational[2, 91]^Rational[1, 2]}}, {{-10.19193535536709, 
+       104.83782981833907`}, {138.67504905630727`, 7.412493166611012}}]], 
+     LineBox[NCache[{{10.27810612442929, 
+        85.80123822086506}, {(-500) 13^Rational[-1, 2], (-50) 
+         Rational[2, 91]^Rational[1, 2]}}, {{10.27810612442929, 
+       85.80123822086506}, {-138.67504905630727`, -7.412493166611012}}]], 
+     LineBox[NCache[{{-51.82388239443185, 97.2129333898697}, {
+        100 13^Rational[-1, 2], (-250) 
+         Rational[2, 91]^Rational[1, 2]}}, {{-51.82388239443185, 
+       97.2129333898697}, {27.735009811261456`, -37.06246583305506}}]], 
+     LineBox[NCache[{{-51.82388239443185, 
+        97.2129333898697}, {(-500) 13^Rational[-1, 2], (-50) 
+         Rational[2, 91]^Rational[1, 2]}}, {{-51.82388239443185, 
+       97.2129333898697}, {-138.67504905630727`, -7.412493166611012}}]], 
+     LineBox[NCache[{{-10.19193535536709, 
+        104.83782981833907`}, {(-100) 13^Rational[-1, 2], 250 
+         Rational[2, 91]^Rational[1, 2]}}, {{-10.19193535536709, 
+       104.83782981833907`}, {-27.735009811261456`, 37.06246583305506}}]], 
+     LineBox[
+      NCache[{{10.27810612442929, 85.80123822086506}, {
+        100 13^Rational[-1, 2], (-250) Rational[2, 91]^Rational[1, 2]}}, {{
+       10.27810612442929, 85.80123822086506}, {
+       27.735009811261456`, -37.06246583305506}}]], 
+     LineBox[NCache[{{51.59154766110082, 93.5146466138004}, {
+        500 13^Rational[-1, 2], 50 Rational[2, 91]^Rational[1, 2]}}, {{
+       51.59154766110082, 93.5146466138004}, {138.67504905630727`, 
+       7.412493166611012}}]]}}},
+  AspectRatio->Automatic,
+  DisplayFunction->Print,
+  PlotLabel->FormBox[
+   "\"deformed shape (mag x250)\"", TraditionalForm]]], "Print",
+ CellChangeTimes->{
+  3.5937926801099052`*^9, {3.593792755591979*^9, 3.593792759544179*^9}, 
+   3.593795429249629*^9, 3.5937955147779627`*^9, 3.5937955559707537`*^9, 
+   3.5937956710114727`*^9, 3.5937958086347933`*^9, 3.593796037810062*^9}],
+
+Cell[BoxData[
+ GraphicsBox[{
+   {GrayLevel[0], AbsoluteThickness[0.5], 
+    LineBox[{{-138.67504905630727`, -37.06246583305506}, {
+     138.67504905630727`, -37.06246583305506}, {138.67504905630727`, 
+     229.78728816494137`}, {-138.67504905630727`, 
+     229.78728816494137`}, {-138.67504905630727`, -37.06246583305506}}]}, 
+   {RGBColor[1., 0.4824330586217215, 0.4824330586217215], AbsoluteThickness[
+    4], LineBox[{{-31.20188603766914, 198.28419220684458`}, {
+     31.20188603766914, 187.16545245692805`}}], 
+    {RGBColor[0.5064057804878821, 0.5064057804878821, 1.], 
+     LineBox[{{-31.20188603766914, 198.28419220684458`}, {52.003143396115235`,
+       99.14209610342229}}]}, 
+    {RGBColor[0.5780298767664214, 0.5780298767664214, 1.], 
+     LineBox[{{31.20188603766914, 187.16545245692805`}, {-10.400628679223047`,
+       110.2608358533388}}]}, 
+    {RGBColor[1., 0.664403137455768, 0.664403137455768], 
+     LineBox[{{-31.20188603766914, 198.28419220684458`}, {10.400628679223047`,
+       82.46398647854751}}]}, 
+    {RGBColor[1., 0.5927790411772291, 0.5927790411772291], 
+     LineBox[{{31.20188603766914, 187.16545245692805`}, {-52.003143396115235`,
+       93.58272622846403}}]}, 
+    {RGBColor[0.2528331640293501, 0.2528331640293501, 1.], 
+     LineBox[{{31.20188603766914, 187.16545245692805`}, {52.003143396115235`, 
+      99.14209610342229}}]}, 
+    {RGBColor[1., 0.5580031067723634, 0.5580031067723634], 
+     LineBox[{{31.20188603766914, 187.16545245692805`}, {10.400628679223047`, 
+      82.46398647854751}}]}, 
+    {RGBColor[0.29467122116640276`, 0.29467122116640276`, 1.], 
+     LineBox[{{-31.20188603766914, 
+      198.28419220684458`}, {-10.400628679223047`, 110.2608358533388}}]}, 
+    {RGBColor[1., 0.5161650496353093, 0.5161650496353093], 
+     LineBox[{{-31.20188603766914, 
+      198.28419220684458`}, {-52.003143396115235`, 93.58272622846403}}]}, 
+    {RGBColor[0.8746014786322015, 0.8746014786322015, 1.], 
+     LineBox[{{-10.400628679223047`, 
+      110.2608358533388}, {-52.003143396115235`, 93.58272622846403}}]}, 
+    {RGBColor[0.9183435552648933, 0.9183435552648933, 1.], 
+     LineBox[{{52.003143396115235`, 99.14209610342229}, {10.400628679223047`, 
+      82.46398647854751}}]}, 
+    {RGBColor[0.655646017550309, 0.655646017550309, 1.], 
+     LineBox[{{-10.400628679223047`, 110.2608358533388}, {52.003143396115235`,
+       99.14209610342229}}]}, 
+    {RGBColor[0.8541391126984836, 0.8541391126984836, 1.], 
+     LineBox[{{10.400628679223047`, 82.46398647854751}, {-52.003143396115235`,
+       93.58272622846403}}]}, 
+    {RGBColor[0.4198647900358654, 0.4198647900358654, 1.], 
+     LineBox[NCache[{{-10.400628679223047`, 
+        110.2608358533388}, {(-500) 13^Rational[-1, 2], (-50) 
+         Rational[2, 91]^Rational[1, 2]}}, {{-10.400628679223047`, 
+       110.2608358533388}, {-138.67504905630727`, -7.412493166611012}}]]}, 
+    {RGBColor[1., 0.5580795848908915, 0.5580795848908915], 
+     LineBox[NCache[{{-52.003143396115235`, 
+        93.58272622846403}, {(-100) 13^Rational[-1, 2], 250 
+         Rational[2, 91]^Rational[1, 2]}}, {{-52.003143396115235`, 
+       93.58272622846403}, {-27.735009811261456`, 37.06246583305506}}]]}, 
+    {RGBColor[0.36835774672088584`, 0.36835774672088584`, 1.], 
+     LineBox[NCache[{{52.003143396115235`, 99.14209610342229}, {
+        100 13^Rational[-1, 2], (-250) Rational[2, 91]^Rational[1, 2]}}, {{
+       52.003143396115235`, 99.14209610342229}, {
+       27.735009811261456`, -37.06246583305506}}]]}, 
+    {RGBColor[1., 0.6095866282058697, 0.6095866282058697], 
+     LineBox[NCache[{{10.400628679223047`, 82.46398647854751}, {
+        500 13^Rational[-1, 2], 50 Rational[2, 91]^Rational[1, 2]}}, {{
+       10.400628679223047`, 82.46398647854751}, {138.67504905630727`, 
+       7.412493166611012}}]]}, 
+    {RGBColor[0.41629973100574647`, 0.41629973100574647`, 1.], 
+     LineBox[NCache[{{52.003143396115235`, 
+        99.14209610342229}, {(-100) 13^Rational[-1, 2], 250 
+         Rational[2, 91]^Rational[1, 2]}}, {{52.003143396115235`, 
+       99.14209610342229}, {-27.735009811261456`, 37.06246583305506}}]]}, 
+    {RGBColor[0.4020722521339887, 0.4020722521339887, 1.], 
+     LineBox[NCache[{{-10.400628679223047`, 110.2608358533388}, {
+        500 13^Rational[-1, 2], 50 
+         Rational[2, 91]^Rational[1, 2]}}, {{-10.400628679223047`, 
+       110.2608358533388}, {138.67504905630727`, 7.412493166611012}}]]}, 
+    {RGBColor[1., 0.6565163539950338, 0.6565163539950338], 
+     LineBox[NCache[{{10.400628679223047`, 
+        82.46398647854751}, {(-500) 13^Rational[-1, 2], (-50) 
+         Rational[2, 91]^Rational[1, 2]}}, {{10.400628679223047`, 
+       82.46398647854751}, {-138.67504905630727`, -7.412493166611012}}]]}, 
+    {RGBColor[1., 0.6707438328667923, 0.6707438328667923], 
+     LineBox[NCache[{{-52.003143396115235`, 93.58272622846403}, {
+        100 13^Rational[-1, 2], (-250) 
+         Rational[2, 91]^Rational[1, 2]}}, {{-52.003143396115235`, 
+       93.58272622846403}, {27.735009811261456`, -37.06246583305506}}]]}, 
+    {RGBColor[1., 0.2623065582698384, 0.2623065582698384], 
+     LineBox[NCache[{{-52.003143396115235`, 
+        93.58272622846403}, {(-500) 13^Rational[-1, 2], (-50) 
+         Rational[2, 91]^Rational[1, 2]}}, {{-52.003143396115235`, 
+       93.58272622846403}, {-138.67504905630727`, -7.412493166611012}}]]}, 
+    {RGBColor[0.11329911205714693`, 0.11329911205714693`, 1.], 
+     LineBox[NCache[{{-10.400628679223047`, 
+        110.2608358533388}, {(-100) 13^Rational[-1, 2], 250 
+         Rational[2, 91]^Rational[1, 2]}}, {{-10.400628679223047`, 
+       110.2608358533388}, {-27.735009811261456`, 37.06246583305506}}]]}, 
+    {RGBColor[1., 0.37560567032698544`, 0.37560567032698544`], 
+     LineBox[NCache[{{10.400628679223047`, 82.46398647854751}, {
+        100 13^Rational[-1, 2], (-250) Rational[2, 91]^Rational[1, 2]}}, {{
+       10.400628679223047`, 82.46398647854751}, {
+       27.735009811261456`, -37.06246583305506}}]]}, 
+    {RGBColor[0., 0., 1.], 
+     LineBox[NCache[{{52.003143396115235`, 99.14209610342229}, {
+        500 13^Rational[-1, 2], 50 Rational[2, 91]^Rational[1, 2]}}, {{
+       52.003143396115235`, 99.14209610342229}, {138.67504905630727`, 
+       7.412493166611012}}]]}}},
+  AspectRatio->0.962140470884728,
+  Background->GrayLevel[0],
+  DisplayFunction->Print,
+  PlotLabel->FormBox[
+   "\"axial stresses in truss members\"", TraditionalForm]]], "Print",
+ CellChangeTimes->{
+  3.5937926801099052`*^9, {3.593792755591979*^9, 3.593792759544179*^9}, 
+   3.593795429249629*^9, 3.5937955147779627`*^9, 3.5937955559707537`*^9, 
+   3.5937956710114727`*^9, 3.5937958086347933`*^9, 3.593796037814424*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "SpaceTrussWeight[nodxyz_,elenod_,elefab_,specw_]:=Module[\n\
+{e,ni,nj,w=0,x1,x2,y1,y2,z1,z2,x21,y21,z21,\n  numele=Length[elenod],LL},\n  \
+For [e=1,e<=numele,e++,  {ni,nj}=elenod[[e]]; \n       \
+ncoor={nodxyz[[ni]],nodxyz[[nj]]};  \n       {{x1,y1,z1},{x2,y2,z2}}=ncoor; \n\
+       {x21,y21,z21}={x2-x1,y2-y1,z2-z1};LL=x21^2+y21^2+z21^2;\n       \
+w=w+Sqrt[LL]*elefab[[e]]*specw];\n  Return[w]];    \n    ",
+ StyleBox["\n",
+  FontColor->RGBColor[0, 0, 1]],
+ StyleBox["w=SpaceTrussWeight[NodeCoordinates,ElemNodes,ElemFabrications,0.1];\
+ \nPrint[\"weight=\",w];",
+  FontColor->RGBColor[0, 0, 1]]
+}], "Input",
+ CellFrame->True,
+ CellMargins->{{17, 19}, {Inherited, Inherited}},
+ CellLabelMargins->{{10, Inherited}, {Inherited, Inherited}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ FontSize->8,
+ Background->RGBColor[0, 1, 0]],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"weight=\"\>", "\[InvisibleSpace]", "555.1844170400078`"}],
+  SequenceForm["weight=", 555.1844170400078],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.5937958684107103`*^9, 3.5937960426985598`*^9}]
+}, Open  ]]
+},
+AutoGeneratedPackage->None,
+WindowToolbars->{},
+CellGrouping->Manual,
+WindowSize->{729, 852},
+WindowMargins->{{Automatic, 1}, {Automatic, 0}},
+PrintingCopies->1,
+PrintingPageRange->{1, Automatic},
+PrivateNotebookOptions->{"ColorPalette"->{RGBColor, -1},
+"VersionedStylesheet"->{"Default.nb"[8.] -> False}},
+ShowCellLabel->True,
+ShowCellTags->False,
+RenderingOptions->{"ObjectDithering"->True,
+"RasterDithering"->False},
+Magnification->1.5,
+FrontEndVersion->"9.0 for Mac OS X x86 (32-bit, 64-bit Kernel) (January 25, \
+2013)",
+StyleDefinitions->"Default.nb",
+MacintoshSystemPageSetup -> \
+"00<0001804P000000]P2:?oQon82n@960dL5:0?l0080001804P000000]P2:001\n\
+0000I00000400`<300000BL?00400@00000000000000060801T1T00000000000\n\
+00000000000000000000000000000000"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[557, 20, 1752, 30, 411, "Text"],
+Cell[2312, 52, 366, 11, 60, "Text"],
+Cell[CellGroupData[{
+Cell[2703, 67, 408, 13, 135, "Input",
+ InitializationCell->True],
+Cell[3114, 82, 377, 10, 78, "Text"],
+Cell[CellGroupData[{
+Cell[3516, 96, 2375, 45, 643, "Input",
+ InitializationCell->True],
+Cell[5894, 143, 1751, 46, 252, "Print"],
+Cell[7648, 191, 476, 13, 30, "Print"]
+}, Open  ]]
+}, Open  ]],
+Cell[8151, 208, 447, 12, 96, "Text"],
+Cell[CellGroupData[{
+Cell[8623, 224, 2302, 39, 759, "Input",
+ InitializationCell->True],
+Cell[10928, 265, 3908, 135, 182, "Print"],
+Cell[14839, 402, 1845, 54, 182, "Print"],
+Cell[16687, 458, 638, 19, 30, "Print"],
+Cell[17328, 479, 2492, 68, 182, "Print"]
+}, Open  ]],
+Cell[19835, 550, 362, 10, 78, "Text"],
+Cell[CellGroupData[{
+Cell[20222, 564, 1969, 38, 541, "Input",
+ InitializationCell->True],
+Cell[22194, 604, 382, 10, 40, "Print"],
+Cell[22579, 616, 285, 8, 30, "Print"]
+}, Open  ]],
+Cell[22879, 627, 556, 14, 115, "Text"],
+Cell[CellGroupData[{
+Cell[23460, 645, 5710, 90, 1643, "Input",
+ InitializationCell->True],
+Cell[29173, 737, 960, 16, 110, "Print"],
+Cell[30136, 755, 8394, 156, 140, "Print"]
+}, Open  ]],
+Cell[38545, 914, 348, 9, 59, "Text"],
+Cell[38896, 925, 428, 11, 78, "Text"],
+Cell[CellGroupData[{
+Cell[39349, 940, 3703, 63, 933, "Input",
+ InitializationCell->True],
+Cell[43055, 1005, 2775, 42, 204, "Print"],
+Cell[45833, 1049, 1255, 26, 204, "Print"],
+Cell[47091, 1077, 1135, 20, 204, "Print"]
+}, Open  ]],
+Cell[48241, 1100, 401, 10, 78, "Text"],
+Cell[CellGroupData[{
+Cell[48667, 1114, 3139, 56, 889, "Input",
+ InitializationCell->True],
+Cell[51809, 1172, 6603, 131, 241, "Print"]
+}, Open  ]],
+Cell[58427, 1306, 348, 10, 59, "Text",
+ InitializationCell->True],
+Cell[58778, 1318, 4255, 96, 1281, "Input",
+ InitializationCell->True],
+Cell[63036, 1416, 281, 7, 59, "Text",
+ InitializationCell->True],
+Cell[63320, 1425, 1170, 23, 280, "Input",
+ InitializationCell->True],
+Cell[64493, 1450, 271, 6, 59, "Text"],
+Cell[64767, 1458, 410, 11, 78, "Text"],
+Cell[65180, 1471, 491, 12, 118, "Input"],
+Cell[65674, 1485, 276, 6, 59, "Text"],
+Cell[65953, 1493, 228, 6, 60, "Input"],
+Cell[CellGroupData[{
+Cell[66206, 1503, 338, 9, 59, "Text"],
+Cell[66547, 1514, 836, 18, 220, "Input"]
+}, Open  ]],
+Cell[67398, 1535, 148, 2, 94, "Input"],
+Cell[67549, 1539, 487, 8, 344, "Input"],
+Cell[68039, 1549, 114, 1, 119, "Section"],
+Cell[68156, 1552, 144, 2, 63, "Text"],
+Cell[68303, 1556, 116, 1, 119, "Section"],
+Cell[68422, 1559, 672, 10, 329, "Text"],
+Cell[69097, 1571, 238, 5, 171, "Section"],
+Cell[CellGroupData[{
+Cell[69360, 1580, 5080, 77, 1603, "Input"],
+Cell[74443, 1659, 291, 4, 30, "Print"],
+Cell[74737, 1665, 5558, 196, 192, "Print"],
+Cell[80298, 1863, 288, 4, 30, "Print"],
+Cell[80589, 1869, 9184, 311, 432, "Print"],
+Cell[89776, 2182, 17852, 332, 519, "Print"],
+Cell[107631, 2516, 288, 4, 30, "Print"],
+Cell[107922, 2522, 8405, 353, 192, "Print"],
+Cell[116330, 2877, 303, 4, 30, "Print"],
+Cell[116636, 2883, 5812, 196, 192, "Print"],
+Cell[122451, 3081, 309, 4, 30, "Print"],
+Cell[122763, 3087, 586, 12, 84, "Message"],
+Cell[123352, 3101, 586, 12, 84, "Message"],
+Cell[123941, 3115, 586, 12, 84, "Message"],
+Cell[124530, 3129, 650, 13, 59, "Message"],
+Cell[125183, 3144, 5782, 196, 192, "Print"],
+Cell[130968, 3342, 301, 4, 30, "Print"],
+Cell[131272, 3348, 586, 12, 84, "Message"],
+Cell[131861, 3362, 586, 12, 84, "Message"],
+Cell[132450, 3376, 585, 12, 84, "Message"],
+Cell[133038, 3390, 650, 13, 59, "Message"],
+Cell[133691, 3405, 9303, 309, 432, "Print"],
+Cell[142997, 3716, 9381, 167, 540, "Print"],
+Cell[152381, 3885, 6643, 114, 540, "Print"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[159061, 4004, 836, 18, 237, "Input"],
+Cell[159900, 4024, 251, 5, 30, "Print"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)

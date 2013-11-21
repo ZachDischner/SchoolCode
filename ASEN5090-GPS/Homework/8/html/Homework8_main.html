@@ -1,0 +1,1372 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Homework8_main</title><meta name="generator" content="MATLAB 8.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-11-10"><meta name="DC.source" content="Homework8_main.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Questions to Answer (First for ease of grading)</a></li><li><a href="#3">Setup Work Space</a></li><li><a href="#4">Setup Problem</a></li><li><a href="#5">Calculate  Pre-Fit Residuals</a></li><li><a href="#7">Read Observation Files, Sort Data</a></li><li><a href="#8">Fetch/Compute Pseudorange Values</a></li><li><a href="#10">Calculate "Modeled" Pseudorange</a></li><li><a href="#12">Fetch Observed Pseudoranges</a></li><li><a href="#16">Clean, Reformat</a></li><li><a href="#17">SUPPORTING FUNCTION - Homework8_main.m</a></li><li><a href="#18">SUPPORTING FUNCTION - getSatGeomRange.m</a></li><li><a href="#19">SUPPORTING FUNCTION - date2GPSTime.m</a></li><li><a href="#20">SUPPORTING FUNCTION - findNearestEphem.m</a></li><li><a href="#21">SUPPORTING FUNCTION - calculateSatellitePosition.m</a></li><li><a href="#22">SUPPORTING FUNCTION - findFirstEpoch.m</a></li><li><a href="#23">SUPPORTING FUNCTION - getSatClockCorrection.m</a></li><li><a href="#24">SUPPORTING FUNCTION - date2GPSTime.m</a></li><li><a href="#25">SUPPORTING FUNCTION - getTropoCorrection.m</a></li></ul></div><pre class="codeinput"><span class="comment">%&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;</span>
+<span class="comment">%                        Homework8_main.m</span>
+<span class="comment">% Author      : Zach Dischner</span>
+<span class="comment">% Date        : 11/3/2013</span>
+<span class="comment">% Description : Matlab script for all calculations required for</span>
+<span class="comment">%               ASEN 5090 Homework 8</span>
+<span class="comment">%</span>
+<span class="comment">%                 __...____________________          ,</span>
+<span class="comment">%                `(\ [ ===NCC-1700===--|__|) ___..--"_`--.._____</span>
+<span class="comment">%                  `"""""""""""""""""| |""` [_""_-___________"_/</span>
+<span class="comment">%                                    | |   /..../`'-._.-'`</span>
+<span class="comment">%                                ____| |__/::..'_</span>
+<span class="comment">%                               |\ ".`"` '_____//\</span>
+<span class="comment">%                               `"'-.   """""  \\/</span>
+<span class="comment">%                                    `""""""""""`</span>
+<span class="comment">% &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</span>
+</pre><h2>Questions to Answer (First for ease of grading)<a name="2"></a></h2><pre class="codeinput">type(<span class="string">'answers.txt'</span>)
+</pre><pre class="codeoutput">
+Solutions for the least squares
+
+----------------------------joze2640.onehour-------------------------
+East/Sig    Estimate (m) -0.275     |   Sigma (m) 0.301
+North/Sig   Estimate (m) -1.632     |   Sigma (m) 0.405
+Up/Sig      Estimate (m) 1.227      |   Sigma (m) 0.757
+Clk/Sig     Estimate (m) 199570.997 |   Sigma (m) 0.500
+
+----------------------------onsa2640.onehour-------------------------
+East/Sig    Estimate (m) 0.478      |   Sigma (m) 0.306
+North/Sig   Estimate (m) 0.622      |   Sigma (m) 0.334
+Up/Sig      Estimate (m) -2.056     |   Sigma (m) 0.699
+Clk/Sig     Estimate (m) 620.163    |   Sigma (m) 0.425
+</pre><h2>Setup Work Space<a name="3"></a></h2><pre class="codeinput">clc;clear <span class="string">all</span>;close <span class="string">all</span>
+tic;
+screen_size = get(0,<span class="string">'ScreenSize'</span>);
+sw = screen_size(3);    <span class="comment">% Screen Width</span>
+sh = screen_size(4);    <span class="comment">% Screen Height</span>
+addpath <span class="string">HW8_files</span>
+soln_format = <span class="string">'|  %2.0f | %15.3f | %7.3f | %12.3f | %6.3f | %9.3f | %3.2f | \t\n'</span>;
+debug = 0;
+</pre><h2>Setup Problem<a name="4"></a></h2><pre class="codeinput"><span class="comment">%------Define Navigation and Observation File</span>
+RINEX_FILES = {<span class="string">'joze2640.onehour'</span>,<span class="string">'onsa2640.onehour'</span>};
+nav_msg  = <span class="string">'brdc2640.12n'</span>;
+
+<span class="comment">%------Define Orbit determination parameters</span>
+params.mu = 3.986005e14;        <span class="comment">% Gravitational param [m^3/s^2]</span>
+params.we = 7.2921151467e-5;    <span class="comment">% Earth's rotation rate [rad/s]</span>
+
+<span class="comment">%------Define speed of light</span>
+params.c = 299792458; <span class="comment">% [m/s]</span>
+
+params.options=optimset(<span class="string">'Display'</span>,<span class="string">'off'</span>,<span class="string">'TolFun'</span>,1e-10,<span class="string">'TolX'</span>,1e-10);
+
+<span class="comment">%------Elevation Mask</span>
+el_mask = 10; <span class="comment">%degrees</span>
+
+
+<span class="comment">%------Define Zenith Correction for each site</span>
+Tzenith = [2.4086, 2.3858]; <span class="comment">%[m]</span>
+
+
+<span class="comment">%------Read navigation message content</span>
+nav_data = read_GPSbroadcast(nav_msg); <span class="comment">% Returns [n x 25] matrix of sat orbit information</span>
+<span class="comment">%                  col1: prn, PRN number of satellite</span>
+<span class="comment">%                  col2: M0, mean anomaly at reference time, rad</span>
+<span class="comment">%                  col3: delta_n, mean motion difference from computed value, rad/s</span>
+<span class="comment">%                  col4: ecc, eccentricity of orbit</span>
+<span class="comment">%                  col5: sqrt_a, square root of semi-major axis, m^0.5</span>
+<span class="comment">%                  col6: Loa, longitude of ascending node of orbit plane at weekly epoch, rad</span>
+<span class="comment">%                  col7: incl, inclination angle at reference time, rad</span>
+<span class="comment">%                  col8: perigee, argument of perigee, rad</span>
+<span class="comment">%                  col9: ra_rate, rate of change of right ascension, rad/s</span>
+<span class="comment">%                 col10: i_rate, rate of change of inclination angle, rad/s</span>
+<span class="comment">%                 col11: Cuc, amplitude of the cosine harmonic correction term to the argument of latitude</span>
+<span class="comment">%                 col12: Cus, amplitude of the sine harmonic correction term to the argument of latitude</span>
+<span class="comment">%                 col13: Crc, amplitude of the cosine harmonic correction term to the orbit radius</span>
+<span class="comment">%                 col14: Crs, amplitude of the sine harmonic correction term to the orbit radius</span>
+<span class="comment">%                 col15: Cic, amplitude of the cosine harmonic correction term to the angle of inclination</span>
+<span class="comment">%                 col16: Cis, amplitude of the cosine harmonic correction term to the angle of inclination</span>
+<span class="comment">%                 col17: Toe, reference time ephemeris (seconds into GPS week)</span>
+<span class="comment">%                 col18: IODE, issue of data (ephemeris)</span>
+<span class="comment">%                 col19: GPS_week, GPS Week Number (to go with Toe)</span>
+<span class="comment">%                 col20: Toc, time of clock</span>
+<span class="comment">%                 col21: Af0, satellite clock bias (sec)</span>
+<span class="comment">%                 col22: Af1, satellite clock drift (sec/sec)</span>
+<span class="comment">%                 col23: Af2, satellite clock drift rate (sec/sec/sec)</span>
+<span class="comment">%                 col24: blank (zero)</span>
+<span class="comment">%                 col25: health, satellite health (0=good and usable)</span>
+</pre><h2>Calculate  Pre-Fit Residuals<a name="5"></a></h2><pre class="codeinput"><span class="keyword">for</span> file_idx=1:length(RINEX_FILES)
+</pre><pre class="codeinput">    rinex_file = RINEX_FILES{file_idx};
+    fprintf(<span class="string">'Processing Rinex file %s\n'</span>, rinex_file)
+</pre><pre class="codeoutput">Processing Rinex file joze2640.onehour
+</pre><pre class="codeoutput">Processing Rinex file onsa2640.onehour
+</pre><h2>Read Observation Files, Sort Data<a name="7"></a></h2><pre class="codeinput">    <span class="comment">%------Read a-priori receiver position from header of RINEX obs file</span>
+    [ fid, rec_xyz, observables ] = read_rinex_header( rinex_file );
+    [rec_lla] = ecef2lla(rec_xyz');
+
+    <span class="comment">%------Form least squares like variables</span>
+    xr = rec_xyz(1); yr = rec_xyz(2); zr = rec_xyz(3);
+    X = [xr, yr, zr, 1];
+
+    <span class="comment">%------Read Observation file</span>
+    obs_data    = read_rinex_obs3(rinex_file);
+    cols        = obs_data.col; <span class="comment">% Structure of column index descriptions</span>
+    <span class="comment">%------Make nice column addressing variables (P1_col, P2_col ... etc)</span>
+    fields = fieldnames(cols);
+    <span class="keyword">for</span> kk=1:length(fields)
+        eval(cell2mat([fields(kk),<span class="string">'_col = cols.'</span>,fields(kk),<span class="string">';'</span>]));
+    <span class="keyword">end</span>
+
+    <span class="comment">%------Only look at first epoch</span>
+    [GPSSecAryUn,secs_idx] = unique(obs_data.data(:,TOW_col));
+    PRNS = obs_data.data(: , PRN_col);
+    GPSWeekAry = obs_data.data(: , WEEK_col);
+    GPSSecAry = obs_data.data(: , TOW_col);
+</pre><pre class="codeoutput">Read 1000 lines
+ans =
+        1024           8
+</pre><pre class="codeoutput">Read 1000 lines
+ans =
+        1238          13
+</pre><h2>Fetch/Compute Pseudorange Values<a name="8"></a></h2><pre class="codeinput">    <span class="comment">%------Allocate</span>
+    rho_obs = zeros(1, length(PRNS));
+    rho_model = rho_obs;
+    el = rho_obs;
+    res = rho_obs;
+    ionFree = rho_obs;
+    sat_prn = rho_obs;
+    epoch_iter = 0;
+    <span class="keyword">for</span> sec_idx = secs_idx'
+</pre><pre class="codeinput">        epoch_iter = epoch_iter + 1;
+</pre><h2>Calculate "Modeled" Pseudorange<a name="10"></a></h2><pre class="codeinput">        <span class="comment">%------Setup Range Finding</span>
+        GPS_SOW = GPSSecAry(sec_idx);
+        GPS_Week = GPSWeekAry(sec_idx);
+        params.Secs = GPS_SOW; <span class="comment">%(GPS_Secs(1))  % Seconds used to calculate seconds since epoch</span>
+
+        <span class="comment">%------Iterate over epoch satellite data</span>
+        Nsats = sum(GPSSecAry == GPSSecAry(sec_idx));
+        iter = 0; clear <span class="string">H</span> <span class="string">y</span>
+        <span class="keyword">for</span> sat = 1:Nsats
+</pre><pre class="codeinput">            data_idx = sec_idx+sat-1;
+            iter = iter + 1;
+            PRN = obs_data.data(data_idx,PRN_col);
+
+            <span class="comment">%------Calculate Geometric Range</span>
+            [R, rel_dt, satXYZ] = getSatGeomRange(rec_xyz', GPS_Week, GPS_SOW, PRN, nav_data, params);
+            xs = satXYZ(1); ys = satXYZ(2); zs = satXYZ(3);
+
+            <span class="comment">%------Check Elevation Angle</span>
+            [az, el(iter), r] = ecef2azelrange(satXYZ', rec_xyz);
+            <span class="keyword">if</span> el(iter) &lt; el_mask
+                iter=iter-1;
+                <span class="keyword">continue</span>
+            <span class="keyword">end</span>
+            rel_corr = rel_dt*params.c;
+
+            <span class="comment">%------Get clock correction</span>
+            sat_clk_t_corr = getSatClockCorrection(GPS_Week, GPS_SOW, PRN, nav_data);
+
+            <span class="comment">%------Get Satellite Correction</span>
+            sat_corr = sat_clk_t_corr*params.c;
+
+            <span class="comment">%------Get Tropospheric Correction</span>
+            Tropo_corr = getTropoCorrection(Tzenith(file_idx), el(iter) );
+            rho_model(iter) = R - sat_corr + Tropo_corr + rel_corr;
+</pre><h2>Fetch Observed Pseudoranges<a name="12"></a></h2><pre class="codeinput">            <span class="comment">%------Get Observed pseudorange</span>
+            P2 = obs_data.data(data_idx,P2_col);
+
+            <span class="keyword">if</span> sum(strcmp(observables,<span class="string">'P1'</span>))&gt;0
+                <span class="comment">%------Retrieve P1 as 2nd freq pseudorange</span>
+                PorC1 = obs_data.data(data_idx,P1_col);
+<span class="comment">%                 rho_obs(iter) = P1;</span>
+            <span class="keyword">else</span>
+                <span class="comment">%------Retrieve C1 as 2nd freq pseudorange</span>
+                PorC1 = obs_data.data(data_idx,C1_col);
+<span class="comment">%                 rho_obs(iter) = C1;</span>
+            <span class="keyword">end</span>
+
+            <span class="comment">%------Use ONLY ionosphere free. Uncomment linesto use what data we have</span>
+            <span class="keyword">if</span> P2==0
+                iter=iter-1;
+                <span class="keyword">continue</span>
+<span class="comment">%                 rho_obs(iter) = PorC1;</span>
+            <span class="keyword">elseif</span> PorC1==0
+                iter=iter-1;
+                <span class="keyword">continue</span>
+<span class="comment">%                 rho_obs(iter) = P2;</span>
+            <span class="keyword">else</span>
+                rho_obs(iter) = 2.5457*PorC1-1.5457*P2;
+            <span class="keyword">end</span>
+
+            <span class="comment">%------Populate Least Squares Variables</span>
+            H(iter,:) = [(xr-xs)/R, (yr-ys)/R, (zr-zs)/R, 1]; <span class="comment">%??? What about clock???</span>
+            <span class="comment">% same as (rec_xyz' - satXYZ)/R</span>
+            y(iter) = rho_obs(iter) - rho_model(iter);
+
+            sat_prn(iter) = PRN;
+
+            <span class="keyword">if</span> epoch_iter == 1 &amp;&amp; file_idx == 1 &amp;&amp; debug == 1
+                <span class="keyword">if</span> sat == 1
+                    fprintf(<span class="string">'|_PRN_|________P3_______|___Geom Range___|____satClk____|__rel__|__Tropo___|___prefit___|\n'</span>)
+                <span class="keyword">end</span>
+                fprintf(1,soln_format,PRN,<span class="keyword">...</span>
+                    rho_obs(iter), R,sat_corr,<span class="keyword">...</span>
+                    rel_corr,Tropo_corr,y(iter))
+            <span class="keyword">end</span>
+</pre><pre class="codeinput">        <span class="keyword">end</span>     <span class="comment">% End Satellite Iteration</span>
+        <span class="comment">%------Obtain least squares correction</span>
+        del_x(epoch_iter,:) = transpose((H'*H)\H'*y');
+        P = inv(H'*H).*(0.5)^2;
+
+        <span class="comment">%------Rotate</span>
+        rec_xyz_adj = repmat(rec_xyz', epoch_iter, 1) - del_x(:,1:3);
+        rec_lla_adj = ecef2lla(rec_xyz_adj);
+        lat_station =  rec_lla_adj(epoch_iter,1);
+        lon_station = rec_lla_adj(epoch_iter,2);
+        P(1:3,1:3) = rotateCovariance(P(1:3,1:3), lat_station,lon_station);
+        sigmas(epoch_iter,:) = sqrt(diag(P))';
+
+        key_epoch = 2;
+        <span class="keyword">if</span> epoch_iter == key_epoch
+            fprintf(<span class="string">'\n\n----------------------------%s-------------------------'</span>,rinex_file)
+            rec_xyz_adj = repmat(rec_xyz', epoch_iter, 1) - del_x(:,1:3);
+            rec_lla_adj = ecef2lla(rec_xyz_adj);
+            [de, dn, du] = ecef2enuv(del_x(key_epoch,1), <span class="keyword">...</span>
+                                     del_x(key_epoch,2), <span class="keyword">...</span>
+                                     del_x(key_epoch,3), <span class="keyword">...</span>
+                                     rec_lla_adj(key_epoch,1),rec_lla_adj(key_epoch,2));
+           fprintf(<span class="string">'\nEast/Sig (m) %3.3f %3.3f\n'</span>,de,sigmas(epoch_iter,1))
+           fprintf(<span class="string">'North/Sig (m) %3.3f %3.3f\n'</span>,dn,sigmas(epoch_iter,2))
+           fprintf(<span class="string">'Up/Sig (m) %3.3f %3.3f\n'</span>,du,sigmas(epoch_iter,3))
+           fprintf(<span class="string">'Clk/Sig (m) %5.3f %3.3f\n'</span>,del_x(key_epoch,4),sigmas(epoch_iter,4))
+        <span class="keyword">end</span>
+</pre><pre class="codeoutput">
+
+----------------------------joze2640.onehour-------------------------
+East/Sig (m) -0.275 0.301
+North/Sig (m) -1.632 0.405
+Up/Sig (m) 1.227 0.757
+Clk/Sig (m) 199570.997 0.500
+</pre><pre class="codeoutput">
+
+----------------------------onsa2640.onehour-------------------------
+East/Sig (m) 0.478 0.306
+North/Sig (m) 0.622 0.334
+Up/Sig (m) -2.056 0.699
+Clk/Sig (m) 620.163 0.425
+</pre><pre class="codeinput">    <span class="keyword">end</span>     <span class="comment">% End time iteration</span>
+
+
+    [de, dn, du] = ecef2enuv(del_x(:,1), <span class="keyword">...</span>
+                             del_x(:,2), <span class="keyword">...</span>
+                             del_x(:,3), <span class="keyword">...</span>
+                             rec_lla_adj(:,1),rec_lla_adj(:,2));
+<span class="comment">%   or...</span>
+    [xe,yn,zu]=ecef2enu(del_x(:,1),del_x(:,2),del_x(:,3),<span class="keyword">...</span>
+                            rec_lla_adj(:,1),rec_lla_adj(:,2),rec_lla_adj(:,3),oblateSpheroid);
+
+    t = linspace(GPSSecAryUn(1),GPSSecAryUn(end),length(GPSSecAryUn));
+    t = (t-t(1))/60;
+    figure; subplot(2,1,1);
+    plot(t,[de,dn,du])
+    xlabel(<span class="string">'Minutes Since First Epoch'</span>);ylabel(<span class="string">'Delta [m]'</span>); legend(<span class="string">'East'</span>,<span class="string">'North'</span>,<span class="string">'Up'</span>)
+    title([<span class="string">'Error for '</span>, rinex_file])
+    subplot(2,1,2)
+    plot(t,sigmas(:,1:3))
+    xlabel(<span class="string">'Minutes Since First Epoch'</span>);ylabel(<span class="string">'STD'</span>); legend(<span class="string">'East'</span>,<span class="string">'North'</span>,<span class="string">'Up'</span>)
+    title([<span class="string">'Error for '</span>, rinex_file])
+
+<span class="comment">%     ecef2enuv()</span>
+
+    <span class="comment">%------Remove data with '0' observation</span>
+    zs = rho_obs == 0;
+    rho_obs(zs) = []; rho_model(zs) = [];
+clear <span class="string">del_x</span> <span class="string">H</span>
+</pre><img vspace="5" hspace="5" src="Homework8_main_01.png" alt=""> <img vspace="5" hspace="5" src="Homework8_main_02.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>     <span class="comment">% End Rinex File Iteration</span>
+</pre><h2>Clean, Reformat<a name="16"></a></h2><pre class="codeinput">figure_awesome
+</pre><img vspace="5" hspace="5" src="Homework8_main_03.png" alt=""> <img vspace="5" hspace="5" src="Homework8_main_04.png" alt=""> <h2>SUPPORTING FUNCTION - Homework8_main.m<a name="17"></a></h2><pre class="codeinput">type(<span class="string">'Homework8_main.m'</span>)
+</pre><pre class="codeoutput">
+%&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+%                        Homework8_main.m
+% Author      : Zach Dischner
+% Date        : 11/3/2013
+% Description : Matlab script for all calculations required for
+%               ASEN 5090 Homework 8
+%
+%                 __...____________________          ,
+%                `(\ [ ===NCC-1700===--|__|) ___..--"_`--.._____
+%                  `"""""""""""""""""| |""` [_""_-___________"_/
+%                                    | |   /..../`'-._.-'`
+%                                ____| |__/::..'_
+%                               |\ ".`"` '_____//\
+%                               `"'-.   """""  \\/
+%                                    `""""""""""`
+% &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+%% Questions to Answer (First for ease of grading)
+type('answers.txt')
+
+%% Setup Work Space
+clc;clear all;close all
+tic;
+screen_size = get(0,'ScreenSize');
+sw = screen_size(3);    % Screen Width
+sh = screen_size(4);    % Screen Height
+addpath HW8_files
+soln_format = '|  %2.0f | %15.3f | %7.3f | %12.3f | %6.3f | %9.3f | %3.2f | \t\n';
+debug = 0;
+
+
+%% Setup Problem
+%------Define Navigation and Observation File
+RINEX_FILES = {'joze2640.onehour','onsa2640.onehour'};
+nav_msg  = 'brdc2640.12n';
+
+%------Define Orbit determination parameters
+params.mu = 3.986005e14;        % Gravitational param [m^3/s^2]
+params.we = 7.2921151467e-5;    % Earth's rotation rate [rad/s]
+
+%------Define speed of light
+params.c = 299792458; % [m/s]
+
+params.options=optimset('Display','off','TolFun',1e-10,'TolX',1e-10);
+
+%------Elevation Mask
+el_mask = 10; %degrees
+
+
+%------Define Zenith Correction for each site
+Tzenith = [2.4086, 2.3858]; %[m]
+
+
+%------Read navigation message content
+nav_data = read_GPSbroadcast(nav_msg); % Returns [n x 25] matrix of sat orbit information
+%                  col1: prn, PRN number of satellite
+%                  col2: M0, mean anomaly at reference time, rad
+%                  col3: delta_n, mean motion difference from computed value, rad/s
+%                  col4: ecc, eccentricity of orbit
+%                  col5: sqrt_a, square root of semi-major axis, m^0.5
+%                  col6: Loa, longitude of ascending node of orbit plane at weekly epoch, rad
+%                  col7: incl, inclination angle at reference time, rad
+%                  col8: perigee, argument of perigee, rad
+%                  col9: ra_rate, rate of change of right ascension, rad/s
+%                 col10: i_rate, rate of change of inclination angle, rad/s
+%                 col11: Cuc, amplitude of the cosine harmonic correction term to the argument of latitude
+%                 col12: Cus, amplitude of the sine harmonic correction term to the argument of latitude
+%                 col13: Crc, amplitude of the cosine harmonic correction term to the orbit radius
+%                 col14: Crs, amplitude of the sine harmonic correction term to the orbit radius
+%                 col15: Cic, amplitude of the cosine harmonic correction term to the angle of inclination
+%                 col16: Cis, amplitude of the cosine harmonic correction term to the angle of inclination
+%                 col17: Toe, reference time ephemeris (seconds into GPS week)
+%                 col18: IODE, issue of data (ephemeris)
+%                 col19: GPS_week, GPS Week Number (to go with Toe)
+%                 col20: Toc, time of clock
+%                 col21: Af0, satellite clock bias (sec)
+%                 col22: Af1, satellite clock drift (sec/sec)
+%                 col23: Af2, satellite clock drift rate (sec/sec/sec)
+%                 col24: blank (zero)
+%                 col25: health, satellite health (0=good and usable)
+
+%% Calculate  Pre-Fit Residuals
+for file_idx=1:length(RINEX_FILES)
+    rinex_file = RINEX_FILES{file_idx};
+    fprintf('Processing Rinex file %s\n', rinex_file)
+    
+    %% Read Observation Files, Sort Data
+    %------Read a-priori receiver position from header of RINEX obs file
+    [ fid, rec_xyz, observables ] = read_rinex_header( rinex_file );
+    [rec_lla] = ecef2lla(rec_xyz');
+    
+    %------Form least squares like variables
+    xr = rec_xyz(1); yr = rec_xyz(2); zr = rec_xyz(3);
+    X = [xr, yr, zr, 1]; 
+    
+    %------Read Observation file
+    obs_data    = read_rinex_obs3(rinex_file);
+    cols        = obs_data.col; % Structure of column index descriptions
+    %------Make nice column addressing variables (P1_col, P2_col ... etc)
+    fields = fieldnames(cols);
+    for kk=1:length(fields)
+        eval(cell2mat([fields(kk),'_col = cols.',fields(kk),';']));
+    end
+    
+    %------Only look at first epoch
+    [GPSSecAryUn,secs_idx] = unique(obs_data.data(:,TOW_col));
+    PRNS = obs_data.data(: , PRN_col);
+    GPSWeekAry = obs_data.data(: , WEEK_col);
+    GPSSecAry = obs_data.data(: , TOW_col);
+    
+    %% Fetch/Compute Pseudorange Values
+    
+    %------Allocate
+    rho_obs = zeros(1, length(PRNS));
+    rho_model = rho_obs;
+    el = rho_obs;
+    res = rho_obs;
+    ionFree = rho_obs;
+    sat_prn = rho_obs;
+    epoch_iter = 0;
+    for sec_idx = secs_idx'
+        epoch_iter = epoch_iter + 1;
+        
+        %% Calculate "Modeled" Pseudorange
+        %------Setup Range Finding
+        GPS_SOW = GPSSecAry(sec_idx);
+        GPS_Week = GPSWeekAry(sec_idx);
+        params.Secs = GPS_SOW; %(GPS_Secs(1))  % Seconds used to calculate seconds since epoch
+        
+        %------Iterate over epoch satellite data
+        Nsats = sum(GPSSecAry == GPSSecAry(sec_idx));
+        iter = 0; clear H y
+        for sat = 1:Nsats
+            data_idx = sec_idx+sat-1;
+            iter = iter + 1;
+            PRN = obs_data.data(data_idx,PRN_col);
+            
+            %------Calculate Geometric Range
+            [R, rel_dt, satXYZ] = getSatGeomRange(rec_xyz', GPS_Week, GPS_SOW, PRN, nav_data, params);
+            xs = satXYZ(1); ys = satXYZ(2); zs = satXYZ(3);
+            
+            %------Check Elevation Angle
+            [az, el(iter), r] = ecef2azelrange(satXYZ', rec_xyz);
+            if el(iter) &lt; el_mask
+                iter=iter-1;
+                continue
+            end
+            rel_corr = rel_dt*params.c;
+            
+            %------Get clock correction
+            sat_clk_t_corr = getSatClockCorrection(GPS_Week, GPS_SOW, PRN, nav_data);
+            
+            %------Get Satellite Correction
+            sat_corr = sat_clk_t_corr*params.c;
+            
+            %------Get Tropospheric Correction
+            Tropo_corr = getTropoCorrection(Tzenith(file_idx), el(iter) );
+            rho_model(iter) = R - sat_corr + Tropo_corr + rel_corr;
+            
+            %% Fetch Observed Pseudoranges
+            %------Get Observed pseudorange
+            P2 = obs_data.data(data_idx,P2_col);
+            
+            if sum(strcmp(observables,'P1'))&gt;0
+                %------Retrieve P1 as 2nd freq pseudorange
+                PorC1 = obs_data.data(data_idx,P1_col);
+%                 rho_obs(iter) = P1;                
+            else
+                %------Retrieve C1 as 2nd freq pseudorange
+                PorC1 = obs_data.data(data_idx,C1_col);
+%                 rho_obs(iter) = C1;
+            end
+            
+            %------Use ONLY ionosphere free. Uncomment linesto use what data we have 
+            if P2==0
+                iter=iter-1;
+                continue
+%                 rho_obs(iter) = PorC1;
+            elseif PorC1==0
+                iter=iter-1;
+                continue
+%                 rho_obs(iter) = P2;
+            else 
+                rho_obs(iter) = 2.5457*PorC1-1.5457*P2;
+            end
+            
+            %------Populate Least Squares Variables
+            H(iter,:) = [(xr-xs)/R, (yr-ys)/R, (zr-zs)/R, 1]; %??? What about clock???
+            % same as (rec_xyz' - satXYZ)/R
+            y(iter) = rho_obs(iter) - rho_model(iter);
+            
+            sat_prn(iter) = PRN;
+            
+            if epoch_iter == 1 &amp;&amp; file_idx == 1 &amp;&amp; debug == 1
+                if sat == 1
+                    fprintf('|_PRN_|________P3_______|___Geom Range___|____satClk____|__rel__|__Tropo___|___prefit___|\n')
+                end
+                fprintf(1,soln_format,PRN,...
+                    rho_obs(iter), R,sat_corr,...
+                    rel_corr,Tropo_corr,y(iter))
+            end
+            
+        end     % End Satellite Iteration
+        %------Obtain least squares correction
+        del_x(epoch_iter,:) = transpose((H'*H)\H'*y'); 
+        P = inv(H'*H).*(0.5)^2;
+        
+        %------Rotate
+        rec_xyz_adj = repmat(rec_xyz', epoch_iter, 1) - del_x(:,1:3);
+        rec_lla_adj = ecef2lla(rec_xyz_adj);
+        lat_station =  rec_lla_adj(epoch_iter,1);
+        lon_station = rec_lla_adj(epoch_iter,2);
+        P(1:3,1:3) = rotateCovariance(P(1:3,1:3), lat_station,lon_station);
+        sigmas(epoch_iter,:) = sqrt(diag(P))';
+
+        key_epoch = 2;
+        if epoch_iter == key_epoch
+            fprintf('\n\n----------------------------%s-------------------------',rinex_file)
+            rec_xyz_adj = repmat(rec_xyz', epoch_iter, 1) - del_x(:,1:3);
+            rec_lla_adj = ecef2lla(rec_xyz_adj);
+            [de, dn, du] = ecef2enuv(del_x(key_epoch,1), ...
+                                     del_x(key_epoch,2), ...
+                                     del_x(key_epoch,3), ...
+                                     rec_lla_adj(key_epoch,1),rec_lla_adj(key_epoch,2));
+           fprintf('\nEast/Sig (m) %3.3f %3.3f\n',de,sigmas(epoch_iter,1)) 
+           fprintf('North/Sig (m) %3.3f %3.3f\n',dn,sigmas(epoch_iter,2)) 
+           fprintf('Up/Sig (m) %3.3f %3.3f\n',du,sigmas(epoch_iter,3)) 
+           fprintf('Clk/Sig (m) %5.3f %3.3f\n',del_x(key_epoch,4),sigmas(epoch_iter,4))
+        end
+    end     % End time iteration
+     
+
+    [de, dn, du] = ecef2enuv(del_x(:,1), ...
+                             del_x(:,2), ...
+                             del_x(:,3), ...
+                             rec_lla_adj(:,1),rec_lla_adj(:,2));
+%   or...
+    [xe,yn,zu]=ecef2enu(del_x(:,1),del_x(:,2),del_x(:,3),...
+                            rec_lla_adj(:,1),rec_lla_adj(:,2),rec_lla_adj(:,3),oblateSpheroid);
+    
+    t = linspace(GPSSecAryUn(1),GPSSecAryUn(end),length(GPSSecAryUn));
+    t = (t-t(1))/60;
+    figure; subplot(2,1,1);
+    plot(t,[de,dn,du])
+    xlabel('Minutes Since First Epoch');ylabel('Delta [m]'); legend('East','North','Up')
+    title(['Error for ', rinex_file])
+    subplot(2,1,2)
+    plot(t,sigmas(:,1:3))
+    xlabel('Minutes Since First Epoch');ylabel('STD'); legend('East','North','Up')
+    title(['Error for ', rinex_file])
+    
+%     ecef2enuv()
+    
+    %------Remove data with '0' observation
+    zs = rho_obs == 0;
+    rho_obs(zs) = []; rho_model(zs) = [];
+clear del_x H
+    
+end     % End Rinex File Iteration
+
+
+%% Clean, Reformat
+figure_awesome
+
+
+%% SUPPORTING FUNCTION - Homework8_main.m
+type('Homework8_main.m')
+
+%% SUPPORTING FUNCTION - getSatGeomRange.m
+type('getSatGeomRange.m')
+
+%% SUPPORTING FUNCTION - date2GPSTime.m
+type('date2GPSTime.m')
+
+%% SUPPORTING FUNCTION - findNearestEphem.m
+type('findNearestEphem.m')
+
+%% SUPPORTING FUNCTION - calculateSatellitePosition.m
+type('calculateSatellitePosition.m')
+
+%% SUPPORTING FUNCTION - findFirstEpoch.m
+type('findFirstEpoch.m')
+
+%% SUPPORTING FUNCTION - getSatClockCorrection.m
+type('getSatClockCorrection.m')
+
+%% SUPPORTING FUNCTION - date2GPSTime.m
+type('GPSTime2Date.m')
+
+%% SUPPORTING FUNCTION - getTropoCorrection.m
+type('getTropoCorrection.m')
+
+fprintf('\nSim took %3.1f seconds to run\n',toc)
+</pre><h2>SUPPORTING FUNCTION - getSatGeomRange.m<a name="18"></a></h2><pre class="codeinput">type(<span class="string">'getSatGeomRange.m'</span>)
+</pre><pre class="codeoutput">
+%&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+%                        getSatGeomRange.m
+% Author      : Zach Dischner
+% Date        : 10/22/2013
+% Description : calculate satellite position from GPS ephemeris dataset
+% 
+%
+%                 __...____________________          ,
+%                `(\ [ ===NCC-1700===--|__|) ___..--"_`--.._____
+%                  `"""""""""""""""""| |""` [_""_-___________"_/
+%                                    | |   /..../`'-._.-'`
+%                                ____| |__/::..'_
+%                               |\ ".`"` '_____//\
+%                               `"'-.   """""  \\/
+%                                    `""""""""""`
+% Inputs        : rStation - GPS Rx [x,y,z] coords in ECEF meters
+%                 GPS_Weeks - GPS Week time
+%                 GPS_SOW - Seconds into week
+%                 PRN - Satellite PRN
+%                 nav_data - nx25 array of sat data from broadcase
+%                   ephemeris 
+%                 params - structure containing keplarian specs and extra
+%                           calculations for sat position
+% 
+% Outputs       : R - Geometric Range value, in meters
+%                 rel_dt - clock offset due to relativity (in seconds)
+%                 rSat - 3d ECI coordinates of satellite [x,y,z]
+% 
+% History       October 11 2013 - First Rev
+%               October 24 2013 - Reformatted output to [R,tk]
+%                               - Added check for time field in params,
+%                                 other that that in the ephemeris data
+%               October 30 2013 - Reformatted output to include XYZ sat
+%                                 position
+%               
+% &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+function [R, rel_dt, rSat] = getSatGeomRange(rStation, GPS_Weeks, GPS_SOW, PRN, nav_data, params)
+
+%------Find Nearest Ephemeris
+[epochData,rows] = findNearestEphem(PRN, GPS_Weeks, GPS_SOW, nav_data);
+SOW_col = 20;
+% Single Row in this case
+
+%------Get Sat Position from Ephemeris data
+[rSat,rel_dt] = calculateSatellitePosition(epochData, params);
+
+
+%------Set up convergence limits
+R = 0;
+conv_limit = 1e-15;
+max_iters = 200;
+iter = 1;
+
+%------Iterate and converge on Geometric Range
+while(1)
+    %------Calculate Geometric Range
+    Rtmp = norm( rSat - rStation );
+    
+    %------Check for Convergence
+    if(abs(Rtmp - R) &lt; conv_limit)
+        break
+    end
+    
+    %------Assign new Range Value now that criterion are passed
+    R = Rtmp;
+    
+    %------Check for iteration limit
+    if(iter &gt; max_iters)
+        fprintf(2,'YO BRO!! Range Calculation not converging!\n')
+        break
+    end
+    
+    %------Increase iteration count
+    iter = iter + 1;
+    
+    %------Calculate 'Tt', time of transmission
+    dt = R/params.c;
+%     Tr = epochData(SOW_col);
+    Tr = GPS_SOW;
+    Tt = Tr - dt;
+    
+    %------Recalculate Satellite position
+    params.Secs = Tt;     
+    % to use new time value
+    [rSat,rel_dt,params] = calculateSatellitePosition(epochData,params);
+    
+    %------Rotate Sat position at time Tr (account for earth's rotation)
+    phi = params.we*dt;
+    rSat = transpose(rot3(phi)*rSat');
+    
+end
+rmfield(params,'E_guess');
+
+</pre><h2>SUPPORTING FUNCTION - date2GPSTime.m<a name="19"></a></h2><pre class="codeinput">type(<span class="string">'date2GPSTime.m'</span>)
+</pre><pre class="codeoutput">
+%&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+%                        date2GPSTime.m
+% Author      : Zach Dischner
+% Date        : 10/11/2013
+% Description : Convert a date type object into [GPS_Weeks, GPS_SOW] time
+% 
+%
+%                 __...____________________          ,
+%                `(\ [ ===NCC-1700===--|__|) ___..--"_`--.._____
+%                  `"""""""""""""""""| |""` [_""_-___________"_/
+%                                    | |   /..../`'-._.-'`
+%                                ____| |__/::..'_
+%                               |\ ".`"` '_____//\
+%                               `"'-.   """""  \\/
+%                                    `""""""""""`
+% Inputs        : utcDate - Satellite PRN number
+% 
+% Outputs       : [GPS_Weeks, GPS_SOW]-weeks and seconds of week
+% 
+% TODOS         : Vectorize!
+% &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+function [GPS_Weeks, GPS_SOW] = date2GPSTime(utcDate)
+
+gps_week_start = 'January 6 1980 00:00:00';
+modnum = 0; % modnum = 0 for no modulo
+tmp = mod((datenum(utcDate) - datenum(gps_week_start))/7,modnum); % (Difference in days)/7 = difference in weeks
+GPS_Weeks = floor(tmp);
+GPS_SOW = round((tmp-GPS_Weeks)*7*24*3600);
+</pre><h2>SUPPORTING FUNCTION - findNearestEphem.m<a name="20"></a></h2><pre class="codeinput">type(<span class="string">'findNearestEphem.m'</span>)
+</pre><pre class="codeoutput">
+%&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+%                        findNearestEmph.m
+% Author      : Zach Dischner
+% Date        : 10/11/2013
+% Description : Function to return all emphimeris data from a nav data
+%               array
+% 
+%
+%                 __...____________________          ,
+%                `(\ [ ===NCC-1700===--|__|) ___..--"_`--.._____
+%                  `"""""""""""""""""| |""` [_""_-___________"_/
+%                                    | |   /..../`'-._.-'`
+%                                ____| |__/::..'_
+%                               |\ ".`"` '_____//\
+%                               `"'-.   """""  \\/
+%                                    `""""""""""`
+% Inputs        : PRN - Satellite PRN number
+%                 GPSWeeks - GPS week number (modded or no?)
+%                 GPSSOW - GPS Seconds of week
+%                 navData - A full array of all emphimeris data, fetched
+%                            from navigation file
+% Outputs       : emphData - Single row (struct?) of emphemeris data per
+%                            sat PRN at time [gps_weeks, gps_seconds
+% 
+% History       Oct 11 2013 - First Version
+%               Oct 22 2013 - Added return for rownums
+%               Oct 24 2013 - Changed PRN matching to ismember(), to allow
+%                               for array matching of PRNs
+%               Oct 31 2013 - Changed all terms to datenums, to account for
+%                               week changeover
+% &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+
+function [ephemData,rownums] = findNearestEphem(PRN, GPS_Weeks, GPS_SOW, navData)
+
+% weeknums = nav_ephem(:,19);
+% secofweeks = nav_ephem(:,17)
+% sec_diff = abs(navData(:,17)-GPS_SOW);
+% rownums = find( (sec_diff) == min(sec_diff) &amp; ismember(navData(:,1),PRN) &amp; navData(:,19)==GPS_Weeks);
+% rownums = find( navData(:,17)&lt;=GPS_SOW &amp; ismember(navData(:,1),PRN) &amp; navData(:,19)==GPS_Weeks);
+GPSNUMBOOL = 1;
+epoch_time = GPSTime2Date(GPS_Weeks, GPS_SOW, GPSNUMBOOL);
+nav_time   = GPSTime2Date(navData(:,19),navData(:,17), GPSNUMBOOL);
+datediff = abs(nav_time-epoch_time);
+rownums = (datediff==min(datediff) &amp; ismember(navData(:,1),PRN));
+
+ephemData = navData(rownums,:);
+
+</pre><h2>SUPPORTING FUNCTION - calculateSatellitePosition.m<a name="21"></a></h2><pre class="codeinput">type(<span class="string">'calculateSatellitePosition.m'</span>)
+</pre><pre class="codeoutput">
+%&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+%                        calculateSatellitePosition.m
+% Author      : Zach Dischner
+% Date        : 10/24/2013
+% Description : calculate satellite position from GPS ephemeris dataset
+% 
+%
+%                 __...____________________          ,
+%                `(\ [ ===NCC-1700===--|__|) ___..--"_`--.._____
+%                  `"""""""""""""""""| |""` [_""_-___________"_/
+%                                    | |   /..../`'-._.-'`
+%                                ____| |__/::..'_
+%                               |\ ".`"` '_____//\
+%                               `"'-.   """""  \\/
+%                                    `""""""""""`
+% Inputs        : ephem - Satellite ephemeris dataset
+%                 params - structure containing keplarian specs and extra
+%                           calculations for sat position
+% 
+% Outputs       : [rk]-3d ECI coordinates of satellite
+% 
+% History       October 11 2013 - First Rev
+%               October 24 2013 - Reformatted output to [rk,tk]
+%               October 30 2013 - Added params to return, check for a 
+%                                   better Ek guess (to speed up 'find')
+% &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+function [rk,dt_rel, params] = calculateSatellitePosition(ephem,params)
+
+%-----Extract all ephemeris components to make life easy and epicer
+ephem = num2cell(ephem);
+[prn,M0,delta_n,ecc,sqrt_a,Loa,incl,perigee,ra_rate,i_rate,Cuc,Cus,Crc,Crs,Cic,Cis,...
+    Toc,IODE,GPS_week,Toc,Af0,Af1,Af2,nil,health] = deal(ephem{:});
+A = sqrt_a^2;
+%------Correct Mean Motion
+n0  = sqrt(params.mu/(A)^3); % Calculated mean motion [rad/s]
+n   = n0 + delta_n;                 % Corrected Mean Motion
+
+%------Correct Time
+tk  = params.Secs-Toc;  
+
+%------Mean Anomaly
+Mk = M0 + n*tk; % Mean anomaly
+
+%------Eccentric Anomaly
+if isfield(params,'E_guess')
+    guess=params.E_guess;
+else
+    guess=0;
+end
+Ek = fsolve(@(Ek) (Ek)-ecc*sin(Ek)-Mk,guess,params.options);
+params.E_guess = Ek;
+
+%------True Anomaly
+vk = atan2(      (sqrt(1-ecc^2)*sin(Ek)/(1-ecc*cos(Ek))), ...
+                      ((cos(Ek)-ecc)/(1-ecc*cos(Ek)))   );
+                  
+%------Argument of Latitude
+Phik = vk + perigee;
+
+%------Second Harmonic Perturbations
+del_uk = Cus*sin(2*Phik) + Cuc*cos(2*Phik);
+del_rk = Crs*sin(2*Phik) + Crc*cos(2*Phik);
+del_ik = Cis*sin(2*Phik) + Cic*cos(2*Phik);
+
+%------Corrected argumet of latitude, radius, inclination
+uk = Phik + del_uk;
+rk = A*(1-ecc*cos(Ek)) + del_rk;
+ik = incl + del_ik + i_rate*tk;
+
+%------Position in Orbit Plane
+xkp = rk*cos(uk);
+ykp = rk*sin(uk);
+
+%------Corrected Longitude of ascending node
+Omegak = Loa + (ra_rate - params.we)*tk - params.we*Toc;
+
+%------Earth Fixed Coordinates
+xk = xkp * cos(Omegak) - ykp * cos(ik) * sin(Omegak);
+yk = xkp * sin(Omegak) + ykp * cos(ik) * cos(Omegak);
+zk = ykp * sin(ik);
+
+%------Relativity time shift
+dt_rel = 2*sqrt(params.mu)/params.c^2 * ecc * sqrt_a * sin(Ek);
+rk = [xk,yk,zk];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre><h2>SUPPORTING FUNCTION - findFirstEpoch.m<a name="22"></a></h2><pre class="codeinput">type(<span class="string">'findFirstEpoch.m'</span>)
+</pre><pre class="codeoutput">
+%&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+%                        findFirstEpoch.m
+% Author      : Zach Dischner
+% Date        : 10/24/2013
+% Description : Function to return all emphimeris data from a nav data
+%               array
+% 
+%
+%                 __...____________________          ,
+%                `(\ [ ===NCC-1700===--|__|) ___..--"_`--.._____
+%                  `"""""""""""""""""| |""` [_""_-___________"_/
+%                                    | |   /..../`'-._.-'`
+%                                ____| |__/::..'_
+%                               |\ ".`"` '_____//\
+%                               `"'-.   """""  \\/
+%                                    `""""""""""`
+% Inputs        : navData - Navigation dataset. 
+% Outputs       : emphData - rows (struct?) of emphemeris data for
+%                            the first epoch
+%                 rows - row indices of the first epoch datasets
+% &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+
+function [emphData,rows] = findFirstEpoch( navData )
+
+weeknums = navData(:,19);
+secofweeks = navData(:,17);
+
+n_epochs = length(navData);
+epochs = zeros(n_epochs,1);
+for ii =1:n_epochs
+    epochs(ii) = datenum(GPSTime2Date(weeknums(ii),secofweeks(ii)));
+end
+
+rows    = find(epochs==min(epochs));
+emphData = navData(rows,:);
+</pre><h2>SUPPORTING FUNCTION - getSatClockCorrection.m<a name="23"></a></h2><pre class="codeinput">type(<span class="string">'getSatClockCorrection.m'</span>)
+</pre><pre class="codeoutput">
+function [tcorr] = getSatClockCorrection(GPS_Weeks, GPS_SOW, PRN, nav_data) 
+%&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+%                        getSatClockCorrection.m
+% Author      : Zach Dischner
+% Date        : 10/24/2013
+% Description : Function to return all emphimeris data from a nav data
+%               array
+% 
+%
+%                 __...____________________          ,
+%                `(\ [ ===NCC-1700===--|__|) ___..--"_`--.._____
+%                  `"""""""""""""""""| |""` [_""_-___________"_/
+%                                    | |   /..../`'-._.-'`
+%                                ____| |__/::..'_
+%                               |\ ".`"` '_____//\
+%                               `"'-.   """""  \\/
+%                                    `""""""""""`
+% Inputs        : PRN - Satellite PRN number
+%                 GPSWeeks - GPS week number (modded or no?)
+%                 GPSSOW - GPS Seconds of week
+%                 navData - A full array of all emphimeris data, fetched
+%                            from navigation file
+% Outputs       : t_corr - Satellite clock correction
+% 
+% History       Oct 24 2013 - First Rev
+%&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+
+%------Get ephemeris dataset
+[eph_data,tmp] = findNearestEphem(PRN, GPS_Weeks, GPS_SOW, nav_data);
+
+%------Define readibility indices
+Af0_col = 21;   %Af0, satellite clock bias (sec)
+Af1_col = 22;   %Af1, satellite clock drift (sec/sec)
+Af2_col = 23;   %Af2, satellite clock drift rate (sec/sec/sec)
+SOW_col = 17;   %Toe, reference time ephemeris (seconds into GPS week)
+
+%------Fetch Correction Constants
+Af0 = eph_data(Af0_col); 
+Af1 = eph_data(Af1_col); 
+Af2 = eph_data(Af2_col);
+
+t_eph = eph_data(SOW_col);
+dt = GPS_SOW - t_eph;
+
+%------Calculate clock correction
+tcorr = Af0 + Af1*(dt) + Af2*(dt)^2;
+
+end %function
+
+
+
+</pre><h2>SUPPORTING FUNCTION - date2GPSTime.m<a name="24"></a></h2><pre class="codeinput">type(<span class="string">'GPSTime2Date.m'</span>)
+</pre><pre class="codeoutput">
+%&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+%                        GPSTime2Date.m
+% Author      : Zach Dischner
+% Date        : 10/24/2013
+% Description : Convert a date type object into [GPS_Weeks, GPS_SOW] time
+% 
+%
+%                 __...____________________          ,
+%                `(\ [ ===NCC-1700===--|__|) ___..--"_`--.._____
+%                  `"""""""""""""""""| |""` [_""_-___________"_/
+%                                    | |   /..../`'-._.-'`
+%                                ____| |__/::..'_
+%                               |\ ".`"` '_____//\
+%                               `"'-.   """""  \\/
+%                                    `""""""""""`
+% Inputs        : [GPS_Weeks, GPS_SOW]-weeks and seconds of week
+% 
+% Outputs       : utcDate - Satellite PRN number
+% 
+% TODOS         : Vectorize!
+%                 Build in mod options
+% &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+function utcDate  = GPSTime2Date(GPS_Weeks, GPS_SOW, GPSNUM_BOOL)
+% gps_week_start = 'January 6 1980 00:00:00';
+gps_weeks_start = 723186;   % datenum(gps_week_start) Save time
+%------GPS date in numerical form, since Matlab's 'epoch'
+GPS_Num = (GPS_Weeks+GPS_SOW/7/24/3600)*7 + gps_weeks_start;
+if nargin == 3
+    if GPSNUM_BOOL == 1
+        utcDate = GPS_Num;
+    else
+        utcDate = datestr(datevec(GPS_Num));
+    end
+else
+    utcDate = datestr(datevec(GPS_Num));
+end
+</pre><h2>SUPPORTING FUNCTION - getTropoCorrection.m<a name="25"></a></h2><pre class="codeinput">type(<span class="string">'getTropoCorrection.m'</span>)
+
+fprintf(<span class="string">'\nSim took %3.1f seconds to run\n'</span>,toc)
+</pre><pre class="codeoutput">
+%&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+%                        getTropoCorrection.m
+% Author      : Zach Dischner
+% Date        : 10/30/2013
+% Description : Retrieve tropospheic correction from simple model (in
+%               meters)
+% 
+%
+%                 __...____________________          ,
+%                `(\ [ ===NCC-1700===--|__|) ___..--"_`--.._____
+%                  `"""""""""""""""""| |""` [_""_-___________"_/
+%                                    | |   /..../`'-._.-'`
+%                                ____| |__/::..'_
+%                               |\ ".`"` '_____//\
+%                               `"'-.   """""  \\/
+%                                    `""""""""""`
+% Inputs        : ZenithCorr - Zenith delay [meters]
+%                 el - elevation angle in degrees
+% 
+% Outputs       : TropoDelay - Delay value [meters]
+% 
+% History       October 30 2013 - First Rev
+%               
+% &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+
+function TropoDelay = getTropoCorrection(ZenithCorr, el)
+TropoDelay = abs(ZenithCorr/sind(el));
+
+Sim took 306.9 seconds to run
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+%                        Homework8_main.m
+% Author      : Zach Dischner
+% Date        : 11/3/2013
+% Description : Matlab script for all calculations required for
+%               ASEN 5090 Homework 8
+%
+%                 __...____________________          ,
+%                `(\ [ ===NCC-1700===REPLACE_WITH_DASH_DASH|__|) ___..REPLACE_WITH_DASH_DASH"_`REPLACE_WITH_DASH_DASH.._____
+%                  `"""""""""""""""""| |""` [_""_-___________"_/
+%                                    | |   /..../`'-._.-'`
+%                                ____| |__/::..'_
+%                               |\ ".`"` '_____//\
+%                               `"'-.   """""  \\/
+%                                    `""""""""""`
+% <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+%% Questions to Answer (First for ease of grading)
+type('answers.txt')
+
+%% Setup Work Space
+clc;clear all;close all
+tic;
+screen_size = get(0,'ScreenSize');
+sw = screen_size(3);    % Screen Width
+sh = screen_size(4);    % Screen Height
+addpath HW8_files
+soln_format = '|  %2.0f | %15.3f | %7.3f | %12.3f | %6.3f | %9.3f | %3.2f | \t\n';
+debug = 0;
+
+
+%% Setup Problem
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHDefine Navigation and Observation File
+RINEX_FILES = {'joze2640.onehour','onsa2640.onehour'};
+nav_msg  = 'brdc2640.12n';
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHDefine Orbit determination parameters
+params.mu = 3.986005e14;        % Gravitational param [m^3/s^2]
+params.we = 7.2921151467e-5;    % Earth's rotation rate [rad/s]
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHDefine speed of light
+params.c = 299792458; % [m/s]
+
+params.options=optimset('Display','off','TolFun',1e-10,'TolX',1e-10);
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHElevation Mask
+el_mask = 10; %degrees
+
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHDefine Zenith Correction for each site
+Tzenith = [2.4086, 2.3858]; %[m]
+
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHRead navigation message content
+nav_data = read_GPSbroadcast(nav_msg); % Returns [n x 25] matrix of sat orbit information
+%                  col1: prn, PRN number of satellite
+%                  col2: M0, mean anomaly at reference time, rad
+%                  col3: delta_n, mean motion difference from computed value, rad/s
+%                  col4: ecc, eccentricity of orbit
+%                  col5: sqrt_a, square root of semi-major axis, m^0.5
+%                  col6: Loa, longitude of ascending node of orbit plane at weekly epoch, rad
+%                  col7: incl, inclination angle at reference time, rad
+%                  col8: perigee, argument of perigee, rad
+%                  col9: ra_rate, rate of change of right ascension, rad/s
+%                 col10: i_rate, rate of change of inclination angle, rad/s
+%                 col11: Cuc, amplitude of the cosine harmonic correction term to the argument of latitude
+%                 col12: Cus, amplitude of the sine harmonic correction term to the argument of latitude
+%                 col13: Crc, amplitude of the cosine harmonic correction term to the orbit radius
+%                 col14: Crs, amplitude of the sine harmonic correction term to the orbit radius
+%                 col15: Cic, amplitude of the cosine harmonic correction term to the angle of inclination
+%                 col16: Cis, amplitude of the cosine harmonic correction term to the angle of inclination
+%                 col17: Toe, reference time ephemeris (seconds into GPS week)
+%                 col18: IODE, issue of data (ephemeris)
+%                 col19: GPS_week, GPS Week Number (to go with Toe)
+%                 col20: Toc, time of clock
+%                 col21: Af0, satellite clock bias (sec)
+%                 col22: Af1, satellite clock drift (sec/sec)
+%                 col23: Af2, satellite clock drift rate (sec/sec/sec)
+%                 col24: blank (zero)
+%                 col25: health, satellite health (0=good and usable)
+
+%% Calculate  Pre-Fit Residuals
+for file_idx=1:length(RINEX_FILES)
+    rinex_file = RINEX_FILES{file_idx};
+    fprintf('Processing Rinex file %s\n', rinex_file)
+    
+    %% Read Observation Files, Sort Data
+    %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHRead a-priori receiver position from header of RINEX obs file
+    [ fid, rec_xyz, observables ] = read_rinex_header( rinex_file );
+    [rec_lla] = ecef2lla(rec_xyz');
+    
+    %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHForm least squares like variables
+    xr = rec_xyz(1); yr = rec_xyz(2); zr = rec_xyz(3);
+    X = [xr, yr, zr, 1]; 
+    
+    %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHRead Observation file
+    obs_data    = read_rinex_obs3(rinex_file);
+    cols        = obs_data.col; % Structure of column index descriptions
+    %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHMake nice column addressing variables (P1_col, P2_col ... etc)
+    fields = fieldnames(cols);
+    for kk=1:length(fields)
+        eval(cell2mat([fields(kk),'_col = cols.',fields(kk),';']));
+    end
+    
+    %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHOnly look at first epoch
+    [GPSSecAryUn,secs_idx] = unique(obs_data.data(:,TOW_col));
+    PRNS = obs_data.data(: , PRN_col);
+    GPSWeekAry = obs_data.data(: , WEEK_col);
+    GPSSecAry = obs_data.data(: , TOW_col);
+    
+    %% Fetch/Compute Pseudorange Values
+    
+    %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHAllocate
+    rho_obs = zeros(1, length(PRNS));
+    rho_model = rho_obs;
+    el = rho_obs;
+    res = rho_obs;
+    ionFree = rho_obs;
+    sat_prn = rho_obs;
+    epoch_iter = 0;
+    for sec_idx = secs_idx'
+        epoch_iter = epoch_iter + 1;
+        
+        %% Calculate "Modeled" Pseudorange
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHSetup Range Finding
+        GPS_SOW = GPSSecAry(sec_idx);
+        GPS_Week = GPSWeekAry(sec_idx);
+        params.Secs = GPS_SOW; %(GPS_Secs(1))  % Seconds used to calculate seconds since epoch
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHIterate over epoch satellite data
+        Nsats = sum(GPSSecAry == GPSSecAry(sec_idx));
+        iter = 0; clear H y
+        for sat = 1:Nsats
+            data_idx = sec_idx+sat-1;
+            iter = iter + 1;
+            PRN = obs_data.data(data_idx,PRN_col);
+            
+            %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHCalculate Geometric Range
+            [R, rel_dt, satXYZ] = getSatGeomRange(rec_xyz', GPS_Week, GPS_SOW, PRN, nav_data, params);
+            xs = satXYZ(1); ys = satXYZ(2); zs = satXYZ(3);
+            
+            %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHCheck Elevation Angle
+            [az, el(iter), r] = ecef2azelrange(satXYZ', rec_xyz);
+            if el(iter) < el_mask
+                iter=iter-1;
+                continue
+            end
+            rel_corr = rel_dt*params.c;
+            
+            %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHGet clock correction
+            sat_clk_t_corr = getSatClockCorrection(GPS_Week, GPS_SOW, PRN, nav_data);
+            
+            %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHGet Satellite Correction
+            sat_corr = sat_clk_t_corr*params.c;
+            
+            %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHGet Tropospheric Correction
+            Tropo_corr = getTropoCorrection(Tzenith(file_idx), el(iter) );
+            rho_model(iter) = R - sat_corr + Tropo_corr + rel_corr;
+            
+            %% Fetch Observed Pseudoranges
+            %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHGet Observed pseudorange
+            P2 = obs_data.data(data_idx,P2_col);
+            
+            if sum(strcmp(observables,'P1'))>0
+                %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHRetrieve P1 as 2nd freq pseudorange
+                PorC1 = obs_data.data(data_idx,P1_col);
+%                 rho_obs(iter) = P1;                
+            else
+                %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHRetrieve C1 as 2nd freq pseudorange
+                PorC1 = obs_data.data(data_idx,C1_col);
+%                 rho_obs(iter) = C1;
+            end
+            
+            %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHUse ONLY ionosphere free. Uncomment linesto use what data we have 
+            if P2==0
+                iter=iter-1;
+                continue
+%                 rho_obs(iter) = PorC1;
+            elseif PorC1==0
+                iter=iter-1;
+                continue
+%                 rho_obs(iter) = P2;
+            else 
+                rho_obs(iter) = 2.5457*PorC1-1.5457*P2;
+            end
+            
+            %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHPopulate Least Squares Variables
+            H(iter,:) = [(xr-xs)/R, (yr-ys)/R, (zr-zs)/R, 1]; %??? What about clock???
+            % same as (rec_xyz' - satXYZ)/R
+            y(iter) = rho_obs(iter) - rho_model(iter);
+            
+            sat_prn(iter) = PRN;
+            
+            if epoch_iter == 1 && file_idx == 1 && debug == 1
+                if sat == 1
+                    fprintf('|_PRN_|________P3_______|___Geom Range___|____satClk____|__rel__|__Tropo___|___prefit___|\n')
+                end
+                fprintf(1,soln_format,PRN,...
+                    rho_obs(iter), R,sat_corr,...
+                    rel_corr,Tropo_corr,y(iter))
+            end
+            
+        end     % End Satellite Iteration
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHObtain least squares correction
+        del_x(epoch_iter,:) = transpose((H'*H)\H'*y'); 
+        P = inv(H'*H).*(0.5)^2;
+        
+        %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHRotate
+        rec_xyz_adj = repmat(rec_xyz', epoch_iter, 1) - del_x(:,1:3);
+        rec_lla_adj = ecef2lla(rec_xyz_adj);
+        lat_station =  rec_lla_adj(epoch_iter,1);
+        lon_station = rec_lla_adj(epoch_iter,2);
+        P(1:3,1:3) = rotateCovariance(P(1:3,1:3), lat_station,lon_station);
+        sigmas(epoch_iter,:) = sqrt(diag(P))';
+
+        key_epoch = 2;
+        if epoch_iter == key_epoch
+            fprintf('\n\nREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH%sREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-',rinex_file)
+            rec_xyz_adj = repmat(rec_xyz', epoch_iter, 1) - del_x(:,1:3);
+            rec_lla_adj = ecef2lla(rec_xyz_adj);
+            [de, dn, du] = ecef2enuv(del_x(key_epoch,1), ...
+                                     del_x(key_epoch,2), ...
+                                     del_x(key_epoch,3), ...
+                                     rec_lla_adj(key_epoch,1),rec_lla_adj(key_epoch,2));
+           fprintf('\nEast/Sig (m) %3.3f %3.3f\n',de,sigmas(epoch_iter,1)) 
+           fprintf('North/Sig (m) %3.3f %3.3f\n',dn,sigmas(epoch_iter,2)) 
+           fprintf('Up/Sig (m) %3.3f %3.3f\n',du,sigmas(epoch_iter,3)) 
+           fprintf('Clk/Sig (m) %5.3f %3.3f\n',del_x(key_epoch,4),sigmas(epoch_iter,4))
+        end
+    end     % End time iteration
+     
+
+    [de, dn, du] = ecef2enuv(del_x(:,1), ...
+                             del_x(:,2), ...
+                             del_x(:,3), ...
+                             rec_lla_adj(:,1),rec_lla_adj(:,2));
+%   or...
+    [xe,yn,zu]=ecef2enu(del_x(:,1),del_x(:,2),del_x(:,3),...
+                            rec_lla_adj(:,1),rec_lla_adj(:,2),rec_lla_adj(:,3),oblateSpheroid);
+    
+    t = linspace(GPSSecAryUn(1),GPSSecAryUn(end),length(GPSSecAryUn));
+    t = (t-t(1))/60;
+    figure; subplot(2,1,1);
+    plot(t,[de,dn,du])
+    xlabel('Minutes Since First Epoch');ylabel('Delta [m]'); legend('East','North','Up')
+    title(['Error for ', rinex_file])
+    subplot(2,1,2)
+    plot(t,sigmas(:,1:3))
+    xlabel('Minutes Since First Epoch');ylabel('STD'); legend('East','North','Up')
+    title(['Error for ', rinex_file])
+    
+%     ecef2enuv()
+    
+    %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHRemove data with '0' observation
+    zs = rho_obs == 0;
+    rho_obs(zs) = []; rho_model(zs) = [];
+clear del_x H
+    
+end     % End Rinex File Iteration
+
+
+%% Clean, Reformat
+figure_awesome
+
+
+%% SUPPORTING FUNCTION - Homework8_main.m
+type('Homework8_main.m')
+
+%% SUPPORTING FUNCTION - getSatGeomRange.m
+type('getSatGeomRange.m')
+
+%% SUPPORTING FUNCTION - date2GPSTime.m
+type('date2GPSTime.m')
+
+%% SUPPORTING FUNCTION - findNearestEphem.m
+type('findNearestEphem.m')
+
+%% SUPPORTING FUNCTION - calculateSatellitePosition.m
+type('calculateSatellitePosition.m')
+
+%% SUPPORTING FUNCTION - findFirstEpoch.m
+type('findFirstEpoch.m')
+
+%% SUPPORTING FUNCTION - getSatClockCorrection.m
+type('getSatClockCorrection.m')
+
+%% SUPPORTING FUNCTION - date2GPSTime.m
+type('GPSTime2Date.m')
+
+%% SUPPORTING FUNCTION - getTropoCorrection.m
+type('getTropoCorrection.m')
+
+fprintf('\nSim took %3.1f seconds to run\n',toc)
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,154 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 9.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[      4988,        145]
+NotebookOptionsPosition[      4217,        114]
+NotebookOutlinePosition[      4625,        132]
+CellTagsIndexPosition[      4582,        129]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["ASEN 5007-Homework 9", "Title",
+ CellChangeTimes->{{3.58782448507475*^9, 3.5878244971110783`*^9}, {
+  3.5907702187557297`*^9, 3.5907702188344383`*^9}, {3.591496034371768*^9, 
+  3.591496035187675*^9}, {3.5919835460103817`*^9, 3.591983546490944*^9}, {
+  3.5925220776796837`*^9, 3.592522078218521*^9}, {3.593792122169455*^9, 
+  3.5937921225441303`*^9}}],
+
+Cell["Zach Dischner & SOMEONE ELSE", "Subtitle",
+ CellChangeTimes->{{3.587824499248228*^9, 3.587824500903141*^9}, {
+   3.590770195354347*^9, 3.590770200890245*^9}, {3.591544933873954*^9, 
+   3.591544935775342*^9}, {3.591983542623353*^9, 3.591983544515092*^9}, 
+   3.592591695749076*^9, {3.593792124903862*^9, 3.593792128486206*^9}}],
+
+Cell["", "Subsubtitle",
+ CellChangeTimes->{3.590770221793289*^9}],
+
+Cell[CellGroupData[{
+
+Cell["Helpful Modules", "Section",
+ CellChangeTimes->{{3.587824506223967*^9, 3.587824507990913*^9}, {
+  3.590770242014482*^9, 3.5907702445783587`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"PrintWithStyle", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"color", "=", "LightGreen"}], "}"}], ",", 
+    RowBox[{"Framed", "[", 
+     RowBox[{
+      RowBox[{"Style", "[", 
+       RowBox[{"x", ",", "18", ",", "Bold", ",", 
+        RowBox[{"Background", "\[Rule]", "color"}]}], "]"}], ",", 
+      "\[IndentingNewLine]", 
+      RowBox[{"Background", "\[Rule]", "color"}]}], "]"}]}], 
+   "\[IndentingNewLine]", "]"}]}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.5878277622951813`*^9, 3.587827801470587*^9}, {
+  3.5878279140382023`*^9, 3.587828037992056*^9}, {3.587828092581545*^9, 
+  3.58782809340242*^9}, {3.587828151664729*^9, 3.587828183864581*^9}, {
+  3.5878282160385027`*^9, 3.5878284333882923`*^9}}],
+
+Cell[TextData[StyleBox["Cell 7: Simple function to print output for solutions \
+in a stylazed way",
+ FontSize->12]], "Text",
+ CellChangeTimes->{{3.5878250168615837`*^9, 3.587825022435727*^9}, {
+  3.587827743369121*^9, 3.5878277582173223`*^9}},
+ Background->GrayLevel[0.85]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"PrintWithStyleMat", "[", "x_", "]"}], " ", ":=", " ", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"color", "=", "LightGreen"}], "}"}], ",", 
+    RowBox[{"Style", "[", 
+     RowBox[{"x", ",", "\[IndentingNewLine]", 
+      RowBox[{"Background", "\[Rule]", "color"}]}], "]"}]}], 
+   "\[IndentingNewLine]", "]"}]}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.590776001488886*^9, 3.590776015640019*^9}}],
+
+Cell["\<\
+The following  modules compute the stiffness matrix, consistent node body \
+forces,
+and corner stresses of the 4-node bilinear iso-P quad in plane stress.  For \
+Exercises
+in Chapter 17 only the stiffness module is necessary.
+
+Compute element stiffness matrix of 4-node bilinear quadrilateral\
+\>", "Text",
+ CellChangeTimes->{{3.591984640301422*^9, 3.591984652402586*^9}, {
+  3.5919850366960583`*^9, 3.591985038537635*^9}},
+ Background->GrayLevel[0.85]],
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.592591811923807*^9, 3.5925918124626083`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.592591819537199*^9, 3.59259182173413*^9}}]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{887, 843},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+PrintingCopies->1,
+PrintingPageRange->{1, Automatic},
+FrontEndVersion->"9.0 for Mac OS X x86 (32-bit, 64-bit Kernel) (January 25, \
+2013)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[579, 22, 356, 5, 92, "Title"],
+Cell[938, 29, 332, 4, 51, "Subtitle"],
+Cell[1273, 35, 65, 1, 29, "Subsubtitle"],
+Cell[CellGroupData[{
+Cell[1363, 40, 151, 2, 80, "Section"],
+Cell[1517, 44, 816, 19, 63, "Input",
+ InitializationCell->True],
+Cell[2336, 65, 273, 5, 44, "Text"],
+Cell[2612, 72, 475, 12, 63, "Input",
+ InitializationCell->True],
+Cell[3090, 86, 463, 11, 122, "Text"],
+Cell[3556, 99, 220, 3, 114, "Input"],
+Cell[3779, 104, 410, 6, 250, "Input"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)

@@ -1,0 +1,13 @@
+Solutions for the least squares
+
+----------------------------joze2640.onehour-------------------------
+East/Sig    Estimate (m) -0.275     |   Sigma (m) 0.301
+North/Sig   Estimate (m) -1.632     |   Sigma (m) 0.405
+Up/Sig      Estimate (m) 1.227      |   Sigma (m) 0.757
+Clk/Sig     Estimate (m) 199570.997 |   Sigma (m) 0.500
+
+----------------------------onsa2640.onehour-------------------------
+East/Sig    Estimate (m) 0.478      |   Sigma (m) 0.306
+North/Sig   Estimate (m) 0.622      |   Sigma (m) 0.334
+Up/Sig      Estimate (m) -2.056     |   Sigma (m) 0.699
+Clk/Sig     Estimate (m) 620.163    |   Sigma (m) 0.425

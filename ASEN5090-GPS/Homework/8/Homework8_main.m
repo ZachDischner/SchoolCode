@@ -15,7 +15,7 @@
 %                                    `""""""""""`
 % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 %% Questions to Answer (First for ease of grading)
-% type('answers.txt')
+type('answers.txt')
 
 %% Setup Work Space
 clc;clear all;close all
@@ -25,10 +25,7 @@ sw = screen_size(3);    % Screen Width
 sh = screen_size(4);    % Screen Height
 addpath HW8_files
 soln_format = '|  %2.0f | %15.3f | %7.3f | %12.3f | %6.3f | %9.3f | %3.2f | \t\n';
-% h = waitbar(0,'GO PARTY, ILL STAY HERE WORKING!!!');
-wb_tot = 1024+1238;
-tot_iters = 0;
-debug = 1;
+debug = 0;
 
 
 %% Setup Problem
@@ -109,8 +106,6 @@ for file_idx=1:length(RINEX_FILES)
     PRNS = obs_data.data(: , PRN_col);
     GPSWeekAry = obs_data.data(: , WEEK_col);
     GPSSecAry = obs_data.data(: , TOW_col);
-    %     GPS_Secs = obs_data.data(rows,SOW_col);
-    %     GPS_Weeks = obs_data.data(rows,Week_col);
     
     %% Fetch/Compute Pseudorange Values
     
@@ -136,7 +131,6 @@ for file_idx=1:length(RINEX_FILES)
         iter = 0; clear H y
         for sat = 1:Nsats
             data_idx = sec_idx+sat-1;
-%             waitbar((data_idx+tot_iters)/wb_tot,h)
             iter = iter + 1;
             PRN = obs_data.data(data_idx,PRN_col);
             
@@ -148,7 +142,6 @@ for file_idx=1:length(RINEX_FILES)
             [az, el(iter), r] = ecef2azelrange(satXYZ', rec_xyz);
             if el(iter) < el_mask
                 iter=iter-1;
-                tot_iters = tot_iters+1;
                 continue
             end
             rel_corr = rel_dt*params.c;
@@ -176,10 +169,16 @@ for file_idx=1:length(RINEX_FILES)
                 PorC1 = obs_data.data(data_idx,C1_col);
 %                 rho_obs(iter) = C1;
             end
+            
+            %------Use ONLY ionosphere free. Uncomment linesto use what data we have 
             if P2==0
-                rho_obs(iter) = PorC1;
+                iter=iter-1;
+                continue
+%                 rho_obs(iter) = PorC1;
             elseif PorC1==0
-                rho_obs(iter) = P2;
+                iter=iter-1;
+                continue
+%                 rho_obs(iter) = P2;
             else 
                 rho_obs(iter) = 2.5457*PorC1-1.5457*P2;
             end
@@ -202,8 +201,8 @@ for file_idx=1:length(RINEX_FILES)
             
         end     % End Satellite Iteration
         %------Obtain least squares correction
-        del_x(epoch_iter,:) = transpose((H'*H)\H'*y');
-        P = inv(H'*H)*(0.5)^2;
+        del_x(epoch_iter,:) = transpose((H'*H)\H'*y'); 
+        P = inv(H'*H).*(0.5)^2;
         
         %------Rotate
         rec_xyz_adj = repmat(rec_xyz', epoch_iter, 1) - del_x(:,1:3);
@@ -213,10 +212,10 @@ for file_idx=1:length(RINEX_FILES)
         P(1:3,1:3) = rotateCovariance(P(1:3,1:3), lat_station,lon_station);
         sigmas(epoch_iter,:) = sqrt(diag(P))';
 
-        key_epoch = 1;
+        key_epoch = 2;
         if epoch_iter == key_epoch
             fprintf('\n\n----------------------------%s-------------------------',rinex_file)
-            rec_xyz_adj = repmat(rec_xyz', epoch_iter, 1) - del_x(key_epoch,1:3);
+            rec_xyz_adj = repmat(rec_xyz', epoch_iter, 1) - del_x(:,1:3);
             rec_lla_adj = ecef2lla(rec_xyz_adj);
             [de, dn, du] = ecef2enuv(del_x(key_epoch,1), ...
                                      del_x(key_epoch,2), ...
@@ -254,89 +253,6 @@ for file_idx=1:length(RINEX_FILES)
     %------Remove data with '0' observation
     zs = rho_obs == 0;
     rho_obs(zs) = []; rho_model(zs) = [];
-    %% Plot
-    
-    
-
-%     res = rho_obs-rho_model;
-% 
-%     
-%     obs{file_idx} = rho_obs; %#ok<*SAGROW>
-%     model{file_idx} = rho_model;
-%     elevation{file_idx} = el;
-%     prefit_res{file_idx} = res()';
-%     prns = unique(sat_prn);
-%     prns(prns==0)=[];
-%     
-%     %------plot residules
-%     figure
-%     colors = jet(length(prns));
-%     for ii=1:length(prns)
-%         rows = sat_prn == prns(ii);
-%         sat_res{file_idx, prns(ii)} = res(rows);
-%         plot(GPSSecAry(rows),res(rows),'.','color',colors(ii,:),'Markersize',15)
-%         leg{ii} = ['PRN: ' , num2str(prns(ii))];
-%         hold on
-%     end
-%     xl = ['Seconds since epoch of week ',num2str(GPS_Week)];
-%     xlabel(xl);ylabel('Residual Error [m]')
-%     title(rinex_file)
-%     legend(leg);
-%     
-%     %------Plot Histogram
-%     figure
-%     datan = (res-mean(res))/std(res);
-%     hist(datan)
-%     histfit(datan)
-%     tot_iters = tot_iters + iter;
-%     title(rinex_file)
-%     
-%     %% Ion Free plot for Onsa
-%     if strcmp(rinex_file,'onsa2640.onehour')
-%         %------Remove data with '0' observation
-%         ionFree(zs)=[];
-%         %% Plot
-%         res = ionFree-rho_model;
-%         prns = unique(sat_prn);
-%         prns(prns==0)=[];
-%         
-%         %------plot residules
-%         figure
-%         colors = jet(length(prns));
-%         for ii=1:length(prns)
-%             rows = sat_prn == prns(ii);
-%             sat_res{file_idx, prns(ii)} = res(rows);
-%             plot(linspace(GPSSecAry(1),GPSSecAry(end),length(res(rows))),res(rows),'.','color',colors(ii,:),'Markersize',15)
-%             leg{ii} = ['PRN: ' , num2str(prns(ii))];
-%             hold on
-%         end
-%         xl = ['Seconds since epoch of week ',num2str(GPS_Week)];
-%         xlabel(xl);ylabel('Residual Error [m]')
-%         title(['Ion-Free residules for ', rinex_file])
-%         legend(leg);
-%         
-%         figure
-%         for ii=1:length(prns)
-%             rows = sat_prn == prns(ii);
-%             sat_res{file_idx, prns(ii)} = res(rows);
-%             plot(el(rows),res(rows),'.','color',colors(ii,:),'Markersize',15)
-%             leg{ii} = ['PRN: ' , num2str(prns(ii))];
-%             hold on
-%         end
-%         xlabel('Elevation Angle [Degrees]');ylabel('Residule [m]')
-%         title('Ion Free Residule vs Elevation Angle for Onsa')
-%         legend(leg)
-%         
-%         %------Plot Histogram
-%         figure
-%         datan = (res-mean(res))/std(res);
-%         hist(datan)
-%         histfit(datan)
-%         title(['Ion Free normalized hist: ', rinex_file])
-%         
-%     end
-%     
-%     clear leg rows outliers sat_prn
 clear del_x H
     
 end     % End Rinex File Iteration
@@ -346,31 +262,31 @@ end     % End Rinex File Iteration
 figure_awesome
 
 
-% %% SUPPORTING FUNCTION - Homework8_main.m
-% type('Homework8_main.m')
-% 
-% %% SUPPORTING FUNCTION - getSatGeomRange.m
-% type('getSatGeomRange.m')
-% 
-% %% SUPPORTING FUNCTION - date2GPSTime.m
-% type('date2GPSTime.m')
-% 
-% %% SUPPORTING FUNCTION - findNearestEphem.m
-% type('findNearestEphem.m')
-% 
-% %% SUPPORTING FUNCTION - calculateSatellitePosition.m
-% type('calculateSatellitePosition.m')
-% 
-% %% SUPPORTING FUNCTION - findFirstEpoch.m
-% type('findFirstEpoch.m')
-% 
-% %% SUPPORTING FUNCTION - getSatClockCorrection.m
-% type('getSatClockCorrection.m')
-% 
-% %% SUPPORTING FUNCTION - date2GPSTime.m
-% type('GPSTime2Date.m')
-% 
-% %% SUPPORTING FUNCTION - getTropoCorrection.m
-% type('getTropoCorrection.m')
+%% SUPPORTING FUNCTION - Homework8_main.m
+type('Homework8_main.m')
+
+%% SUPPORTING FUNCTION - getSatGeomRange.m
+type('getSatGeomRange.m')
+
+%% SUPPORTING FUNCTION - date2GPSTime.m
+type('date2GPSTime.m')
+
+%% SUPPORTING FUNCTION - findNearestEphem.m
+type('findNearestEphem.m')
+
+%% SUPPORTING FUNCTION - calculateSatellitePosition.m
+type('calculateSatellitePosition.m')
+
+%% SUPPORTING FUNCTION - findFirstEpoch.m
+type('findFirstEpoch.m')
+
+%% SUPPORTING FUNCTION - getSatClockCorrection.m
+type('getSatClockCorrection.m')
+
+%% SUPPORTING FUNCTION - date2GPSTime.m
+type('GPSTime2Date.m')
+
+%% SUPPORTING FUNCTION - getTropoCorrection.m
+type('getTropoCorrection.m')
 
 fprintf('\nSim took %3.1f seconds to run\n',toc)

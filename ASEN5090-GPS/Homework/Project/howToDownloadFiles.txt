@@ -1,0 +1,6 @@
+urlwrite('ftp://cddis.gsfc.nasa.gov/gps/data/daily/2011/220/11o/nya12200.11o.Z','ObservationFiles/data1.Z')
+%   .11o is the observation file
+%   .11n is the navigation file
+%   nya12200 is the station
+%   .Z is the compressed extension
+[s,r]=system('gunzip -k ./ObservationFiles/data1.Z')
